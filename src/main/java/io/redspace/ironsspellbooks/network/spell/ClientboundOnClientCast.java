@@ -2,6 +2,7 @@ package io.redspace.ironsspellbooks.network.spell;
 
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
 import io.redspace.ironsspellbooks.api.spells.*;
+import io.redspace.ironsspellbooks.spells.parameters.JsonCastData;
 import io.redspace.ironsspellbooks.player.ClientSpellCastHelper;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
@@ -28,9 +29,15 @@ public class ClientboundOnClientCast {
         level = buf.readInt();
         castSource = buf.readEnum(CastSource.class);
         if (buf.readBoolean()) {
-            var tmp = SpellRegistry.getSpell(spellId).getEmptyCastData();
-            tmp.readFromBuffer(buf);
-            castData = tmp;
+            var spell = SpellRegistry.getSpell(spellId);
+            ICastData tmp = spell != null ? spell.getEmptyCastData() : null;
+            if (tmp == null) {
+                tmp = new JsonCastData();
+            }
+            if (tmp instanceof ICastDataSerializable serializable) {
+                serializable.readFromBuffer(buf);
+                castData = tmp;
+            }
         }
     }
 

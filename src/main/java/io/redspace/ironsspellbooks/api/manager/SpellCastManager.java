@@ -83,15 +83,21 @@ public final class SpellCastManager {
         SpellParameterConfig previousParameters = spell.applyParameterOverrides(resolved);
         boolean castBarInitiated = false;
         boolean castSucceeded = false;
-        JsonCastData castData = new JsonCastData(normalized);
+        JsonCastData jsonCastData = new JsonCastData(normalized);
+        int resolvedManaCost = calculateManaCost(spell, resolved, level);
 
         try {
             if (!options.bypassConditions) {
-                CastResult result = spell.canBeCastedBy(level, CastSource.COMMAND, magicData, player);
+                CastSource validationSource = options.consumeMana ? CastSource.SPELLBOOK : CastSource.COMMAND;
+                CastResult result = spell.canBeCastedBy(level, validationSource, magicData, player);
                 if (!result.isSuccess()) {
                     if (result.message != null) {
                         player.sendSystemMessage(result.message.copy().withStyle(ChatFormatting.RED));
                     }
+                    return false;
+                }
+                if (options.consumeMana && magicData.getMana() < resolvedManaCost) {
+                    player.sendSystemMessage(Component.translatable("ui.irons_spellbooks.cast_error_mana", spell.getDisplayName(player)).withStyle(ChatFormatting.RED));
                     return false;
                 }
                 if (!spell.checkPreCastConditions(player.level(), level, player, magicData)) {
@@ -113,9 +119,8 @@ public final class SpellCastManager {
             parameterizedSpell.onCastWithParameters(player.level(), level, player, CastSource.COMMAND, magicData, normalized);
 
             if (options.consumeMana) {
-                int manaCost = calculateManaCost(spell, resolved, level);
-                if (manaCost > 0) {
-                    magicData.setMana(Math.max(0, magicData.getMana() - manaCost));
+                if (resolvedManaCost > 0) {
+                    magicData.setMana(Math.max(0, magicData.getMana() - resolvedManaCost));
                     Messages.sendToPlayer(new ClientboundSyncMana(magicData), player);
                 }
             }
@@ -125,7 +130,11 @@ public final class SpellCastManager {
             }
 
             if (options.playEffects) {
-                Messages.sendToPlayer(new ClientboundOnClientCast(spell.getSpellId(), level, CastSource.COMMAND, castData), player);
+                var broadcastData = magicData.getAdditionalCastData();
+                if (broadcastData == null) {
+                    broadcastData = jsonCastData;
+                }
+                Messages.sendToPlayer(new ClientboundOnClientCast(spell.getSpellId(), level, CastSource.COMMAND, broadcastData), player);
             }
 
             spell.onServerCastComplete(player.level(), level, player, magicData, false);
