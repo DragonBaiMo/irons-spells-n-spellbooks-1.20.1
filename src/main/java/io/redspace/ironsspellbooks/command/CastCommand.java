@@ -2,10 +2,12 @@ package io.redspace.ironsspellbooks.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.api.entity.IMagicEntity;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
+import io.redspace.ironsspellbooks.api.manager.SpellCastManager;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
 import io.redspace.ironsspellbooks.api.spells.CastSource;
 import net.minecraft.commands.CommandFunction;
@@ -13,6 +15,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.item.FunctionArgument;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -29,7 +32,15 @@ public class CastCommand {
                         .then(Commands.argument("spell", SpellArgument.spellArgument())
                                 .executes((context) -> castSpell(context.getSource(), EntityArgument.getEntities(context, "casters"), context.getArgument("spell", String.class)))
                                 .then(Commands.argument("level", IntegerArgumentType.integer(1))
-                                        .executes((context) -> castSpell(context.getSource(), EntityArgument.getEntities(context, "casters"), context.getArgument("spell", String.class), IntegerArgumentType.getInteger(context, "level"))))
+                                        .executes((context) -> castSpell(context.getSource(), EntityArgument.getEntities(context, "casters"), context.getArgument("spell", String.class), IntegerArgumentType.getInteger(context, "level")))
+                                        .then(Commands.argument("json", StringArgumentType.greedyString())
+                                                .executes((context) -> castSpellWithJson(
+                                                        context.getSource(),
+                                                        EntityArgument.getEntities(context, "casters"),
+                                                        context.getArgument("spell", String.class),
+                                                        IntegerArgumentType.getInteger(context, "level"),
+                                                        StringArgumentType.getString(context, "json")
+                                                ))))
                                 .then(Commands.argument("function value", FunctionArgument.functions())
                                         .executes((context) -> castSpell(context.getSource(), EntityArgument.getEntities(context, "casters"), context.getArgument("spell", String.class), FunctionArgument.getFunctions(context, "function value"))))
                         ))
@@ -79,5 +90,29 @@ public class CastCommand {
             }
         }
         return 1;
+    }
+
+    private static int castSpellWithJson(CommandSourceStack source, Collection<? extends Entity> targets, String spellId, int spellLevel, String jsonParams) {
+        if (!spellId.contains(":")) {
+            spellId = IronsSpellbooks.MODID + ":" + spellId;
+        }
+
+        int successCount = 0;
+        for (Entity target : targets) {
+            if (target instanceof ServerPlayer serverPlayer) {
+                if (SpellCastManager.castSpell(serverPlayer, spellId, spellLevel, jsonParams)) {
+                    successCount++;
+                }
+            } else {
+                source.sendFailure(Component.literal("非玩家实体暂不支持参数化施法"));
+            }
+        }
+
+        if (successCount > 0) {
+            int finalSuccessCount = successCount;
+            source.sendSuccess(() -> Component.literal(String.format("成功为 %d 个目标施放技能", finalSuccessCount)), true);
+        }
+
+        return successCount;
     }
 }

@@ -11,6 +11,7 @@ import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.api.magic.MagicHelper;
 import io.redspace.ironsspellbooks.api.registry.AttributeRegistry;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
+import io.redspace.ironsspellbooks.api.spells.parameters.SpellParameterConfig;
 import io.redspace.ironsspellbooks.api.util.AnimationHolder;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import io.redspace.ironsspellbooks.capabilities.magic.RecastInstance;
@@ -154,6 +155,29 @@ public abstract class AbstractSpell {
             return 0;
         }
         return this.castTime;
+    }
+
+    public SpellParameterConfig snapshotParameters() {
+        return new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.getDefaultConfig().cooldownInSeconds);
+    }
+
+    public SpellParameterConfig applyParameterOverrides(SpellParameterConfig overrides) {
+        SpellParameterConfig previous = snapshotParameters();
+        applyParameterConfig(overrides);
+        return previous;
+    }
+
+    public void restoreParameters(SpellParameterConfig config) {
+        applyParameterConfig(config);
+    }
+
+    private void applyParameterConfig(SpellParameterConfig config) {
+        this.baseManaCost = config.baseManaCost();
+        this.manaCostPerLevel = config.manaCostPerLevel();
+        this.baseSpellPower = config.baseSpellPower();
+        this.spellPowerPerLevel = config.spellPowerPerLevel();
+        this.castTime = config.castTime();
+        this.getDefaultConfig().cooldownInSeconds = config.cooldownSeconds();
     }
 
     public ICastDataSerializable getEmptyCastData() {

@@ -1,0 +1,866 @@
+{
+  "irons_spellbooks:abyssal_shroud": {
+    "class": "AbyssalShroudSpell",
+    "baseManaCost": 300,
+    "manaCostPerLevel": 20,
+    "baseSpellPower": 6,
+    "spellPowerPerLevel": 6,
+    "castTime": 0,
+    "cooldown": 200.0
+  },
+  "irons_spellbooks:acid_orb": {
+    "class": "AcidOrbSpell",
+    "baseManaCost": 30,
+    "manaCostPerLevel": 3,
+    "baseSpellPower": 1,
+    "spellPowerPerLevel": 0,
+    "castTime": 15,
+    "cooldown": 15.0
+  },
+  "irons_spellbooks:acupuncture": {
+    "class": "AcupunctureSpell",
+    "baseManaCost": 25,
+    "manaCostPerLevel": 5,
+    "baseSpellPower": 1,
+    "spellPowerPerLevel": 0,
+    "castTime": 0,
+    "cooldown": 20.0
+  },
+  "irons_spellbooks:angel_wing": {
+    "class": "AngelWingsSpell",
+    "baseManaCost": 60,
+    "manaCostPerLevel": 20,
+    "baseSpellPower": 30,
+    "spellPowerPerLevel": 30,
+    "castTime": 0,
+    "cooldown": 120.0
+  },
+  "irons_spellbooks:arrow_volley": {
+    "class": "ArrowVolleySpell",
+    "baseManaCost": 40,
+    "manaCostPerLevel": 10,
+    "baseSpellPower": 8,
+    "spellPowerPerLevel": 0,
+    "castTime": 30,
+    "cooldown": 15.0
+  },
+  "irons_spellbooks:ascension": {
+    "class": "AscensionSpell",
+    "baseManaCost": 50,
+    "manaCostPerLevel": 1,
+    "baseSpellPower": 5,
+    "spellPowerPerLevel": 1,
+    "castTime": 0,
+    "cooldown": 15.0
+  },
+  "irons_spellbooks:ball_lightning": {
+    "class": "BallLightningSpell",
+    "baseManaCost": 20,
+    "manaCostPerLevel": 4,
+    "baseSpellPower": 6,
+    "spellPowerPerLevel": 1,
+    "castTime": 0,
+    "cooldown": 1.0
+  },
+  "irons_spellbooks:black_hole": {
+    "class": "BlackHoleSpell",
+    "baseManaCost": 300,
+    "manaCostPerLevel": 100,
+    "baseSpellPower": 1,
+    "spellPowerPerLevel": 0,
+    "castTime": 100,
+    "cooldown": 120.0
+  },
+  "irons_spellbooks:blaze_storm": {
+    "class": "BlazeStormSpell",
+    "baseManaCost": 5,
+    "manaCostPerLevel": 1,
+    "baseSpellPower": 5,
+    "spellPowerPerLevel": 1,
+    "castTime": 55,
+    "cooldown": 20.0
+  },
+  "irons_spellbooks:blessing_of_life": {
+    "class": "BlessingOfLifeSpell",
+    "baseManaCost": 10,
+    "manaCostPerLevel": 5,
+    "baseSpellPower": 6,
+    "spellPowerPerLevel": 1,
+    "castTime": 30,
+    "cooldown": 10.0
+  },
+  "irons_spellbooks:blight": {
+    "class": "BlightSpell",
+    "baseManaCost": 10,
+    "manaCostPerLevel": 5,
+    "baseSpellPower": 1,
+    "spellPowerPerLevel": 0,
+    "castTime": 50,
+    "cooldown": 35.0
+  },
+  "irons_spellbooks:blood_needles": {
+    "class": "BloodNeedlesSpell",
+    "baseManaCost": 25,
+    "manaCostPerLevel": 5,
+    "baseSpellPower": 8,
+    "spellPowerPerLevel": 1,
+    "castTime": 0,
+    "cooldown": 10.0
+  },
+  "irons_spellbooks:blood_slash": {
+    "class": "BloodSlashSpell",
+    "baseManaCost": 25,
+    "manaCostPerLevel": 5,
+    "baseSpellPower": 10,
+    "spellPowerPerLevel": 1,
+    "castTime": 0,
+    "cooldown": 10.0
+  },
+  "irons_spellbooks:blood_step": {
+    "class": "BloodStepSpell",
+    "baseManaCost": 30,
+    "manaCostPerLevel": 10,
+    "baseSpellPower": 12,
+    "spellPowerPerLevel": 4,
+    "castTime": 0,
+    "cooldown": 5.0
+  },
+  "irons_spellbooks:burning_dash": {
+    "class": "BurningDashSpell",
+    "baseManaCost": 20,
+    "manaCostPerLevel": 2,
+    "baseSpellPower": 1,
+    "spellPowerPerLevel": 1,
+    "castTime": 0,
+    "cooldown": 10.0
+  },
+  "irons_spellbooks:chain_creeper": {
+    "class": "ChainCreeperSpell",
+    "baseManaCost": 40,
+    "manaCostPerLevel": 10,
+    "baseSpellPower": 5,
+    "spellPowerPerLevel": 0,
+    "castTime": 30,
+    "cooldown": 15.0
+  },
+  "irons_spellbooks:chain_lightning": {
+    "class": "ChainLightningSpell",
+    "baseManaCost": 25,
+    "manaCostPerLevel": 7,
+    "baseSpellPower": 6,
+    "spellPowerPerLevel": 1,
+    "castTime": 0,
+    "cooldown": 20.0
+  },
+  "irons_spellbooks:charge": {
+    "class": "ChargeSpell",
+    "baseManaCost": 50,
+    "manaCostPerLevel": 25,
+    "baseSpellPower": 30,
+    "spellPowerPerLevel": 8,
+    "castTime": 0,
+    "cooldown": 40.0
+  },
+  "irons_spellbooks:cleanse": {
+    "class": "CleanseSpell",
+    "baseManaCost": 100,
+    "manaCostPerLevel": 0,
+    "baseSpellPower": 0,
+    "spellPowerPerLevel": 0,
+    "castTime": 60,
+    "cooldown": 60.0
+  },
+  "irons_spellbooks:cloud_of_regeneration": {
+    "class": "CloudOfRegenerationSpell",
+    "baseManaCost": 10,
+    "manaCostPerLevel": 3,
+    "baseSpellPower": 2,
+    "spellPowerPerLevel": 1,
+    "castTime": 200,
+    "cooldown": 35.0
+  },
+  "irons_spellbooks:cone_of_cold": {
+    "class": "ConeOfColdSpell",
+    "baseManaCost": 5,
+    "manaCostPerLevel": 1,
+    "baseSpellPower": 1,
+    "spellPowerPerLevel": 1,
+    "castTime": 100,
+    "cooldown": 12.0
+  },
+  "irons_spellbooks:counterspell": {
+    "class": "CounterspellSpell",
+    "baseManaCost": 50,
+    "manaCostPerLevel": 1,
+    "baseSpellPower": 1,
+    "spellPowerPerLevel": 1,
+    "castTime": 0,
+    "cooldown": 10.0
+  },
+  "irons_spellbooks:devour": {
+    "class": "DevourSpell",
+    "baseManaCost": 25,
+    "manaCostPerLevel": 4,
+    "baseSpellPower": 6,
+    "spellPowerPerLevel": 1,
+    "castTime": 0,
+    "cooldown": 20.0
+  },
+  "irons_spellbooks:divine_smite": {
+    "class": "DivineSmiteSpell",
+    "baseManaCost": 30,
+    "manaCostPerLevel": 15,
+    "baseSpellPower": 8,
+    "spellPowerPerLevel": 3,
+    "castTime": 16,
+    "cooldown": 15.0
+  },
+  "irons_spellbooks:dragon_breath": {
+    "class": "DragonBreathSpell",
+    "baseManaCost": 5,
+    "manaCostPerLevel": 1,
+    "baseSpellPower": 1,
+    "spellPowerPerLevel": 1,
+    "castTime": 100,
+    "cooldown": 12.0
+  },
+  "irons_spellbooks:earthquake": {
+    "class": "EarthquakeSpell",
+    "baseManaCost": 50,
+    "manaCostPerLevel": 10,
+    "baseSpellPower": 8,
+    "spellPowerPerLevel": 1,
+    "castTime": 40,
+    "cooldown": 16.0
+  },
+  "irons_spellbooks:echoing_strikes": {
+    "class": "EchoingStrikesSpell",
+    "baseManaCost": 50,
+    "manaCostPerLevel": 10,
+    "baseSpellPower": 20,
+    "spellPowerPerLevel": 5,
+    "castTime": 0,
+    "cooldown": 60.0
+  },
+  "irons_spellbooks:eldritch_blast": {
+    "class": "EldritchBlastSpell",
+    "baseManaCost": 90,
+    "manaCostPerLevel": 15,
+    "baseSpellPower": 15,
+    "spellPowerPerLevel": 0,
+    "castTime": 0,
+    "cooldown": 15.0
+  },
+  "irons_spellbooks:electrocute": {
+    "class": "ElectrocuteSpell",
+    "baseManaCost": 3,
+    "manaCostPerLevel": 1,
+    "baseSpellPower": 0,
+    "spellPowerPerLevel": 1,
+    "castTime": 100,
+    "cooldown": 12.0
+  },
+  "irons_spellbooks:evasion": {
+    "class": "EvasionSpell",
+    "baseManaCost": 40,
+    "manaCostPerLevel": 20,
+    "baseSpellPower": 0,
+    "spellPowerPerLevel": 1,
+    "castTime": 0,
+    "cooldown": 180.0
+  },
+  "irons_spellbooks:fang_strike": {
+    "class": "FangStrikeSpell",
+    "baseManaCost": 30,
+    "manaCostPerLevel": 3,
+    "baseSpellPower": 6,
+    "spellPowerPerLevel": 1,
+    "castTime": 15,
+    "cooldown": 5.0
+  },
+  "irons_spellbooks:fang_ward": {
+    "class": "FangWardSpell",
+    "baseManaCost": 45,
+    "manaCostPerLevel": 5,
+    "baseSpellPower": 8,
+    "spellPowerPerLevel": 1,
+    "castTime": 15,
+    "cooldown": 15.0
+  },
+  "irons_spellbooks:fire_breath": {
+    "class": "FireBreathSpell",
+    "baseManaCost": 5,
+    "manaCostPerLevel": 1,
+    "baseSpellPower": 0,
+    "spellPowerPerLevel": 1,
+    "castTime": 100,
+    "cooldown": 12.0
+  },
+  "irons_spellbooks:fireball": {
+    "class": "FireballSpell",
+    "baseManaCost": 60,
+    "manaCostPerLevel": 15,
+    "baseSpellPower": 1,
+    "spellPowerPerLevel": 1,
+    "castTime": 40,
+    "cooldown": 25.0
+  },
+  "irons_spellbooks:firebolt": {
+    "class": "FireboltSpell",
+    "baseManaCost": 10,
+    "manaCostPerLevel": 2,
+    "baseSpellPower": 12,
+    "spellPowerPerLevel": 1,
+    "castTime": 0,
+    "cooldown": 1.0
+  },
+  "irons_spellbooks:firecracker": {
+    "class": "FirecrackerSpell",
+    "baseManaCost": 20,
+    "manaCostPerLevel": 2,
+    "baseSpellPower": 4,
+    "spellPowerPerLevel": 1,
+    "castTime": 0,
+    "cooldown": 1.5
+  },
+  "irons_spellbooks:firefly_swarm": {
+    "class": "FireflySwarmSpell",
+    "baseManaCost": 40,
+    "manaCostPerLevel": 10,
+    "baseSpellPower": 6,
+    "spellPowerPerLevel": 1,
+    "castTime": 30,
+    "cooldown": 20.0
+  },
+  "irons_spellbooks:flaming_barrage": {
+    "class": "FlamingBarrageSpell",
+    "baseManaCost": 80,
+    "manaCostPerLevel": 5,
+    "baseSpellPower": 3,
+    "spellPowerPerLevel": 2,
+    "castTime": 0,
+    "cooldown": 15.0
+  },
+  "irons_spellbooks:flaming_strike": {
+    "class": "FlamingStrikeSpell",
+    "baseManaCost": 30,
+    "manaCostPerLevel": 15,
+    "baseSpellPower": 5,
+    "spellPowerPerLevel": 2,
+    "castTime": 10,
+    "cooldown": 15.0
+  },
+  "irons_spellbooks:fortify": {
+    "class": "FortifySpell",
+    "baseManaCost": 40,
+    "manaCostPerLevel": 5,
+    "baseSpellPower": 6,
+    "spellPowerPerLevel": 1,
+    "castTime": 40,
+    "cooldown": 35.0
+  },
+  "irons_spellbooks:frost_step": {
+    "class": "FrostStepSpell",
+    "baseManaCost": 15,
+    "manaCostPerLevel": 3,
+    "baseSpellPower": 14,
+    "spellPowerPerLevel": 3,
+    "castTime": 0,
+    "cooldown": 10.0
+  },
+  "irons_spellbooks:frostbite": {
+    "class": "FrostbiteSpell",
+    "baseManaCost": 100,
+    "manaCostPerLevel": 50,
+    "baseSpellPower": 75,
+    "spellPowerPerLevel": 15,
+    "castTime": 40,
+    "cooldown": 0.0
+  },
+  "irons_spellbooks:frostwave": {
+    "class": "FrostwaveSpell",
+    "baseManaCost": 50,
+    "manaCostPerLevel": 5,
+    "baseSpellPower": 10,
+    "spellPowerPerLevel": 3,
+    "castTime": 20,
+    "cooldown": 45.0
+  },
+  "irons_spellbooks:gluttony": {
+    "class": "GluttonySpell",
+    "baseManaCost": 35,
+    "manaCostPerLevel": 0,
+    "baseSpellPower": 30,
+    "spellPowerPerLevel": 0,
+    "castTime": 0,
+    "cooldown": 90.0
+  },
+  "irons_spellbooks:greater_heal": {
+    "class": "GreaterHealSpell",
+    "baseManaCost": 100,
+    "manaCostPerLevel": 0,
+    "baseSpellPower": 0,
+    "spellPowerPerLevel": 0,
+    "castTime": 120,
+    "cooldown": 45.0
+  },
+  "irons_spellbooks:guiding_bolt": {
+    "class": "GuidingBoltSpell",
+    "baseManaCost": 20,
+    "manaCostPerLevel": 5,
+    "baseSpellPower": 6,
+    "spellPowerPerLevel": 1,
+    "castTime": 0,
+    "cooldown": 8.0
+  },
+  "irons_spellbooks:gust": {
+    "class": "GustSpell",
+    "baseManaCost": 30,
+    "manaCostPerLevel": 5,
+    "baseSpellPower": 10,
+    "spellPowerPerLevel": 1,
+    "castTime": 15,
+    "cooldown": 12.0
+  },
+  "irons_spellbooks:haste": {
+    "class": "HasteSpell",
+    "baseManaCost": 50,
+    "manaCostPerLevel": 10,
+    "baseSpellPower": 30,
+    "spellPowerPerLevel": 5,
+    "castTime": 30,
+    "cooldown": 80.0
+  },
+  "irons_spellbooks:heal": {
+    "class": "HealSpell",
+    "baseManaCost": 30,
+    "manaCostPerLevel": 15,
+    "baseSpellPower": 5,
+    "spellPowerPerLevel": 1,
+    "castTime": 0,
+    "cooldown": 30.0
+  },
+  "irons_spellbooks:healing_circle": {
+    "class": "HealingCircleSpell",
+    "baseManaCost": 40,
+    "manaCostPerLevel": 10,
+    "baseSpellPower": 2,
+    "spellPowerPerLevel": 1,
+    "castTime": 20,
+    "cooldown": 25.0
+  },
+  "irons_spellbooks:heartstop": {
+    "class": "HeartstopSpell",
+    "baseManaCost": 50,
+    "manaCostPerLevel": 10,
+    "baseSpellPower": 300,
+    "spellPowerPerLevel": 30,
+    "castTime": 0,
+    "cooldown": 120.0
+  },
+  "irons_spellbooks:heat_surge": {
+    "class": "HeatSurgeSpell",
+    "baseManaCost": 50,
+    "manaCostPerLevel": 8,
+    "baseSpellPower": 10,
+    "spellPowerPerLevel": 2,
+    "castTime": 20,
+    "cooldown": 45.0
+  },
+  "irons_spellbooks:ice_block": {
+    "class": "IceBlockSpell",
+    "baseManaCost": 40,
+    "manaCostPerLevel": 10,
+    "baseSpellPower": 14,
+    "spellPowerPerLevel": 2,
+    "castTime": 30,
+    "cooldown": 15.0
+  },
+  "irons_spellbooks:icicle": {
+    "class": "IcicleSpell",
+    "baseManaCost": 10,
+    "manaCostPerLevel": 2,
+    "baseSpellPower": 12,
+    "spellPowerPerLevel": 1,
+    "castTime": 0,
+    "cooldown": 1.0
+  },
+  "irons_spellbooks:invisibility": {
+    "class": "InvisibilitySpell",
+    "baseManaCost": 35,
+    "manaCostPerLevel": 8,
+    "baseSpellPower": 10,
+    "spellPowerPerLevel": 5,
+    "castTime": 40,
+    "cooldown": 45.0
+  },
+  "irons_spellbooks:lightning_bolt": {
+    "class": "LightningBoltSpell",
+    "baseManaCost": 75,
+    "manaCostPerLevel": 15,
+    "baseSpellPower": 10,
+    "spellPowerPerLevel": 2,
+    "castTime": 0,
+    "cooldown": 25.0
+  },
+  "irons_spellbooks:lightning_lance": {
+    "class": "LightningLanceSpell",
+    "baseManaCost": 50,
+    "manaCostPerLevel": 10,
+    "baseSpellPower": 14,
+    "spellPowerPerLevel": 2,
+    "castTime": 40,
+    "cooldown": 8.0
+  },
+  "irons_spellbooks:lob_creeper": {
+    "class": "LobCreeperSpell",
+    "baseManaCost": 20,
+    "manaCostPerLevel": 2,
+    "baseSpellPower": 12,
+    "spellPowerPerLevel": 1,
+    "castTime": 0,
+    "cooldown": 2.0
+  },
+  "irons_spellbooks:magic_arrow": {
+    "class": "MagicArrowSpell",
+    "baseManaCost": 40,
+    "manaCostPerLevel": 5,
+    "baseSpellPower": 10,
+    "spellPowerPerLevel": 2,
+    "castTime": 30,
+    "cooldown": 8.0
+  },
+  "irons_spellbooks:magic_missile": {
+    "class": "MagicMissileSpell",
+    "baseManaCost": 10,
+    "manaCostPerLevel": 2,
+    "baseSpellPower": 12,
+    "spellPowerPerLevel": 1,
+    "castTime": 0,
+    "cooldown": 1.0
+  },
+  "irons_spellbooks:magma_bomb": {
+    "class": "MagmaBombSpell",
+    "baseManaCost": 30,
+    "manaCostPerLevel": 5,
+    "baseSpellPower": 8,
+    "spellPowerPerLevel": 3,
+    "castTime": 20,
+    "cooldown": 12.0
+  },
+  "irons_spellbooks:oakskin": {
+    "class": "OakskinSpell",
+    "baseManaCost": 15,
+    "manaCostPerLevel": 5,
+    "baseSpellPower": 20,
+    "spellPowerPerLevel": 3,
+    "castTime": 0,
+    "cooldown": 35.0
+  },
+  "irons_spellbooks:planar_sight": {
+    "class": "PlanarSightSpell",
+    "baseManaCost": 150,
+    "manaCostPerLevel": 50,
+    "baseSpellPower": 40,
+    "spellPowerPerLevel": 20,
+    "castTime": 0,
+    "cooldown": 200.0
+  },
+  "irons_spellbooks:poison_arrow": {
+    "class": "PoisonArrowSpell",
+    "baseManaCost": 40,
+    "manaCostPerLevel": 5,
+    "baseSpellPower": 5,
+    "spellPowerPerLevel": 1,
+    "castTime": 20,
+    "cooldown": 15.0
+  },
+  "irons_spellbooks:poison_breath": {
+    "class": "PoisonBreathSpell",
+    "baseManaCost": 5,
+    "manaCostPerLevel": 1,
+    "baseSpellPower": 1,
+    "spellPowerPerLevel": 1,
+    "castTime": 100,
+    "cooldown": 12.0
+  },
+  "irons_spellbooks:poison_splash": {
+    "class": "PoisonSplashSpell",
+    "baseManaCost": 40,
+    "manaCostPerLevel": 10,
+    "baseSpellPower": 8,
+    "spellPowerPerLevel": 1,
+    "castTime": 15,
+    "cooldown": 20.0
+  },
+  "irons_spellbooks:portal": {
+    "class": "PortalSpell",
+    "baseManaCost": 200,
+    "manaCostPerLevel": 10,
+    "baseSpellPower": 300,
+    "spellPowerPerLevel": 120,
+    "castTime": 0,
+    "cooldown": 180.0
+  },
+  "irons_spellbooks:raise_dead": {
+    "class": "RaiseDeadSpell",
+    "baseManaCost": 50,
+    "manaCostPerLevel": 10,
+    "baseSpellPower": 10,
+    "spellPowerPerLevel": 3,
+    "castTime": 30,
+    "cooldown": 150.0
+  },
+  "irons_spellbooks:ray_of_frost": {
+    "class": "RayOfFrostSpell",
+    "baseManaCost": 25,
+    "manaCostPerLevel": 15,
+    "baseSpellPower": 6,
+    "spellPowerPerLevel": 1,
+    "castTime": 0,
+    "cooldown": 15.0
+  },
+  "irons_spellbooks:ray_of_siphoning": {
+    "class": "RayOfSiphoningSpell",
+    "baseManaCost": 8,
+    "manaCostPerLevel": 1,
+    "baseSpellPower": 4,
+    "spellPowerPerLevel": 1,
+    "castTime": 100,
+    "cooldown": 15.0
+  },
+  "irons_spellbooks:recall": {
+    "class": "RecallSpell",
+    "baseManaCost": 100,
+    "manaCostPerLevel": 1,
+    "baseSpellPower": 1,
+    "spellPowerPerLevel": 1,
+    "castTime": 100,
+    "cooldown": 300.0
+  },
+  "irons_spellbooks:root": {
+    "class": "RootSpell",
+    "baseManaCost": 45,
+    "manaCostPerLevel": 3,
+    "baseSpellPower": 5,
+    "spellPowerPerLevel": 1,
+    "castTime": 40,
+    "cooldown": 35.0
+  },
+  "irons_spellbooks:sacrifice": {
+    "class": "SacrificeSpell",
+    "baseManaCost": 25,
+    "manaCostPerLevel": 5,
+    "baseSpellPower": 2,
+    "spellPowerPerLevel": 1,
+    "castTime": 0,
+    "cooldown": 1.0
+  },
+  "irons_spellbooks:scorch": {
+    "class": "ScorchSpell",
+    "baseManaCost": 50,
+    "manaCostPerLevel": 5,
+    "baseSpellPower": 8,
+    "spellPowerPerLevel": 1,
+    "castTime": 20,
+    "cooldown": 12.0
+  },
+  "irons_spellbooks:sculk_tentacles": {
+    "class": "SculkTentaclesSpell",
+    "baseManaCost": 150,
+    "manaCostPerLevel": 50,
+    "baseSpellPower": 8,
+    "spellPowerPerLevel": 3,
+    "castTime": 20,
+    "cooldown": 30.0
+  },
+  "irons_spellbooks:shield": {
+    "class": "ShieldSpell",
+    "baseManaCost": 35,
+    "manaCostPerLevel": 5,
+    "baseSpellPower": 5,
+    "spellPowerPerLevel": 10,
+    "castTime": 0,
+    "cooldown": 8.0
+  },
+  "irons_spellbooks:shockwave": {
+    "class": "ShockwaveSpell",
+    "baseManaCost": 70,
+    "manaCostPerLevel": 5,
+    "baseSpellPower": 8,
+    "spellPowerPerLevel": 1,
+    "castTime": 16,
+    "cooldown": 30.0
+  },
+  "irons_spellbooks:slow": {
+    "class": "SlowSpell",
+    "baseManaCost": 50,
+    "manaCostPerLevel": 10,
+    "baseSpellPower": 20,
+    "spellPowerPerLevel": 4,
+    "castTime": 30,
+    "cooldown": 80.0
+  },
+  "irons_spellbooks:sonic_boom": {
+    "class": "SonicBoomSpell",
+    "baseManaCost": 110,
+    "manaCostPerLevel": 50,
+    "baseSpellPower": 20,
+    "spellPowerPerLevel": 8,
+    "castTime": 30,
+    "cooldown": 25.0
+  },
+  "irons_spellbooks:spectral_hammer": {
+    "class": "SpectralHammerSpell",
+    "baseManaCost": 15,
+    "manaCostPerLevel": 5,
+    "baseSpellPower": 1,
+    "spellPowerPerLevel": 1,
+    "castTime": 0,
+    "cooldown": 2.0
+  },
+  "irons_spellbooks:spider_aspect": {
+    "class": "SpiderAspectSpell",
+    "baseManaCost": 35,
+    "manaCostPerLevel": 5,
+    "baseSpellPower": 20,
+    "spellPowerPerLevel": 5,
+    "castTime": 0,
+    "cooldown": 90.0
+  },
+  "irons_spellbooks:starfall": {
+    "class": "StarfallSpell",
+    "baseManaCost": 5,
+    "manaCostPerLevel": 1,
+    "baseSpellPower": 8,
+    "spellPowerPerLevel": 1,
+    "castTime": 160,
+    "cooldown": 16.0
+  },
+  "irons_spellbooks:stomp": {
+    "class": "StompSpell",
+    "baseManaCost": 50,
+    "manaCostPerLevel": 10,
+    "baseSpellPower": 8,
+    "spellPowerPerLevel": 2,
+    "castTime": 10,
+    "cooldown": 16.0
+  },
+  "irons_spellbooks:summon_ender_chest": {
+    "class": "SummonEnderChestSpell",
+    "baseManaCost": 25,
+    "manaCostPerLevel": 1,
+    "baseSpellPower": 1,
+    "spellPowerPerLevel": 1,
+    "castTime": 0,
+    "cooldown": 5.0
+  },
+  "irons_spellbooks:summon_horse": {
+    "class": "SummonHorseSpell",
+    "baseManaCost": 50,
+    "manaCostPerLevel": 2,
+    "baseSpellPower": 2,
+    "spellPowerPerLevel": 1,
+    "castTime": 20,
+    "cooldown": 20.0
+  },
+  "irons_spellbooks:summon_polar_bear": {
+    "class": "SummonPolarBearSpell",
+    "baseManaCost": 50,
+    "manaCostPerLevel": 10,
+    "baseSpellPower": 4,
+    "spellPowerPerLevel": 1,
+    "castTime": 20,
+    "cooldown": 180.0
+  },
+  "irons_spellbooks:summon_vex": {
+    "class": "SummonVexSpell",
+    "baseManaCost": 50,
+    "manaCostPerLevel": 10,
+    "baseSpellPower": 1,
+    "spellPowerPerLevel": 0,
+    "castTime": 20,
+    "cooldown": 150.0
+  },
+  "irons_spellbooks:sunbeam": {
+    "class": "SunbeamSpell",
+    "baseManaCost": 40,
+    "manaCostPerLevel": 10,
+    "baseSpellPower": 24,
+    "spellPowerPerLevel": 3,
+    "castTime": 0,
+    "cooldown": 20.0
+  },
+  "irons_spellbooks:telekinesis": {
+    "class": "TelekinesisSpell",
+    "baseManaCost": 25,
+    "manaCostPerLevel": 0,
+    "baseSpellPower": 8,
+    "spellPowerPerLevel": 4,
+    "castTime": 140,
+    "cooldown": 35.0
+  },
+  "irons_spellbooks:teleport": {
+    "class": "TeleportSpell",
+    "baseManaCost": 20,
+    "manaCostPerLevel": 2,
+    "baseSpellPower": 10,
+    "spellPowerPerLevel": 10,
+    "castTime": 0,
+    "cooldown": 3.0
+  },
+  "irons_spellbooks:thunder_step": {
+    "class": "ThunderStepSpell",
+    "baseManaCost": 75,
+    "manaCostPerLevel": 15,
+    "baseSpellPower": 10,
+    "spellPowerPerLevel": 2,
+    "castTime": 0,
+    "cooldown": 8.0
+  },
+  "irons_spellbooks:thunderstorm": {
+    "class": "ThunderstormSpell",
+    "baseManaCost": 70,
+    "manaCostPerLevel": 10,
+    "baseSpellPower": 8,
+    "spellPowerPerLevel": 1,
+    "castTime": 40,
+    "cooldown": 120.0
+  },
+  "irons_spellbooks:wall_of_fire": {
+    "class": "WallOfFireSpell",
+    "baseManaCost": 30,
+    "manaCostPerLevel": 5,
+    "baseSpellPower": 4,
+    "spellPowerPerLevel": 1,
+    "castTime": 0,
+    "cooldown": 30.0
+  },
+  "irons_spellbooks:wisp": {
+    "class": "WispSpell",
+    "baseManaCost": 15,
+    "manaCostPerLevel": 2,
+    "baseSpellPower": 5,
+    "spellPowerPerLevel": 1,
+    "castTime": 20,
+    "cooldown": 3.0
+  },
+  "irons_spellbooks:wither_skull": {
+    "class": "WitherSkullSpell",
+    "baseManaCost": 20,
+    "manaCostPerLevel": 2,
+    "baseSpellPower": 12,
+    "spellPowerPerLevel": 1,
+    "castTime": 0,
+    "cooldown": 1.0
+  },
+  "irons_spellbooks:wololo": {
+    "class": "WololoSpell",
+    "baseManaCost": 10,
+    "manaCostPerLevel": 5,
+    "baseSpellPower": 4,
+    "spellPowerPerLevel": 1,
+    "castTime": 30,
+    "cooldown": 10.0
+  }
+}
