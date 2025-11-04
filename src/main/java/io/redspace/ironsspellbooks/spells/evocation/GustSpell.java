@@ -19,12 +19,18 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import io.redspace.ironsspellbooks.api.spells.parameters.IParameterizedSpell;
+import io.redspace.ironsspellbooks.api.spells.parameters.ParameterType;
+import io.redspace.ironsspellbooks.api.spells.parameters.SpellParameterConfig;
+import io.redspace.ironsspellbooks.api.spells.parameters.SpellParameterLoader;
+import io.redspace.ironsspellbooks.api.spells.parameters.SpellParameterSchema;
+import io.redspace.ironsspellbooks.api.spells.parameters.SpellParameters;
 
 import java.util.List;
 import java.util.Optional;
 
 @AutoSpellConfig
-public class GustSpell extends AbstractSpell {
+public class GustSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "gust");
 
     @Override
@@ -48,6 +54,18 @@ public class GustSpell extends AbstractSpell {
         this.spellPowerPerLevel = 1;
         this.castTime = 15;
         this.baseManaCost = 30;
+        
+        SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
+        if (SpellParameterLoader.hasConfig(getSpellId())) {
+            SpellParameterConfig parameters = SpellParameterLoader.resolve(getSpellId(), SpellParameters.empty(), defaults);
+            this.baseManaCost = parameters.baseManaCost();
+            this.manaCostPerLevel = parameters.manaCostPerLevel();
+            this.baseSpellPower = parameters.baseSpellPower();
+            this.spellPowerPerLevel = parameters.spellPowerPerLevel();
+            this.castTime = parameters.castTime();
+            this.defaultConfig.cooldownInSeconds = parameters.cooldownSeconds();
+        }
+
     }
 
     @Override
@@ -124,5 +142,46 @@ public class GustSpell extends AbstractSpell {
     @Override
     public boolean shouldAIStopCasting(int spellLevel, Mob mob, LivingEntity target) {
         return target.distanceToSqr(mob) > getRange(spellLevel, mob) * getRange(spellLevel, mob) * 1.25;
+    }
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    @Override
+    public SpellParameterSchema getParameterSchema() {
+        SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
+        SpellParameterConfig parameters = SpellParameterLoader.resolve(getSpellId(), SpellParameters.empty(), defaults);
+        return SpellParameterSchema.builder()
+                .optional("baseManaCost", ParameterType.INT, parameters.baseManaCost(), "基础魔力消耗")
+                .alias("manaCost", "baseManaCost")
+                .optional("manaCostPerLevel", ParameterType.INT, parameters.manaCostPerLevel(), "每级魔力增量")
+                .optional("baseSpellPower", ParameterType.INT, parameters.baseSpellPower(), "基础技能威力")
+                .alias("power", "baseSpellPower")
+                .optional("spellPowerPerLevel", ParameterType.INT, parameters.spellPowerPerLevel(), "每级威力增量")
+                .alias("levelScaling", "spellPowerPerLevel")
+                .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
+                .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .build();
+    }
+
+    @Override
+    public void onCastWithParameters(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData, SpellParameters parameters) {
+        SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
+        SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
+        SpellParameterConfig previous = this.applyParameterOverrides(config);
+        try {
+            this.onCast(level, spellLevel, entity, castSource, playerMagicData);
+        } finally {
+            this.restoreParameters(previous);
+        }
     }
 }
