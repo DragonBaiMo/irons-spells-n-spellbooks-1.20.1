@@ -27,6 +27,8 @@ import java.util.Optional;
 @AutoSpellConfig
 public class SummonEnderChestSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "summon_ender_chest");
+    private static final String PARAM_ALLOW_NON_PLAYER = "allowNonPlayerCaster";
+    private boolean allowNonPlayerCaster = false;
 
     public SummonEnderChestSpell() {
         this.manaCostPerLevel = 1;
@@ -79,6 +81,9 @@ public class SummonEnderChestSpell extends AbstractSpell implements IParameteriz
             player.openMenu(new SimpleMenuProvider((p_53124_, p_53125_, p_53126_) -> {
                 return ChestMenu.threeRows(p_53124_, p_53125_, playerenderchestcontainer);
             }, CONTAINER_TITLE));
+        } else if (!allowNonPlayerCaster) {
+            super.onCast(world, spellLevel, entity, castSource, playerMagicData);
+            return;
         }
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);
     }
@@ -114,6 +119,7 @@ public class SummonEnderChestSpell extends AbstractSpell implements IParameteriz
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_ALLOW_NON_PLAYER, ParameterType.BOOLEAN, allowNonPlayerCaster, "是否允许非玩家施放 (默认仅玩家生效)")
                 .build();
     }
 
@@ -123,8 +129,10 @@ public class SummonEnderChestSpell extends AbstractSpell implements IParameteriz
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.allowNonPlayerCaster = parameters.getBoolean(PARAM_ALLOW_NON_PLAYER, this.allowNonPlayerCaster);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.allowNonPlayerCaster = false;
             this.restoreParameters(previous);
         }
     }

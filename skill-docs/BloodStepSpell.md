@@ -9,5 +9,6 @@
 | levelScaling / spellPowerPerLevel | INT | 4 | 每级技能威力增量 |
 | castTime | INT | 0 | 施法时间 (tick) |
 | cooldown | DOUBLE | 5.0 | 默认冷却时间 (秒) |
+| invisDurationTicks | INT | 100 | 隐身持续时间 (tick) |
 
 **说明**: 参数可在管理员通道中通过 SpellParameters 进行覆盖。

@@ -42,6 +42,7 @@ public class PoisonArrow extends AbstractMagicProjectile {
     protected boolean hasEmittedPoison;
     protected boolean inGround;
     protected float aoeDamage;
+    private int lifetimeTicks = 200;
 
     @Override
     public void tick() {
@@ -53,7 +54,7 @@ public class PoisonArrow extends AbstractMagicProjectile {
             super.tick();
             //IronsSpellbooks.LOGGER.debug("Poison Arrow Flying!! {}", inGround);
         } else {
-            if (tickCount > EXPIRE_TIME) {
+            if (tickCount > Math.min(EXPIRE_TIME, lifetimeTicks)) {
                 discard();
                 return;
             }
@@ -80,6 +81,10 @@ public class PoisonArrow extends AbstractMagicProjectile {
 
     public float getAoeDamage() {
         return aoeDamage;
+    }
+
+    public void setLifetime(int ticks) {
+        this.lifetimeTicks = ticks;
     }
 
     private boolean shouldFall() {

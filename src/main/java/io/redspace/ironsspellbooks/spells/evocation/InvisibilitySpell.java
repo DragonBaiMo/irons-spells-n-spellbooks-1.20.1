@@ -28,6 +28,7 @@ import java.util.Optional;
 @AutoSpellConfig
 public class InvisibilitySpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "invisibility");
+    private float durationPerPower = 20f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -47,6 +48,7 @@ public class InvisibilitySpell extends AbstractSpell implements IParameterizedSp
         this.spellPowerPerLevel = 5;
         this.castTime = 40;
         this.baseManaCost = 35;
+        this.durationPerPower = 20f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -90,7 +92,7 @@ public class InvisibilitySpell extends AbstractSpell implements IParameterizedSp
     }
 
     private int getDuration(int spellLevel, LivingEntity source) {
-        return (int) (getSpellPower(spellLevel, source) * 20);
+        return (int) (getSpellPower(spellLevel, source) * durationPerPower);
     }
 
     
@@ -119,6 +121,7 @@ public class InvisibilitySpell extends AbstractSpell implements IParameterizedSp
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("durationPerPower", ParameterType.FLOAT, this.durationPerPower, "持续时间系数 (tick/威力)")
                 .build();
     }
 
@@ -127,9 +130,12 @@ public class InvisibilitySpell extends AbstractSpell implements IParameterizedSp
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        float previousDurationPerPower = this.durationPerPower;
+        this.durationPerPower = parameters.getFloat("durationPerPower", this.durationPerPower);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.durationPerPower = previousDurationPerPower;
             this.restoreParameters(previous);
         }
     }

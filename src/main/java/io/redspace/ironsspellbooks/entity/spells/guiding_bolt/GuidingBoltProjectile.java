@@ -26,6 +26,7 @@ public class GuidingBoltProjectile extends AbstractMagicProjectile {
     public GuidingBoltProjectile(EntityType<? extends GuidingBoltProjectile> entityType, Level level) {
         super(entityType, level);
         this.setNoGravity(true);
+        this.markDuration = 25 * 20;
     }
 
     public GuidingBoltProjectile(EntityType<? extends GuidingBoltProjectile> entityType, Level levelIn, LivingEntity shooter) {
@@ -72,7 +73,7 @@ public class GuidingBoltProjectile extends AbstractMagicProjectile {
 
         if (DamageSources.applyDamage(entityHitResult.getEntity(), damage, SpellRegistry.GUIDING_BOLT_SPELL.get().getDamageSource(this, getOwner()))) {
             if (entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
-                livingEntity.addEffect(new MobEffectInstance(MobEffectRegistry.GUIDING_BOLT.get(), 25 * 20));
+                livingEntity.addEffect(new MobEffectInstance(MobEffectRegistry.GUIDING_BOLT.get(), markDuration));
             }
         }
         discard();
@@ -82,4 +83,10 @@ public class GuidingBoltProjectile extends AbstractMagicProjectile {
     @Override
     public void trailParticles() {
     }
+
+    public void setMarkDuration(int markDuration) {
+        this.markDuration = markDuration;
+    }
+
+    private int markDuration = 25 * 20;
 }

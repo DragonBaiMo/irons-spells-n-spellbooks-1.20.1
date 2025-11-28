@@ -24,6 +24,7 @@ import java.util.List;
 @AutoSpellConfig
 public class BallLightningSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "ball_lightning");
+    private float damagePerPower = 1f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -84,7 +85,7 @@ public class BallLightningSpell extends AbstractSpell implements IParameterizedS
     }
 
     private float getDamage(int spellLevel, LivingEntity entity) {
-        return getSpellPower(spellLevel, entity);
+        return getSpellPower(spellLevel, entity) * damagePerPower;
     }
 
     
@@ -113,6 +114,7 @@ public class BallLightningSpell extends AbstractSpell implements IParameterizedS
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("damagePerPower", ParameterType.DOUBLE, damagePerPower, "每点威力对应的伤害系数")
                 .build();
     }
 
@@ -121,9 +123,12 @@ public class BallLightningSpell extends AbstractSpell implements IParameterizedS
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        float previousDamagePerPower = this.damagePerPower;
+        this.damagePerPower = (float) parameters.getDouble("damagePerPower", this.damagePerPower);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.damagePerPower = previousDamagePerPower;
             this.restoreParameters(previous);
         }
     }

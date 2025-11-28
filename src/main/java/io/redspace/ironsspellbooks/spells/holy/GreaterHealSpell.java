@@ -28,6 +28,7 @@ import java.util.Optional;
 @AutoSpellConfig
 public class GreaterHealSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "greater_heal");
+    private float healRatio = 1f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -49,6 +50,7 @@ public class GreaterHealSpell extends AbstractSpell implements IParameterizedSpe
         this.spellPowerPerLevel = 0;
         this.castTime = 120;
         this.baseManaCost = 100;
+        this.healRatio = 1f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -80,7 +82,7 @@ public class GreaterHealSpell extends AbstractSpell implements IParameterizedSpe
 
     @Override
     public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        float healAmount = entity.getMaxHealth();
+        float healAmount = entity.getMaxHealth() * healRatio;
         MinecraftForge.EVENT_BUS.post(new SpellHealEvent(entity, entity, healAmount, getSchoolType()));
         entity.heal(healAmount);
         Messages.sendToPlayersTrackingEntity(new ClientboundHealParticles(entity.position()), entity, true);
@@ -113,6 +115,7 @@ public class GreaterHealSpell extends AbstractSpell implements IParameterizedSpe
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("healRatio", ParameterType.FLOAT, this.healRatio, "治疗比例 (最大生命百分比)")
                 .build();
     }
 
@@ -121,10 +124,25 @@ public class GreaterHealSpell extends AbstractSpell implements IParameterizedSpe
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams prevExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(prevExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.healRatio);
+        this.healRatio = parameters.getFloat("healRatio", this.healRatio);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.healRatio = previous.healRatio();
+    }
+
+    private record ExtraParams(float healRatio) {
     }
 }

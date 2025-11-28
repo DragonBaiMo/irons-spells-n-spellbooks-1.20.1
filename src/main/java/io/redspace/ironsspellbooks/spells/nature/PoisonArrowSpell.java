@@ -28,6 +28,14 @@ import java.util.Optional;
 @AutoSpellConfig
 public class PoisonArrowSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "poison_arrow");
+    private static final String PARAM_PROJECTILE_SPEED = "projectileSpeed";
+    private static final String PARAM_AOE_DURATION = "aoeDurationTicks";
+    private static final String PARAM_DAMAGE_MULTIPLIER = "damageMultiplier";
+    private static final String PARAM_AOE_DAMAGE_MULTIPLIER = "aoeDamageMultiplier";
+    private float projectileSpeed = 2.5f;
+    private int aoeDurationTicks = 200;
+    private float damageMultiplier = 1f;
+    private float aoeDamageMultiplier = .185f;
     private final DefaultConfig defaultConfig = new DefaultConfig()
             .setMinRarity(SpellRarity.COMMON)
             .setSchoolResource(SchoolRegistry.NATURE_RESOURCE)
@@ -91,19 +99,20 @@ public class PoisonArrowSpell extends AbstractSpell implements IParameterizedSpe
     public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
         PoisonArrow magicArrow = new PoisonArrow(level, entity);
         magicArrow.setPos(entity.position().add(0, entity.getEyeHeight() - magicArrow.getBoundingBox().getYsize() * .5f, 0).add(entity.getForward()));
-        magicArrow.shoot(entity.getLookAngle());
+        magicArrow.shoot(entity.getLookAngle().scale(projectileSpeed));
         magicArrow.setDamage(getArrowDamage(spellLevel, entity));
         magicArrow.setAoeDamage(getAOEDamage(spellLevel, entity));
+        magicArrow.setLifetime(aoeDurationTicks);
         level.addFreshEntity(magicArrow);
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 
     public float getArrowDamage(int spellLevel, LivingEntity caster) {
-        return getSpellPower(spellLevel, caster);
+        return getSpellPower(spellLevel, caster) * damageMultiplier;
     }
 
     public float getAOEDamage(int spellLevel, LivingEntity caster) {
-        return getSpellPower(spellLevel, caster) * .185f;
+        return getSpellPower(spellLevel, caster) * aoeDamageMultiplier;
     }
 
     @Override
@@ -142,6 +151,10 @@ public class PoisonArrowSpell extends AbstractSpell implements IParameterizedSpe
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_PROJECTILE_SPEED, ParameterType.DOUBLE, projectileSpeed, "弹速")
+                .optional(PARAM_AOE_DURATION, ParameterType.INT, aoeDurationTicks, "毒云持续时间 (tick)")
+                .optional(PARAM_DAMAGE_MULTIPLIER, ParameterType.DOUBLE, damageMultiplier, "直伤倍率 (基于技能威力)")
+                .optional(PARAM_AOE_DAMAGE_MULTIPLIER, ParameterType.DOUBLE, aoeDamageMultiplier, "毒云伤害倍率 (基于技能威力)")
                 .build();
     }
 
@@ -151,8 +164,16 @@ public class PoisonArrowSpell extends AbstractSpell implements IParameterizedSpe
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.projectileSpeed = (float) parameters.getDouble(PARAM_PROJECTILE_SPEED, this.projectileSpeed);
+            this.aoeDurationTicks = parameters.getInt(PARAM_AOE_DURATION, this.aoeDurationTicks);
+            this.damageMultiplier = (float) parameters.getDouble(PARAM_DAMAGE_MULTIPLIER, this.damageMultiplier);
+            this.aoeDamageMultiplier = (float) parameters.getDouble(PARAM_AOE_DAMAGE_MULTIPLIER, this.aoeDamageMultiplier);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.projectileSpeed = 2.5f;
+            this.aoeDurationTicks = 200;
+            this.damageMultiplier = 1f;
+            this.aoeDamageMultiplier = .185f;
             this.restoreParameters(previous);
         }
     }

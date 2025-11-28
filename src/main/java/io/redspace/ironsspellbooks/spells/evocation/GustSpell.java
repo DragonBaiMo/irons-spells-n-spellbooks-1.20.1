@@ -32,6 +32,10 @@ import java.util.Optional;
 @AutoSpellConfig
 public class GustSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "gust");
+    private float range = 8f;
+    private float strengthScale = .2f;
+    private float kickbackScale = .25f;
+    private float damageScale = 1f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -54,6 +58,10 @@ public class GustSpell extends AbstractSpell implements IParameterizedSpell  {
         this.spellPowerPerLevel = 1;
         this.castTime = 15;
         this.baseManaCost = 30;
+        this.range = 8f;
+        this.strengthScale = .2f;
+        this.kickbackScale = .25f;
+        this.damageScale = 1f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -110,7 +118,7 @@ public class GustSpell extends AbstractSpell implements IParameterizedSpell  {
         float kickback = (float) entity.getBoundingBox().getCenter().distanceToSqr(Utils.getTargetBlock(level, entity, ClipContext.Fluid.NONE, 3.5f).getLocation());
         kickback = Mth.clamp(1 / (kickback + 1) - .11f, 0f, .95f);
         if (kickback > 0) {
-            entity.setDeltaMovement(entity.getDeltaMovement().subtract(entity.getLookAngle().scale(kickback * spellLevel * .25f)));
+            entity.setDeltaMovement(entity.getDeltaMovement().subtract(entity.getLookAngle().scale(kickback * spellLevel * kickbackScale)));
             entity.resetFallDistance();
             entity.hurtMarked = true;
         }
@@ -118,15 +126,15 @@ public class GustSpell extends AbstractSpell implements IParameterizedSpell  {
     }
 
     public float getRange(int spellLevel, LivingEntity caster) {
-        return 8;
+        return range;
     }
 
     public float getStrength(int spellLevel, LivingEntity caster) {
-        return getSpellPower(spellLevel, caster) * .2f;
+        return getSpellPower(spellLevel, caster) * strengthScale;
     }
 
     public float getDamage(int spellLevel, LivingEntity caster) {
-        return getSpellPower(spellLevel, caster);
+        return getSpellPower(spellLevel, caster) * damageScale;
     }
 
     @Override
@@ -170,6 +178,10 @@ public class GustSpell extends AbstractSpell implements IParameterizedSpell  {
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("range", ParameterType.FLOAT, this.range, "施法范围")
+                .optional("strengthScale", ParameterType.FLOAT, this.strengthScale, "击退强度系数")
+                .optional("kickbackScale", ParameterType.FLOAT, this.kickbackScale, "自我后坐力系数")
+                .optional("damageScale", ParameterType.FLOAT, this.damageScale, "落地伤害系数")
                 .build();
     }
 
@@ -178,10 +190,31 @@ public class GustSpell extends AbstractSpell implements IParameterizedSpell  {
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams prevExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(prevExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.range, this.strengthScale, this.kickbackScale, this.damageScale);
+        this.range = parameters.getFloat("range", this.range);
+        this.strengthScale = parameters.getFloat("strengthScale", this.strengthScale);
+        this.kickbackScale = parameters.getFloat("kickbackScale", this.kickbackScale);
+        this.damageScale = parameters.getFloat("damageScale", this.damageScale);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.range = previous.range();
+        this.strengthScale = previous.strengthScale();
+        this.kickbackScale = previous.kickbackScale();
+        this.damageScale = previous.damageScale();
+    }
+
+    private record ExtraParams(float range, float strengthScale, float kickbackScale, float damageScale) {
     }
 }

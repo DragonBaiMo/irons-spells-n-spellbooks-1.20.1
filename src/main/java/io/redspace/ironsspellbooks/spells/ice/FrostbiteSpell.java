@@ -32,6 +32,10 @@ import java.util.List;
 @AutoSpellConfig
 public class FrostbiteSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "frostbite");
+    private float percentDamageScale = .01f;
+    private int icicleShardCount = 8;
+    private float shardDamageSplit = 1f;
+    private float castRange = 48f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -53,6 +57,10 @@ public class FrostbiteSpell extends AbstractSpell implements IParameterizedSpell
         this.spellPowerPerLevel = 15;
         this.castTime = 40;
         this.baseManaCost = 100;
+        this.percentDamageScale = .01f;
+        this.icicleShardCount = 8;
+        this.shardDamageSplit = 1f;
+        this.castRange = 48f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -84,7 +92,7 @@ public class FrostbiteSpell extends AbstractSpell implements IParameterizedSpell
 
     @Override
     public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        return Utils.preCastTargetHelper(level, entity, playerMagicData, this, 48, .15f);
+        return Utils.preCastTargetHelper(level, entity, playerMagicData, this, (int) castRange, .15f);
     }
 
     @Override
@@ -134,7 +142,7 @@ public class FrostbiteSpell extends AbstractSpell implements IParameterizedSpell
     }
 
     private void spawnIcicleShards(Vec3 origin, float damage, LivingEntity owner) {
-        int count = 8;
+        int count = icicleShardCount;
         int offset = 360 / count;
         for (int i = 0; i < count; i++) {
 
@@ -143,7 +151,7 @@ public class FrostbiteSpell extends AbstractSpell implements IParameterizedSpell
             motion = motion.yRot(offset * i * Mth.DEG_TO_RAD);
 
             IcicleProjectile shard = new IcicleProjectile(owner.level, owner);
-            shard.setDamage(damage / count);
+            shard.setDamage(damage * shardDamageSplit / count);
             shard.setDeltaMovement(motion);
 
             Vec3 spawn = origin.add(motion.multiply(1, 0, 1).normalize().scale(.5f));
@@ -155,7 +163,7 @@ public class FrostbiteSpell extends AbstractSpell implements IParameterizedSpell
     }
 
     public float getPercentDamage(int spellLevel, LivingEntity caster) {
-        return getSpellPower(spellLevel, caster) * .01f;
+        return getSpellPower(spellLevel, caster) * percentDamageScale;
     }
 
     
@@ -184,6 +192,10 @@ public class FrostbiteSpell extends AbstractSpell implements IParameterizedSpell
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("percentDamageScale", ParameterType.FLOAT, this.percentDamageScale, "冻结伤害百分比系数")
+                .optional("icicleShardCount", ParameterType.INT, this.icicleShardCount, "碎冰弹数量")
+                .optional("shardDamageSplit", ParameterType.FLOAT, this.shardDamageSplit, "碎冰伤害分摊比例")
+                .optional("castRange", ParameterType.FLOAT, this.castRange, "施法距离")
                 .build();
     }
 
@@ -192,10 +204,31 @@ public class FrostbiteSpell extends AbstractSpell implements IParameterizedSpell
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams prevExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(prevExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.percentDamageScale, this.icicleShardCount, this.shardDamageSplit, this.castRange);
+        this.percentDamageScale = parameters.getFloat("percentDamageScale", this.percentDamageScale);
+        this.icicleShardCount = parameters.getInt("icicleShardCount", this.icicleShardCount);
+        this.shardDamageSplit = parameters.getFloat("shardDamageSplit", this.shardDamageSplit);
+        this.castRange = parameters.getFloat("castRange", this.castRange);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.percentDamageScale = previous.percentDamageScale();
+        this.icicleShardCount = previous.icicleShardCount();
+        this.shardDamageSplit = previous.shardDamageSplit();
+        this.castRange = previous.castRange();
+    }
+
+    private record ExtraParams(float percentDamageScale, int icicleShardCount, float shardDamageSplit, float castRange) {
     }
 }

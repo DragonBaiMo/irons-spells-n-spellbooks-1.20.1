@@ -30,6 +30,8 @@ import java.util.Optional;
 @AutoSpellConfig
 public class FireboltSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "firebolt");
+    private float damageScale = .5f;
+    private float fireTimeSeconds = 3f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -49,6 +51,8 @@ public class FireboltSpell extends AbstractSpell implements IParameterizedSpell 
         this.spellPowerPerLevel = 1;
         this.castTime = 0;
         this.baseManaCost = 10;
+        this.damageScale = .5f;
+        this.fireTimeSeconds = 3f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -90,11 +94,11 @@ public class FireboltSpell extends AbstractSpell implements IParameterizedSpell 
 
     @Override
     public SpellDamageSource getDamageSource(@Nullable Entity projectile, Entity attacker) {
-        return super.getDamageSource(projectile, attacker).setFireTime(3);
+        return super.getDamageSource(projectile, attacker).setFireTime((int) fireTimeSeconds);
     }
 
     private float getDamage(int spellLevel, LivingEntity entity) {
-        return getSpellPower(spellLevel, entity) * .5f;
+        return getSpellPower(spellLevel, entity) * damageScale;
     }
 
     
@@ -123,6 +127,8 @@ public class FireboltSpell extends AbstractSpell implements IParameterizedSpell 
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("damageScale", ParameterType.FLOAT, this.damageScale, "伤害系数")
+                .optional("fireTimeSeconds", ParameterType.FLOAT, this.fireTimeSeconds, "点燃时长 (秒)")
                 .build();
     }
 
@@ -131,10 +137,27 @@ public class FireboltSpell extends AbstractSpell implements IParameterizedSpell 
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams prevExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(prevExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.damageScale, this.fireTimeSeconds);
+        this.damageScale = parameters.getFloat("damageScale", this.damageScale);
+        this.fireTimeSeconds = parameters.getFloat("fireTimeSeconds", this.fireTimeSeconds);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.damageScale = previous.damageScale();
+        this.fireTimeSeconds = previous.fireTimeSeconds();
+    }
+
+    private record ExtraParams(float damageScale, float fireTimeSeconds) {
     }
 }

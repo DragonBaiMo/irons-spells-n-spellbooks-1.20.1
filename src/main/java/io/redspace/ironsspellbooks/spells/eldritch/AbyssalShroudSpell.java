@@ -29,10 +29,11 @@ import java.util.Optional;
 @AutoSpellConfig
 public class AbyssalShroudSpell extends AbstractEldritchSpell implements IParameterizedSpell {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "abyssal_shroud");
+    private double durationSecondsPerPower = 1d;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1)));
+        return List.of(Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks((float) (getSpellPower(spellLevel, caster) * durationSecondsPerPower * 20), 1)));
     }
 
     private final DefaultConfig defaultConfig = new DefaultConfig()
@@ -89,7 +90,7 @@ public class AbyssalShroudSpell extends AbstractEldritchSpell implements IParame
 
     @Override
     public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.ABYSSAL_SHROUD.get(), (int) getSpellPower(spellLevel, entity) * 20, 0, false, false, true));
+        entity.addEffect(new MobEffectInstance(MobEffectRegistry.ABYSSAL_SHROUD.get(), (int) (getSpellPower(spellLevel, entity) * durationSecondsPerPower * 20), 0, false, false, true));
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);
     }
 
@@ -124,6 +125,7 @@ public class AbyssalShroudSpell extends AbstractEldritchSpell implements IParame
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("durationSecondsPerPower", ParameterType.DOUBLE, durationSecondsPerPower, "每点威力对应的持续时间 (秒)")
                 .build();
     }
 
@@ -132,9 +134,12 @@ public class AbyssalShroudSpell extends AbstractEldritchSpell implements IParame
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        double previousDurationSecondsPerPower = this.durationSecondsPerPower;
+        this.durationSecondsPerPower = parameters.getDouble("durationSecondsPerPower", this.durationSecondsPerPower);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.durationSecondsPerPower = previousDurationSecondsPerPower;
             this.restoreParameters(previous);
         }
     }

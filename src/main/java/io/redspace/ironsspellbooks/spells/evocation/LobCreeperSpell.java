@@ -28,6 +28,9 @@ import java.util.Optional;
 @AutoSpellConfig
 public class LobCreeperSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "lob_creeper");
+    private float speedBase = .6f;
+    private float speedPerLevel = .1f;
+    private float damageMultiplier = .5f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -49,6 +52,9 @@ public class LobCreeperSpell extends AbstractSpell implements IParameterizedSpel
         this.spellPowerPerLevel = 1;
         this.castTime = 0;
         this.baseManaCost = 20;
+        this.speedBase = .6f;
+        this.speedPerLevel = .1f;
+        this.damageMultiplier = .5f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -90,7 +96,7 @@ public class LobCreeperSpell extends AbstractSpell implements IParameterizedSpel
 
     @Override
     public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        float speed = (6 + spellLevel) * .1f;
+        float speed = getSpeed(spellLevel);
         float damage = getDamage(spellLevel, entity);
         CreeperHeadProjectile head = new CreeperHeadProjectile(entity, level, speed, damage);
         Vec3 spawn = entity.getEyePosition().add(entity.getForward());
@@ -100,7 +106,11 @@ public class LobCreeperSpell extends AbstractSpell implements IParameterizedSpel
     }
 
     private float getDamage(int spellLevel, LivingEntity entity) {
-        return this.getSpellPower(spellLevel, entity) * .5f;
+        return this.getSpellPower(spellLevel, entity) * damageMultiplier;
+    }
+
+    private float getSpeed(int spellLevel) {
+        return speedBase + speedPerLevel * spellLevel;
     }
 
     
@@ -129,6 +139,9 @@ public class LobCreeperSpell extends AbstractSpell implements IParameterizedSpel
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("speedBase", ParameterType.FLOAT, this.speedBase, "初速基础值")
+                .optional("speedPerLevel", ParameterType.FLOAT, this.speedPerLevel, "初速每级增量")
+                .optional("damageMultiplier", ParameterType.FLOAT, this.damageMultiplier, "伤害威力倍率")
                 .build();
     }
 
@@ -137,10 +150,29 @@ public class LobCreeperSpell extends AbstractSpell implements IParameterizedSpel
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams previousExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(previousExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.speedBase, this.speedPerLevel, this.damageMultiplier);
+        this.speedBase = parameters.getFloat("speedBase", this.speedBase);
+        this.speedPerLevel = parameters.getFloat("speedPerLevel", this.speedPerLevel);
+        this.damageMultiplier = parameters.getFloat("damageMultiplier", this.damageMultiplier);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.speedBase = previous.speedBase();
+        this.speedPerLevel = previous.speedPerLevel();
+        this.damageMultiplier = previous.damageMultiplier();
+    }
+
+    private record ExtraParams(float speedBase, float speedPerLevel, float damageMultiplier) {
     }
 }

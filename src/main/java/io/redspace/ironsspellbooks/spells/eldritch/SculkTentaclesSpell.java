@@ -37,6 +37,20 @@ import java.util.Optional;
 @AutoSpellConfig
 public class SculkTentaclesSpell extends AbstractEldritchSpell implements IParameterizedSpell {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "sculk_tentacles");
+    private static final String PARAM_TARGET_RANGE = "targetRange";
+    private static final String PARAM_DAMAGE_MULTIPLIER = "damageMultiplier";
+    private static final String PARAM_BASE_RINGS = "baseRings";
+    private static final String PARAM_RINGS_PER_LEVEL = "ringsPerLevel";
+    private static final String PARAM_TENTACLES_BASE = "tentaclesBase";
+    private static final String PARAM_TENTACLES_PER_RING = "tentaclesPerRingIncrement";
+    private static final String PARAM_RING_SPACING = "ringSpacing";
+    private float targetRange = 48;
+    private float damageMultiplier = 1f;
+    private int baseRings = 1;
+    private int ringsPerLevel = 1;
+    private int tentaclesBase = 2;
+    private int tentaclesPerRingIncrement = 2;
+    private float ringSpacing = 1.3f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -100,14 +114,14 @@ public class SculkTentaclesSpell extends AbstractEldritchSpell implements IParam
 
     @Override
     public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        Utils.preCastTargetHelper(level, entity, playerMagicData, this, 32, .15f, false);
+        Utils.preCastTargetHelper(level, entity, playerMagicData, this, (int) targetRange, .15f, false);
         return true;
     }
 
     @Override
     public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
         int rings = getRings(spellLevel, entity);
-        int count = 2;
+        int count = tentaclesBase;
         Vec3 center = null;
         if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData castTargetingData) {
             var target = castTargetingData.getTarget((ServerLevel) level);
@@ -121,10 +135,10 @@ public class SculkTentaclesSpell extends AbstractEldritchSpell implements IParam
         level.playSound(entity instanceof Player player ? player : null, center.x, center.y, center.z, SoundRegistry.VOID_TENTACLES_FINISH.get(), SoundSource.AMBIENT, 1, 1);
 
         for (int r = 0; r < rings; r++) {
-            float tentacles = count + r * 2;
+            float tentacles = count + r * tentaclesPerRingIncrement;
             for (int i = 0; i < tentacles; i++) {
                 Vec3 random = new Vec3(Utils.getRandomScaled(1), Utils.getRandomScaled(1), Utils.getRandomScaled(1));
-                Vec3 spawn = center.add(new Vec3(0, 0, 1.3 * (r + 1)).yRot(((6.281f / tentacles) * i))).add(random);
+                Vec3 spawn = center.add(new Vec3(0, 0, ringSpacing * (r + 1)).yRot(((6.281f / tentacles) * i))).add(random);
 
                 spawn = Utils.moveToRelativeGroundLevel(level, spawn, 8);
                 if (!level.getBlockState(BlockPos.containing(spawn).below()).isAir()) {
@@ -141,11 +155,11 @@ public class SculkTentaclesSpell extends AbstractEldritchSpell implements IParam
     }
 
     private float getDamage(int spellLevel, LivingEntity entity) {
-        return getSpellPower(spellLevel, entity);
+        return getSpellPower(spellLevel, entity) * damageMultiplier;
     }
 
     private int getRings(int spellLevel, LivingEntity entity) {
-        return 1 + spellLevel;
+        return baseRings + ringsPerLevel * spellLevel;
     }
 
     
@@ -174,6 +188,13 @@ public class SculkTentaclesSpell extends AbstractEldritchSpell implements IParam
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_TARGET_RANGE, ParameterType.DOUBLE, targetRange, "目标选取距离")
+                .optional(PARAM_DAMAGE_MULTIPLIER, ParameterType.DOUBLE, damageMultiplier, "伤害倍率 (基于技能威力)")
+                .optional(PARAM_BASE_RINGS, ParameterType.INT, baseRings, "基础环数")
+                .optional(PARAM_RINGS_PER_LEVEL, ParameterType.INT, ringsPerLevel, "每级增加环数")
+                .optional(PARAM_TENTACLES_BASE, ParameterType.INT, tentaclesBase, "第一环触手数量")
+                .optional(PARAM_TENTACLES_PER_RING, ParameterType.INT, tentaclesPerRingIncrement, "每增加一环的额外触手数")
+                .optional(PARAM_RING_SPACING, ParameterType.DOUBLE, ringSpacing, "环间距")
                 .build();
     }
 
@@ -183,8 +204,22 @@ public class SculkTentaclesSpell extends AbstractEldritchSpell implements IParam
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.targetRange = (float) parameters.getDouble(PARAM_TARGET_RANGE, this.targetRange);
+            this.damageMultiplier = (float) parameters.getDouble(PARAM_DAMAGE_MULTIPLIER, this.damageMultiplier);
+            this.baseRings = parameters.getInt(PARAM_BASE_RINGS, this.baseRings);
+            this.ringsPerLevel = parameters.getInt(PARAM_RINGS_PER_LEVEL, this.ringsPerLevel);
+            this.tentaclesBase = parameters.getInt(PARAM_TENTACLES_BASE, this.tentaclesBase);
+            this.tentaclesPerRingIncrement = parameters.getInt(PARAM_TENTACLES_PER_RING, this.tentaclesPerRingIncrement);
+            this.ringSpacing = (float) parameters.getDouble(PARAM_RING_SPACING, this.ringSpacing);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.targetRange = 48;
+            this.damageMultiplier = 1f;
+            this.baseRings = 1;
+            this.ringsPerLevel = 1;
+            this.tentaclesBase = 2;
+            this.tentaclesPerRingIncrement = 2;
+            this.ringSpacing = 1.3f;
             this.restoreParameters(previous);
         }
     }

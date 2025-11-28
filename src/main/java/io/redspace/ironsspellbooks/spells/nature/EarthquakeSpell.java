@@ -30,6 +30,12 @@ import java.util.Optional;
 @AutoSpellConfig
 public class EarthquakeSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "earthquake");
+    private int durationTicks = 20 * 12;
+    private float radiusBase = 4f;
+    private float radiusScale = 4f;
+    private float damageScale = .25f;
+    private int slownessOffset = 2;
+    private float slownessScale = 1f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -53,6 +59,12 @@ public class EarthquakeSpell extends AbstractSpell implements IParameterizedSpel
         this.spellPowerPerLevel = 1;
         this.castTime = 40;
         this.baseManaCost = 50;
+        this.durationTicks = 20 * 12;
+        this.radiusBase = 4f;
+        this.radiusScale = 4f;
+        this.damageScale = .25f;
+        this.slownessOffset = 2;
+        this.slownessScale = 1f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -111,7 +123,7 @@ public class EarthquakeSpell extends AbstractSpell implements IParameterizedSpel
             spawn = Utils.moveToRelativeGroundLevel(world, spawn, 6);
         }
 
-        int duration = 20 * 12;//getDuration(spellLevel, entity);
+        int duration = durationTicks;
         float radius = getRadius(spellLevel, entity);
 
         EarthquakeAoe aoeEntity = new EarthquakeAoe(world);
@@ -128,15 +140,15 @@ public class EarthquakeSpell extends AbstractSpell implements IParameterizedSpel
     }
 
     private float getDamage(int spellLevel, LivingEntity caster) {
-        return getSpellPower(spellLevel, caster) * .25f;
+        return getSpellPower(spellLevel, caster) * damageScale;
     }
 
     private float getRadius(int spellLevel, LivingEntity caster) {
-        return 4 + 4 * getEntityPowerMultiplier(caster);
+        return radiusBase + radiusScale * getEntityPowerMultiplier(caster);
     }
 
     private int getSlownessAmplifier(int spellLevel, LivingEntity caster) {
-        return Math.max(0, (int) getDamage(spellLevel, caster) - 2);
+        return Math.max(0, (int) (getDamage(spellLevel, caster) * slownessScale) - slownessOffset);
     }
 
     
@@ -165,6 +177,12 @@ public class EarthquakeSpell extends AbstractSpell implements IParameterizedSpel
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("durationTicks", ParameterType.INT, this.durationTicks, "持续时间 (tick)")
+                .optional("radiusBase", ParameterType.FLOAT, this.radiusBase, "基础半径")
+                .optional("radiusScale", ParameterType.FLOAT, this.radiusScale, "半径系数")
+                .optional("damageScale", ParameterType.FLOAT, this.damageScale, "伤害系数")
+                .optional("slownessOffset", ParameterType.INT, this.slownessOffset, "减速等级扣减")
+                .optional("slownessScale", ParameterType.FLOAT, this.slownessScale, "减速等级系数")
                 .build();
     }
 
@@ -173,10 +191,35 @@ public class EarthquakeSpell extends AbstractSpell implements IParameterizedSpel
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams prevExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(prevExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.durationTicks, this.radiusBase, this.radiusScale, this.damageScale, this.slownessOffset, this.slownessScale);
+        this.durationTicks = parameters.getInt("durationTicks", this.durationTicks);
+        this.radiusBase = parameters.getFloat("radiusBase", this.radiusBase);
+        this.radiusScale = parameters.getFloat("radiusScale", this.radiusScale);
+        this.damageScale = parameters.getFloat("damageScale", this.damageScale);
+        this.slownessOffset = parameters.getInt("slownessOffset", this.slownessOffset);
+        this.slownessScale = parameters.getFloat("slownessScale", this.slownessScale);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.durationTicks = previous.durationTicks();
+        this.radiusBase = previous.radiusBase();
+        this.radiusScale = previous.radiusScale();
+        this.damageScale = previous.damageScale();
+        this.slownessOffset = previous.slownessOffset();
+        this.slownessScale = previous.slownessScale();
+    }
+
+    private record ExtraParams(int durationTicks, float radiusBase, float radiusScale, float damageScale, int slownessOffset, float slownessScale) {
     }
 }

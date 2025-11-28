@@ -31,12 +31,15 @@ import java.util.Optional;
 @AutoSpellConfig
 public class EchoingStrikesSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "echoing_strikes");
+    private int baseAmplifier = 4;
+    private float amplifierPerLevel = 1f;
+    private float radius = 3f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
                 Component.translatable("ui.irons_spellbooks.percent_damage", Utils.stringTruncation(getPercentDamage(spellLevel, caster), 0)),
-                Component.translatable("ui.irons_spellbooks.radius", 3),
+                Component.translatable("ui.irons_spellbooks.radius", radius),
                 Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1))
         );
     }
@@ -54,6 +57,9 @@ public class EchoingStrikesSpell extends AbstractSpell implements IParameterized
         this.spellPowerPerLevel = 5;
         this.castTime = 0;
         this.baseManaCost = 50;
+        this.baseAmplifier = 4;
+        this.amplifierPerLevel = 1f;
+        this.radius = 3f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -94,7 +100,7 @@ public class EchoingStrikesSpell extends AbstractSpell implements IParameterized
     }
 
     private int getAmplifierForLevel(int spellLevel, LivingEntity caster) {
-        return 4 + (int) ((spellLevel - 1) * getEntityPowerMultiplier(caster));
+        return (int) (baseAmplifier + (spellLevel - 1) * amplifierPerLevel * getEntityPowerMultiplier(caster));
     }
 
     @Override
@@ -128,6 +134,9 @@ public class EchoingStrikesSpell extends AbstractSpell implements IParameterized
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("baseAmplifier", ParameterType.INT, this.baseAmplifier, "基础增益等级")
+                .optional("amplifierPerLevel", ParameterType.FLOAT, this.amplifierPerLevel, "每级增益系数")
+                .optional("radius", ParameterType.FLOAT, this.radius, "作用半径")
                 .build();
     }
 
@@ -136,10 +145,29 @@ public class EchoingStrikesSpell extends AbstractSpell implements IParameterized
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams prevExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(prevExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.baseAmplifier, this.amplifierPerLevel, this.radius);
+        this.baseAmplifier = parameters.getInt("baseAmplifier", this.baseAmplifier);
+        this.amplifierPerLevel = parameters.getFloat("amplifierPerLevel", this.amplifierPerLevel);
+        this.radius = parameters.getFloat("radius", this.radius);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.baseAmplifier = previous.baseAmplifier();
+        this.amplifierPerLevel = previous.amplifierPerLevel();
+        this.radius = previous.radius();
+    }
+
+    private record ExtraParams(int baseAmplifier, float amplifierPerLevel, float radius) {
     }
 }

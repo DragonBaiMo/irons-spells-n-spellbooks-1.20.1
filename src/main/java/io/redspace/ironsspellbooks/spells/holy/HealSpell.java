@@ -30,6 +30,7 @@ import java.util.Optional;
 @AutoSpellConfig
 public class HealSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "heal");
+    private float healMultiplier = 1f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -51,6 +52,7 @@ public class HealSpell extends AbstractSpell implements IParameterizedSpell  {
         this.spellPowerPerLevel = 1;
         this.castTime = 0;
         this.baseManaCost = 30;
+        this.healMultiplier = 1f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -82,7 +84,7 @@ public class HealSpell extends AbstractSpell implements IParameterizedSpell  {
 
     @Override
     public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        float healAmount = getSpellPower(spellLevel, entity);
+        float healAmount = getSpellPower(spellLevel, entity) * healMultiplier;
         MinecraftForge.EVENT_BUS.post(new SpellHealEvent(entity, entity, healAmount, getSchoolType()));
         entity.heal(healAmount);
         int count = 16;
@@ -128,6 +130,7 @@ public class HealSpell extends AbstractSpell implements IParameterizedSpell  {
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("healMultiplier", ParameterType.FLOAT, this.healMultiplier, "治疗倍率")
                 .build();
     }
 
@@ -136,9 +139,12 @@ public class HealSpell extends AbstractSpell implements IParameterizedSpell  {
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        float previousHealMultiplier = this.healMultiplier;
+        this.healMultiplier = parameters.getFloat("healMultiplier", this.healMultiplier);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.healMultiplier = previousHealMultiplier;
             this.restoreParameters(previous);
         }
     }

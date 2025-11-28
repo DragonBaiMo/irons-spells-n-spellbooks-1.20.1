@@ -30,6 +30,10 @@ import java.util.Optional;
 @AutoSpellConfig
 public class PoisonBreathSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "poison_breath");
+    private static final String PARAM_DAMAGE_MULTIPLIER = "damageMultiplier";
+    private static final String PARAM_MAX_RANGE = "maxRange";
+    private float damageMultiplier = .75f;
+    private float maxRange = 10;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -106,12 +110,12 @@ public class PoisonBreathSpell extends AbstractSpell implements IParameterizedSp
     }
 
     public float getDamage(int spellLevel, LivingEntity caster) {
-        return 1 + getSpellPower(spellLevel, caster) * .75f;
+        return 1 + getSpellPower(spellLevel, caster) * damageMultiplier;
     }
 
     @Override
     public boolean shouldAIStopCasting(int spellLevel, Mob mob, LivingEntity target) {
-        return mob.distanceToSqr(target) > (10 * 10) * 1.2;
+        return mob.distanceToSqr(target) > (maxRange * maxRange) * 1.2;
     }
 
     
@@ -140,6 +144,8 @@ public class PoisonBreathSpell extends AbstractSpell implements IParameterizedSp
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_DAMAGE_MULTIPLIER, ParameterType.DOUBLE, damageMultiplier, "伤害倍率 (基于技能威力)")
+                .optional(PARAM_MAX_RANGE, ParameterType.DOUBLE, maxRange, "最大施法距离")
                 .build();
     }
 
@@ -149,8 +155,12 @@ public class PoisonBreathSpell extends AbstractSpell implements IParameterizedSp
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.damageMultiplier = (float) parameters.getDouble(PARAM_DAMAGE_MULTIPLIER, this.damageMultiplier);
+            this.maxRange = (float) parameters.getDouble(PARAM_MAX_RANGE, this.maxRange);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.damageMultiplier = .75f;
+            this.maxRange = 10;
             this.restoreParameters(previous);
         }
     }

@@ -37,7 +37,12 @@ import java.util.Optional;
 public class SpectralHammerSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "spectral_hammer");
 
-    private static final int distance = 16;
+    private static final String PARAM_DISTANCE = "distance";
+    private static final String PARAM_RADIUS_MULTIPLIER = "radiusMultiplier";
+    private static final String PARAM_DEPTH_MULTIPLIER = "depthMultiplier";
+    private int distance = 16;
+    private float radiusMultiplier = .5f;
+    private float depthMultiplier = 1f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -127,11 +132,11 @@ public class SpectralHammerSpell extends AbstractSpell implements IParameterized
     }
 
     private int getDepth(int spellLevel, LivingEntity caster) {
-        return (int) getSpellPower(spellLevel, caster);
+        return (int) (getSpellPower(spellLevel, caster) * depthMultiplier);
     }
 
     private int getRadius(int spellLevel, LivingEntity caster) {
-        return (int) Math.max(getSpellPower(spellLevel, caster) * .5f, 1);
+        return (int) Math.max(getSpellPower(spellLevel, caster) * radiusMultiplier, 1);
     }
 
     
@@ -160,6 +165,9 @@ public class SpectralHammerSpell extends AbstractSpell implements IParameterized
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_DISTANCE, ParameterType.INT, distance, "最远挖掘距离")
+                .optional(PARAM_RADIUS_MULTIPLIER, ParameterType.DOUBLE, radiusMultiplier, "半径倍率 (基于技能威力)")
+                .optional(PARAM_DEPTH_MULTIPLIER, ParameterType.DOUBLE, depthMultiplier, "深度倍率 (基于技能威力)")
                 .build();
     }
 
@@ -169,8 +177,14 @@ public class SpectralHammerSpell extends AbstractSpell implements IParameterized
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.distance = parameters.getInt(PARAM_DISTANCE, this.distance);
+            this.radiusMultiplier = (float) parameters.getDouble(PARAM_RADIUS_MULTIPLIER, this.radiusMultiplier);
+            this.depthMultiplier = (float) parameters.getDouble(PARAM_DEPTH_MULTIPLIER, this.depthMultiplier);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.distance = 16;
+            this.radiusMultiplier = .5f;
+            this.depthMultiplier = 1f;
             this.restoreParameters(previous);
         }
     }

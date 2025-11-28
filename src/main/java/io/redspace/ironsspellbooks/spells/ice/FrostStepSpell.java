@@ -35,6 +35,9 @@ import java.util.Optional;
 @AutoSpellConfig
 public class FrostStepSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "frost_step");
+    private float distanceScale = .65f;
+    private float shadowDamageScale = 1f / 3f;
+    private int shadowDurationTicks = 60;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -57,6 +60,9 @@ public class FrostStepSpell extends AbstractSpell implements IParameterizedSpell
         this.baseManaCost = 15;
         this.manaCostPerLevel = 3;
         this.castTime = 0;
+        this.distanceScale = .65f;
+        this.shadowDamageScale = 1f / 3f;
+        this.shadowDurationTicks = 60;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -102,7 +108,7 @@ public class FrostStepSpell extends AbstractSpell implements IParameterizedSpell
 
         FrozenHumanoid shadow = new FrozenHumanoid(level, entity);
         shadow.setShatterDamage(getDamage(spellLevel, entity));
-        shadow.setDeathTimer(60);
+        shadow.setDeathTimer(shadowDurationTicks);
         level.addFreshEntity(shadow);
         Vec3 dest = null;
         if (teleportData != null) {
@@ -148,11 +154,11 @@ public class FrostStepSpell extends AbstractSpell implements IParameterizedSpell
     }
 
     private float getDistance(int spellLevel, LivingEntity sourceEntity) {
-        return (float) (Utils.softCapFormula(getEntityPowerMultiplier(sourceEntity)) * getSpellPower(spellLevel, null)) * .65f;
+        return (float) (Utils.softCapFormula(getEntityPowerMultiplier(sourceEntity)) * getSpellPower(spellLevel, null)) * distanceScale;
     }
 
     private float getDamage(int spellLevel, LivingEntity caster) {
-        return this.getSpellPower(spellLevel, caster) / 3;
+        return this.getSpellPower(spellLevel, caster) * shadowDamageScale;
     }
 
     @Override
@@ -186,6 +192,9 @@ public class FrostStepSpell extends AbstractSpell implements IParameterizedSpell
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("distanceScale", ParameterType.FLOAT, this.distanceScale, "距离系数")
+                .optional("shadowDamageScale", ParameterType.FLOAT, this.shadowDamageScale, "残影碎裂伤害系数")
+                .optional("shadowDurationTicks", ParameterType.INT, this.shadowDurationTicks, "残影存活时间 (tick)")
                 .build();
     }
 
@@ -194,10 +203,29 @@ public class FrostStepSpell extends AbstractSpell implements IParameterizedSpell
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams prevExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(prevExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.distanceScale, this.shadowDamageScale, this.shadowDurationTicks);
+        this.distanceScale = parameters.getFloat("distanceScale", this.distanceScale);
+        this.shadowDamageScale = parameters.getFloat("shadowDamageScale", this.shadowDamageScale);
+        this.shadowDurationTicks = parameters.getInt("shadowDurationTicks", this.shadowDurationTicks);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.distanceScale = previous.distanceScale();
+        this.shadowDamageScale = previous.shadowDamageScale();
+        this.shadowDurationTicks = previous.shadowDurationTicks();
+    }
+
+    private record ExtraParams(float distanceScale, float shadowDamageScale, int shadowDurationTicks) {
     }
 }

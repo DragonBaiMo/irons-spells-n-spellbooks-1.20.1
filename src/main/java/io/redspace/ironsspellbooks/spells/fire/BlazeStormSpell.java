@@ -33,6 +33,7 @@ import java.util.Optional;
 @AutoSpellConfig
 public class BlazeStormSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "blaze_storm");
+    private int castTimePerLevel = 5;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -68,7 +69,7 @@ public class BlazeStormSpell extends AbstractSpell implements IParameterizedSpel
 
     @Override
     public int getCastTime(int spellLevel) {
-        return castTime + 5 * spellLevel;
+        return castTime + castTimePerLevel * spellLevel;
     }
 
     @Override
@@ -152,6 +153,7 @@ public class BlazeStormSpell extends AbstractSpell implements IParameterizedSpel
                 .optional("spellPowerPerLevel", ParameterType.INT, parameters.spellPowerPerLevel(), "每级威力增量")
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
+                .optional("castTimePerLevel", ParameterType.INT, castTimePerLevel, "每级额外施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
                 .build();
     }
@@ -161,9 +163,12 @@ public class BlazeStormSpell extends AbstractSpell implements IParameterizedSpel
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        int previousCastTimePerLevel = this.castTimePerLevel;
+        this.castTimePerLevel = parameters.getInt("castTimePerLevel", this.castTimePerLevel);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.castTimePerLevel = previousCastTimePerLevel;
             this.restoreParameters(previous);
         }
     }

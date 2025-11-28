@@ -27,6 +27,7 @@ import java.util.Optional;
 @AutoSpellConfig
 public class AngelWingsSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "angel_wing");
+    private double durationSecondsPerPower = 1d;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -66,7 +67,7 @@ public class AngelWingsSpell extends AbstractSpell implements IParameterizedSpel
     }
 
     private int getEffectDuration(int spellLevel, LivingEntity entity) {
-        return (int) getSpellPower(spellLevel, entity) * 20;
+        return (int) (getSpellPower(spellLevel, entity) * durationSecondsPerPower * 20);
     }
 
     @Override
@@ -111,6 +112,7 @@ public class AngelWingsSpell extends AbstractSpell implements IParameterizedSpel
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("durationSecondsPerPower", ParameterType.DOUBLE, durationSecondsPerPower, "每点威力对应的持续时间 (秒)")
                 .build();
     }
 
@@ -119,9 +121,12 @@ public class AngelWingsSpell extends AbstractSpell implements IParameterizedSpel
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        double previousDurationSecondsPerPower = this.durationSecondsPerPower;
+        this.durationSecondsPerPower = parameters.getDouble("durationSecondsPerPower", this.durationSecondsPerPower);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.durationSecondsPerPower = previousDurationSecondsPerPower;
             this.restoreParameters(previous);
         }
     }

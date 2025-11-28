@@ -35,12 +35,12 @@ import java.util.Optional;
 @AutoSpellConfig
 public class CleanseSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "cleanse");
-    private static final float CLEANSE_RADIUS = 2f;
+    private float cleanseRadius = 2f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(CLEANSE_RADIUS, 1))
+                Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(cleanseRadius, 1))
         );
     }
 
@@ -93,15 +93,15 @@ public class CleanseSpell extends AbstractSpell implements IParameterizedSpell  
 
     @Override
     public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        var area = TargetedAreaEntity.createTargetAreaEntity(level, entity.position(), CLEANSE_RADIUS, Utils.packRGB(this.getTargetingColor()), entity);
+        var area = TargetedAreaEntity.createTargetAreaEntity(level, entity.position(), cleanseRadius, Utils.packRGB(this.getTargetingColor()), entity);
         playerMagicData.setAdditionalCastData(new TargetAreaCastData(entity.position(), area));
         return true;
     }
 
     @Override
     public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        // 维持 2 格净化半径，确保瞄准提示与实际效果一致
-        for (LivingEntity livingEntity : level.getEntitiesOfClass(LivingEntity.class, AABB.ofSize(entity.getBoundingBox().getCenter(), CLEANSE_RADIUS * 2, CLEANSE_RADIUS * 2, CLEANSE_RADIUS * 2))) {
+        // 维持净化半径与瞄准提示一致
+        for (LivingEntity livingEntity : level.getEntitiesOfClass(LivingEntity.class, AABB.ofSize(entity.getBoundingBox().getCenter(), cleanseRadius * 2, cleanseRadius * 2, cleanseRadius * 2))) {
             IronsSpellbooks.LOGGER.debug("cleanse: {}", livingEntity);
             if (Utils.shouldHealEntity(entity, livingEntity)) {
                 // 优化：改用传统循环代替stream，直接移除有害效果，避免创建中间列表
@@ -153,6 +153,7 @@ public class CleanseSpell extends AbstractSpell implements IParameterizedSpell  
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("radius", ParameterType.DOUBLE, cleanseRadius, "净化半径 (格)")
                 .build();
     }
 
@@ -161,9 +162,12 @@ public class CleanseSpell extends AbstractSpell implements IParameterizedSpell  
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        float previousRadius = this.cleanseRadius;
+        this.cleanseRadius = (float) parameters.getDouble("radius", this.cleanseRadius);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.cleanseRadius = previousRadius;
             this.restoreParameters(previous);
         }
     }

@@ -32,6 +32,9 @@ import java.util.Random;
 @AutoSpellConfig
 public class FirecrackerSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "firecracker");
+    private int rangeBase = 15;
+    private float rangePerPower = 2f;
+    private float damageScale = 1f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -51,6 +54,9 @@ public class FirecrackerSpell extends AbstractSpell implements IParameterizedSpe
         this.spellPowerPerLevel = 1;
         this.castTime = 0;
         this.baseManaCost = 20;
+        this.rangeBase = 15;
+        this.rangePerPower = 2f;
+        this.damageScale = 1f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -91,11 +97,11 @@ public class FirecrackerSpell extends AbstractSpell implements IParameterizedSpe
     }
 
     private int getRange(int spellLevel, LivingEntity entity) {
-        return 15 + (int) (getSpellPower(spellLevel, entity) * 2);
+        return rangeBase + (int) (getSpellPower(spellLevel, entity) * rangePerPower);
     }
 
     private float getDamage(int spellLevel, LivingEntity entity) {
-        return getSpellPower(spellLevel, entity);
+        return getSpellPower(spellLevel, entity) * damageScale;
     }
 
     private ItemStack randomFireworkRocket() {
@@ -187,6 +193,9 @@ public class FirecrackerSpell extends AbstractSpell implements IParameterizedSpe
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("rangeBase", ParameterType.INT, this.rangeBase, "基础射程")
+                .optional("rangePerPower", ParameterType.FLOAT, this.rangePerPower, "每点威力增加射程")
+                .optional("damageScale", ParameterType.FLOAT, this.damageScale, "伤害系数")
                 .build();
     }
 
@@ -195,10 +204,29 @@ public class FirecrackerSpell extends AbstractSpell implements IParameterizedSpe
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams prevExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(prevExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.rangeBase, this.rangePerPower, this.damageScale);
+        this.rangeBase = parameters.getInt("rangeBase", this.rangeBase);
+        this.rangePerPower = parameters.getFloat("rangePerPower", this.rangePerPower);
+        this.damageScale = parameters.getFloat("damageScale", this.damageScale);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.rangeBase = previous.rangeBase();
+        this.rangePerPower = previous.rangePerPower();
+        this.damageScale = previous.damageScale();
+    }
+
+    private record ExtraParams(int rangeBase, float rangePerPower, float damageScale) {
     }
 }

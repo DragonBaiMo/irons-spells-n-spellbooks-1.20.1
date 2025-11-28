@@ -28,6 +28,12 @@ import java.util.Optional;
 @AutoSpellConfig
 public class ShieldSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "shield");
+    private static final String PARAM_PLACEMENT_RANGE = "placementRange";
+    private static final String PARAM_SHIELD_BASE = "shieldBase";
+    private static final String PARAM_SHIELD_POWER_MULTIPLIER = "shieldPowerMultiplier";
+    private float placementRange = 5f;
+    private float shieldBase = 10f;
+    private float shieldPowerMultiplier = 1f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -91,7 +97,7 @@ public class ShieldSpell extends AbstractSpell implements IParameterizedSpell  {
     @Override
     public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
         ShieldEntity shield = new ShieldEntity(level, getShieldHP(spellLevel, entity));
-        Vec3 spawn = Utils.raycastForEntity(level, entity, 5, true).getLocation();
+        Vec3 spawn = Utils.raycastForEntity(level, entity, placementRange, true).getLocation();
         shield.setPos(spawn);
         shield.setRotation(entity.getXRot(), entity.getYRot());
         level.addFreshEntity(shield);
@@ -99,7 +105,7 @@ public class ShieldSpell extends AbstractSpell implements IParameterizedSpell  {
     }
 
     private float getShieldHP(int spellLevel, LivingEntity caster) {
-        return 10 + getSpellPower(spellLevel, caster);
+        return shieldBase + getSpellPower(spellLevel, caster) * shieldPowerMultiplier;
     }
 
     //    @Override
@@ -133,6 +139,9 @@ public class ShieldSpell extends AbstractSpell implements IParameterizedSpell  {
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_PLACEMENT_RANGE, ParameterType.DOUBLE, placementRange, "放置距离")
+                .optional(PARAM_SHIELD_BASE, ParameterType.DOUBLE, shieldBase, "护盾基础生命")
+                .optional(PARAM_SHIELD_POWER_MULTIPLIER, ParameterType.DOUBLE, shieldPowerMultiplier, "护盾生命倍率 (基于技能威力)")
                 .build();
     }
 
@@ -142,8 +151,14 @@ public class ShieldSpell extends AbstractSpell implements IParameterizedSpell  {
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.placementRange = (float) parameters.getDouble(PARAM_PLACEMENT_RANGE, this.placementRange);
+            this.shieldBase = (float) parameters.getDouble(PARAM_SHIELD_BASE, this.shieldBase);
+            this.shieldPowerMultiplier = (float) parameters.getDouble(PARAM_SHIELD_POWER_MULTIPLIER, this.shieldPowerMultiplier);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.placementRange = 5f;
+            this.shieldBase = 10f;
+            this.shieldPowerMultiplier = 1f;
             this.restoreParameters(previous);
         }
     }

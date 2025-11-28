@@ -46,6 +46,10 @@ public class EldritchBlastSpell extends AbstractEldritchSpell implements IParame
             .setMaxLevel(5)
             .setCooldownSeconds(15)
             .build();
+    private int recastBase = 2;
+    private int recastPerLevel = 1;
+    private int recastIntervalTicks = 80;
+    private float range = 30f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -62,6 +66,10 @@ public class EldritchBlastSpell extends AbstractEldritchSpell implements IParame
         this.spellPowerPerLevel = 0;
         this.castTime = 0;
         this.baseManaCost = 90;
+        this.recastBase = 2;
+        this.recastPerLevel = 1;
+        this.recastIntervalTicks = 80;
+        this.range = 30f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -103,13 +111,13 @@ public class EldritchBlastSpell extends AbstractEldritchSpell implements IParame
 
     @Override
     public int getRecastCount(int spellLevel, @Nullable LivingEntity entity) {
-        return 2 + spellLevel;
+        return recastBase + spellLevel * recastPerLevel;
     }
 
     @Override
     public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
         if (!playerMagicData.getPlayerRecasts().hasRecastForSpell(getSpellId())) {
-            playerMagicData.getPlayerRecasts().addRecast(new RecastInstance(getSpellId(), spellLevel, getRecastCount(spellLevel, entity), 80, castSource, null), playerMagicData);
+            playerMagicData.getPlayerRecasts().addRecast(new RecastInstance(getSpellId(), spellLevel, getRecastCount(spellLevel, entity), recastIntervalTicks, castSource, null), playerMagicData);
         }
 
         var hitResult = Utils.raycastForEntity(level, entity, getRange(spellLevel, entity), true, .15f);
@@ -124,8 +132,8 @@ public class EldritchBlastSpell extends AbstractEldritchSpell implements IParame
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 
-    public static float getRange(int level, LivingEntity caster) {
-        return 30;
+    public float getRange(int level, LivingEntity caster) {
+        return range;
     }
 
     private float getDamage(int spellLevel, LivingEntity caster) {
@@ -162,6 +170,10 @@ public class EldritchBlastSpell extends AbstractEldritchSpell implements IParame
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("recastBase", ParameterType.INT, this.recastBase, "重铸基础次数")
+                .optional("recastPerLevel", ParameterType.INT, this.recastPerLevel, "每级追加重铸次数")
+                .optional("recastIntervalTicks", ParameterType.INT, this.recastIntervalTicks, "重铸间隔 (tick)")
+                .optional("range", ParameterType.FLOAT, this.range, "施法距离")
                 .build();
     }
 
@@ -170,10 +182,31 @@ public class EldritchBlastSpell extends AbstractEldritchSpell implements IParame
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams prevExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(prevExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.recastBase, this.recastPerLevel, this.recastIntervalTicks, this.range);
+        this.recastBase = parameters.getInt("recastBase", this.recastBase);
+        this.recastPerLevel = parameters.getInt("recastPerLevel", this.recastPerLevel);
+        this.recastIntervalTicks = parameters.getInt("recastIntervalTicks", this.recastIntervalTicks);
+        this.range = parameters.getFloat("range", this.range);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.recastBase = previous.recastBase();
+        this.recastPerLevel = previous.recastPerLevel();
+        this.recastIntervalTicks = previous.recastIntervalTicks();
+        this.range = previous.range();
+    }
+
+    private record ExtraParams(int recastBase, int recastPerLevel, int recastIntervalTicks, float range) {
     }
 }

@@ -34,6 +34,12 @@ import java.util.Optional;
 @AutoSpellConfig
 public class ThunderStepSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "thunder_step");
+    private static final String PARAM_RANGE_SCALE = "rangeScale";
+    private static final String PARAM_MAX_RANGE = "maxRange";
+    private static final String PARAM_BEAM_WIDTH = "beamWidth";
+    private float rangeScale = 1f;
+    private float maxRange = Float.MAX_VALUE;
+    private float beamWidth = 1f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -139,15 +145,16 @@ public class ThunderStepSpell extends AbstractSpell implements IParameterizedSpe
         for (Entity target : entities) {
             Vec3 height = new Vec3(0, caster.getEyeHeight(), 0);
             //Raycast from eyes and from feet. Rectangular zone of zapping.
-            if (Utils.checkEntityIntersecting(target, start, end, 1f).getType() != HitResult.Type.MISS
-                    || Utils.checkEntityIntersecting(target, start.subtract(height), end.subtract(height), 1f).getType() != HitResult.Type.MISS) {
+            if (Utils.checkEntityIntersecting(target, start, end, beamWidth).getType() != HitResult.Type.MISS
+                    || Utils.checkEntityIntersecting(target, start.subtract(height), end.subtract(height), beamWidth).getType() != HitResult.Type.MISS) {
                 DamageSources.applyDamage(target, getDamage(spellLevel, caster), this.getDamageSource(caster));
             }
         }
     }
 
     private float getDistance(int spellLevel, LivingEntity sourceEntity) {
-        return getSpellPower(spellLevel, sourceEntity);
+        float distance = getSpellPower(spellLevel, sourceEntity) * rangeScale;
+        return maxRange == Float.MAX_VALUE ? distance : Math.min(distance, maxRange);
     }
 
     private float getDamage(int spellLevel, LivingEntity sourceEntity) {
@@ -180,6 +187,9 @@ public class ThunderStepSpell extends AbstractSpell implements IParameterizedSpe
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_RANGE_SCALE, ParameterType.DOUBLE, rangeScale, "距离倍率")
+                .optional(PARAM_MAX_RANGE, ParameterType.DOUBLE, maxRange == Float.MAX_VALUE ? -1 : maxRange, "最大传送距离 (-1 不限制)")
+                .optional(PARAM_BEAM_WIDTH, ParameterType.DOUBLE, beamWidth, "路径判定宽度")
                 .build();
     }
 
@@ -189,8 +199,15 @@ public class ThunderStepSpell extends AbstractSpell implements IParameterizedSpe
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.rangeScale = (float) parameters.getDouble(PARAM_RANGE_SCALE, this.rangeScale);
+            float configuredMax = (float) parameters.getDouble(PARAM_MAX_RANGE, maxRange == Float.MAX_VALUE ? -1 : maxRange);
+            this.maxRange = configuredMax < 0 ? Float.MAX_VALUE : configuredMax;
+            this.beamWidth = (float) parameters.getDouble(PARAM_BEAM_WIDTH, this.beamWidth);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.rangeScale = 1f;
+            this.maxRange = Float.MAX_VALUE;
+            this.beamWidth = 1f;
             this.restoreParameters(previous);
         }
     }

@@ -29,6 +29,15 @@ import java.util.Optional;
 @AutoSpellConfig
 public class SummonPolarBearSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "summon_polar_bear");
+    private static final String PARAM_SUMMON_DURATION = "summonDurationTicks";
+    private static final String PARAM_BEAR_BASE_HEALTH = "bearBaseHealth";
+    private static final String PARAM_BEAR_HEALTH_PER_LEVEL = "bearHealthPerLevel";
+    private static final String PARAM_BEAR_DAMAGE_MULTIPLIER = "bearDamageMultiplier";
+
+    private int summonDurationTicks = 20 * 60 * 10;
+    private float bearBaseHealth = 20;
+    private float bearHealthPerLevel = 4;
+    private float bearDamageMultiplier = 1f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -87,7 +96,7 @@ public class SummonPolarBearSpell extends AbstractSpell implements IParameterize
 
     @Override
     public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        int summonTime = 20 * 60 * 10;
+        int summonTime = summonDurationTicks;
 
         SummonedPolarBear polarBear = new SummonedPolarBear(world, entity);
         polarBear.setPos(entity.position());
@@ -108,11 +117,11 @@ public class SummonPolarBearSpell extends AbstractSpell implements IParameterize
     }
 
     private float getBearHealth(int spellLevel, LivingEntity caster) {
-        return 20 + spellLevel * 4;
+        return bearBaseHealth + spellLevel * bearHealthPerLevel;
     }
 
     private float getBearDamage(int spellLevel, LivingEntity caster) {
-        return getSpellPower(spellLevel, caster);
+        return getSpellPower(spellLevel, caster) * bearDamageMultiplier;
     }
 
     
@@ -141,6 +150,10 @@ public class SummonPolarBearSpell extends AbstractSpell implements IParameterize
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_SUMMON_DURATION, ParameterType.INT, summonDurationTicks, "召唤物持续时间 (tick)")
+                .optional(PARAM_BEAR_BASE_HEALTH, ParameterType.DOUBLE, bearBaseHealth, "基础生命值")
+                .optional(PARAM_BEAR_HEALTH_PER_LEVEL, ParameterType.DOUBLE, bearHealthPerLevel, "每级生命增量")
+                .optional(PARAM_BEAR_DAMAGE_MULTIPLIER, ParameterType.DOUBLE, bearDamageMultiplier, "伤害倍率 (基于技能威力)")
                 .build();
     }
 
@@ -150,8 +163,16 @@ public class SummonPolarBearSpell extends AbstractSpell implements IParameterize
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.summonDurationTicks = parameters.getInt(PARAM_SUMMON_DURATION, this.summonDurationTicks);
+            this.bearBaseHealth = (float) parameters.getDouble(PARAM_BEAR_BASE_HEALTH, this.bearBaseHealth);
+            this.bearHealthPerLevel = (float) parameters.getDouble(PARAM_BEAR_HEALTH_PER_LEVEL, this.bearHealthPerLevel);
+            this.bearDamageMultiplier = (float) parameters.getDouble(PARAM_BEAR_DAMAGE_MULTIPLIER, this.bearDamageMultiplier);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.summonDurationTicks = 20 * 60 * 10;
+            this.bearBaseHealth = 20;
+            this.bearHealthPerLevel = 4;
+            this.bearDamageMultiplier = 1f;
             this.restoreParameters(previous);
         }
     }

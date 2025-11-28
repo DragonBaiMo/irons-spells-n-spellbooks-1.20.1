@@ -27,6 +27,7 @@ import java.util.List;
 @AutoSpellConfig
 public class GluttonySpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "gluttony");
+    private float durationPerPower = 20f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -49,6 +50,7 @@ public class GluttonySpell extends AbstractSpell implements IParameterizedSpell 
         this.baseSpellPower = 30;
         this.spellPowerPerLevel = 0;
         this.castTime = 0;
+        this.durationPerPower = 20f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -80,7 +82,7 @@ public class GluttonySpell extends AbstractSpell implements IParameterizedSpell 
 
     @Override
     public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.GLUTTONY.get(), (int) (getSpellPower(spellLevel, entity) * 20), spellLevel - 1, false, false, true));
+        entity.addEffect(new MobEffectInstance(MobEffectRegistry.GLUTTONY.get(), (int) (getSpellPower(spellLevel, entity) * durationPerPower), spellLevel - 1, false, false, true));
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 
@@ -119,6 +121,7 @@ public class GluttonySpell extends AbstractSpell implements IParameterizedSpell 
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("durationPerPower", ParameterType.FLOAT, this.durationPerPower, "每点威力增加持续 (tick)")
                 .build();
     }
 
@@ -127,10 +130,25 @@ public class GluttonySpell extends AbstractSpell implements IParameterizedSpell 
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams prevExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(prevExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.durationPerPower);
+        this.durationPerPower = parameters.getFloat("durationPerPower", this.durationPerPower);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.durationPerPower = previous.durationPerPower();
+    }
+
+    private record ExtraParams(float durationPerPower) {
     }
 }

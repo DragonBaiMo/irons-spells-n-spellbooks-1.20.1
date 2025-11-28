@@ -38,6 +38,12 @@ import java.util.Optional;
 @AutoSpellConfig
 public class StarfallSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "starfall");
+    private static final String PARAM_RADIUS = "radius";
+    private static final String PARAM_DAMAGE_MULTIPLIER = "damageMultiplier";
+    private static final String PARAM_EXPLOSION_RADIUS = "explosionRadius";
+    private float targetRadius = 6;
+    private float damageMultiplier = .5f;
+    private float explosionRadius = 2f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -137,11 +143,11 @@ public class StarfallSpell extends AbstractSpell implements IParameterizedSpell 
     }
 
     private float getDamage(int spellLevel, LivingEntity caster) {
-        return getSpellPower(spellLevel, caster) * .5f;
+        return getSpellPower(spellLevel, caster) * damageMultiplier;
     }
 
     private float getRadius(LivingEntity caster) {
-        return 6;
+        return targetRadius;
     }
 
     public void shootComet(Level world, int spellLevel, LivingEntity entity, Vec3 spawn) {
@@ -149,7 +155,7 @@ public class StarfallSpell extends AbstractSpell implements IParameterizedSpell 
         fireball.setPos(spawn.add(-1, 0, 0));
         fireball.shoot(new Vec3(.15f, -.85f, 0), .075f);
         fireball.setDamage(getDamage(spellLevel, entity));
-        fireball.setExplosionRadius(2f);
+        fireball.setExplosionRadius(explosionRadius);
         world.addFreshEntity(fireball);
         world.playSound(null, spawn.x, spawn.y, spawn.z, SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.PLAYERS, 3.0f, 0.7f + Utils.random.nextFloat() * .3f);
 
@@ -186,6 +192,9 @@ public class StarfallSpell extends AbstractSpell implements IParameterizedSpell 
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_RADIUS, ParameterType.DOUBLE, targetRadius, "落星覆盖半径")
+                .optional(PARAM_DAMAGE_MULTIPLIER, ParameterType.DOUBLE, damageMultiplier, "伤害倍率 (基于技能威力)")
+                .optional(PARAM_EXPLOSION_RADIUS, ParameterType.DOUBLE, explosionRadius, "流星爆炸半径")
                 .build();
     }
 
@@ -195,8 +204,14 @@ public class StarfallSpell extends AbstractSpell implements IParameterizedSpell 
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.targetRadius = (float) parameters.getDouble(PARAM_RADIUS, this.targetRadius);
+            this.damageMultiplier = (float) parameters.getDouble(PARAM_DAMAGE_MULTIPLIER, this.damageMultiplier);
+            this.explosionRadius = (float) parameters.getDouble(PARAM_EXPLOSION_RADIUS, this.explosionRadius);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.targetRadius = 6;
+            this.damageMultiplier = .5f;
+            this.explosionRadius = 2f;
             this.restoreParameters(previous);
         }
     }

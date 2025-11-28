@@ -39,6 +39,11 @@ import java.util.Optional;
 @AutoSpellConfig
 public class HeatSurgeSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "heat_surge");
+    private float radiusBase = 6f;
+    private float radiusPerLevel = .5f;
+    private int rendBase = 1;
+    private int rendPerLevel = 1;
+    private float durationPerPower = 20f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -62,6 +67,11 @@ public class HeatSurgeSpell extends AbstractSpell implements IParameterizedSpell
         this.spellPowerPerLevel = 2;
         this.castTime = 20;
         this.baseManaCost = 50;
+        this.radiusBase = 6f;
+        this.radiusPerLevel = .5f;
+        this.rendBase = 1;
+        this.rendPerLevel = 1;
+        this.durationPerPower = 20f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -114,15 +124,15 @@ public class HeatSurgeSpell extends AbstractSpell implements IParameterizedSpell
     }
 
     public float getRadius(int spellLevel, LivingEntity caster) {
-        return 6 + spellLevel * .5f;
+        return radiusBase + radiusPerLevel * spellLevel;
     }
 
     public int getDuration(int spellLevel, LivingEntity caster) {
-        return (int) (getSpellPower(spellLevel, caster) * 20);
+        return (int) (getSpellPower(spellLevel, caster) * durationPerPower);
     }
 
     public int getRendAmplifier(int spellLevel, LivingEntity caster) {
-        return 1 + (spellLevel);
+        return rendBase + (rendPerLevel * spellLevel);
     }
 
     @Override
@@ -171,6 +181,11 @@ public class HeatSurgeSpell extends AbstractSpell implements IParameterizedSpell
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("radiusBase", ParameterType.FLOAT, this.radiusBase, "爆发半径基础值")
+                .optional("radiusPerLevel", ParameterType.FLOAT, this.radiusPerLevel, "爆发半径每级增量")
+                .optional("rendBase", ParameterType.INT, this.rendBase, "撕裂等级基础值")
+                .optional("rendPerLevel", ParameterType.INT, this.rendPerLevel, "撕裂等级每级增量")
+                .optional("durationPerPower", ParameterType.FLOAT, this.durationPerPower, "持续时间系数 (tick/威力)")
                 .build();
     }
 
@@ -179,10 +194,33 @@ public class HeatSurgeSpell extends AbstractSpell implements IParameterizedSpell
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams previousExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(previousExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.radiusBase, this.radiusPerLevel, this.rendBase, this.rendPerLevel, this.durationPerPower);
+        this.radiusBase = parameters.getFloat("radiusBase", this.radiusBase);
+        this.radiusPerLevel = parameters.getFloat("radiusPerLevel", this.radiusPerLevel);
+        this.rendBase = parameters.getInt("rendBase", this.rendBase);
+        this.rendPerLevel = parameters.getInt("rendPerLevel", this.rendPerLevel);
+        this.durationPerPower = parameters.getFloat("durationPerPower", this.durationPerPower);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.radiusBase = previous.radiusBase();
+        this.radiusPerLevel = previous.radiusPerLevel();
+        this.rendBase = previous.rendBase();
+        this.rendPerLevel = previous.rendPerLevel();
+        this.durationPerPower = previous.durationPerPower();
+    }
+
+    private record ExtraParams(float radiusBase, float radiusPerLevel, int rendBase, int rendPerLevel, float durationPerPower) {
     }
 }

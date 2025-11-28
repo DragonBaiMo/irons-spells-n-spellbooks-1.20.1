@@ -33,12 +33,15 @@ import java.util.Optional;
 @AutoSpellConfig
 public class FireflySwarmSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "firefly_swarm");
+    private float radius = FireflySwarmProjectile.radius;
+    private float damageScale = 1f / 3f;
+    private float targetSearchRange = 32f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
                 Component.translatable("ui.irons_spellbooks.aoe_damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)),
-                Component.translatable("ui.irons_spellbooks.radius", FireflySwarmProjectile.radius)
+                Component.translatable("ui.irons_spellbooks.radius", radius)
         );
     }
 
@@ -55,6 +58,9 @@ public class FireflySwarmSpell extends AbstractSpell implements IParameterizedSp
         this.spellPowerPerLevel = 1;
         this.castTime = 30;
         this.baseManaCost = 40;
+        this.radius = FireflySwarmProjectile.radius;
+        this.damageScale = 1f / 3f;
+        this.targetSearchRange = 32f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -91,7 +97,7 @@ public class FireflySwarmSpell extends AbstractSpell implements IParameterizedSp
 
     @Override
     public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        return Utils.preCastTargetHelper(level, entity, playerMagicData, this, 32, .35f);
+        return Utils.preCastTargetHelper(level, entity, playerMagicData, this, (int) targetSearchRange, .35f);
     }
 
     @Override
@@ -104,7 +110,7 @@ public class FireflySwarmSpell extends AbstractSpell implements IParameterizedSp
             target = castTargetingData.getTarget((ServerLevel) level);
         }
         if (spawn == null) {
-            HitResult raycast = Utils.raycastForEntity(level, entity, 32, true);
+            HitResult raycast = Utils.raycastForEntity(level, entity, targetSearchRange, true);
             if (raycast.getType() == HitResult.Type.ENTITY) {
                 target = ((EntityHitResult) raycast).getEntity();
                 spawn = target.position();
@@ -121,7 +127,7 @@ public class FireflySwarmSpell extends AbstractSpell implements IParameterizedSp
     }
 
     private float getDamage(int spellLevel, LivingEntity entity) {
-        return this.getSpellPower(spellLevel, entity) / 3f;
+        return this.getSpellPower(spellLevel, entity) * damageScale;
     }
 
     
@@ -150,6 +156,9 @@ public class FireflySwarmSpell extends AbstractSpell implements IParameterizedSp
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("radius", ParameterType.FLOAT, this.radius, "作用半径")
+                .optional("damageScale", ParameterType.FLOAT, this.damageScale, "伤害系数")
+                .optional("targetSearchRange", ParameterType.FLOAT, this.targetSearchRange, "目标搜索距离")
                 .build();
     }
 
@@ -158,10 +167,29 @@ public class FireflySwarmSpell extends AbstractSpell implements IParameterizedSp
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams prevExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(prevExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.radius, this.damageScale, this.targetSearchRange);
+        this.radius = parameters.getFloat("radius", this.radius);
+        this.damageScale = parameters.getFloat("damageScale", this.damageScale);
+        this.targetSearchRange = parameters.getFloat("targetSearchRange", this.targetSearchRange);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.radius = previous.radius();
+        this.damageScale = previous.damageScale();
+        this.targetSearchRange = previous.targetSearchRange();
+    }
+
+    private record ExtraParams(float radius, float damageScale, float targetSearchRange) {
     }
 }

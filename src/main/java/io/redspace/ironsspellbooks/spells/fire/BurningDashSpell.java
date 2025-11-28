@@ -34,6 +34,8 @@ import java.util.List;
 @AutoSpellConfig
 public class BurningDashSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "burning_dash");
+    private int damageBase = 5;
+    private float damagePerPower = 1f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -139,7 +141,7 @@ public class BurningDashSpell extends AbstractSpell implements IParameterizedSpe
     }
 
     private int getDamage(int spellLevel, LivingEntity caster) {
-        return (int) (5 + getSpellPower(spellLevel, caster));
+        return (int) (damageBase + damagePerPower * getSpellPower(spellLevel, caster));
     }
 //
 //    @Override
@@ -192,6 +194,8 @@ public class BurningDashSpell extends AbstractSpell implements IParameterizedSpe
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("damageBase", ParameterType.INT, damageBase, "基础伤害")
+                .optional("damagePerPower", ParameterType.DOUBLE, damagePerPower, "每点威力附加伤害")
                 .build();
     }
 
@@ -200,9 +204,15 @@ public class BurningDashSpell extends AbstractSpell implements IParameterizedSpe
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        int previousDamageBase = this.damageBase;
+        float previousDamagePerPower = this.damagePerPower;
+        this.damageBase = parameters.getInt("damageBase", this.damageBase);
+        this.damagePerPower = (float) parameters.getDouble("damagePerPower", this.damagePerPower);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.damageBase = previousDamageBase;
+            this.damagePerPower = previousDamagePerPower;
             this.restoreParameters(previous);
         }
     }

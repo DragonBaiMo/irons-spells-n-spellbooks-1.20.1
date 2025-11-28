@@ -33,6 +33,8 @@ import java.util.Optional;
 @AutoSpellConfig
 public class ChainCreeperSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "chain_creeper");
+    private int baseCount = 3;
+    private int countPerLevel = 1;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -137,7 +139,7 @@ public class ChainCreeperSpell extends AbstractSpell implements IParameterizedSp
     }
 
     private int getCount(int spellLevel, LivingEntity entity) {
-        return 3 + spellLevel - 1;
+        return baseCount + countPerLevel * spellLevel - 1;
     }
 
     private float getDamage(int spellLevel, LivingEntity entity) {
@@ -170,6 +172,8 @@ public class ChainCreeperSpell extends AbstractSpell implements IParameterizedSp
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("baseCount", ParameterType.INT, baseCount, "基础爆炸头数量")
+                .optional("countPerLevel", ParameterType.INT, countPerLevel, "每级额外数量")
                 .build();
     }
 
@@ -178,9 +182,15 @@ public class ChainCreeperSpell extends AbstractSpell implements IParameterizedSp
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        int previousBaseCount = this.baseCount;
+        int previousCountPerLevel = this.countPerLevel;
+        this.baseCount = parameters.getInt("baseCount", this.baseCount);
+        this.countPerLevel = parameters.getInt("countPerLevel", this.countPerLevel);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.baseCount = previousBaseCount;
+            this.countPerLevel = previousCountPerLevel;
             this.restoreParameters(previous);
         }
     }

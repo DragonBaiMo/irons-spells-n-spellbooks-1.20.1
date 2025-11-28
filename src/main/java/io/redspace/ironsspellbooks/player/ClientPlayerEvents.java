@@ -115,7 +115,8 @@ public class ClientPlayerEvents {
                     //TODO: what is this, shouldnt there be an onClientCastTick?
                     if (spellData.isCasting()) {
                         if (spellData.getCastingSpellId().equals(SpellRegistry.RAY_OF_SIPHONING_SPELL.get().getSpellId())) {
-                            Vec3 impact = Utils.raycastForEntity(entity.level, entity, RayOfSiphoningSpell.getRange(0), true).getLocation().subtract(0, .25, 0);
+                            RayOfSiphoningSpell raySpell = (RayOfSiphoningSpell) SpellRegistry.RAY_OF_SIPHONING_SPELL.get();
+                            Vec3 impact = Utils.raycastForEntity(entity.level, entity, raySpell.getRange(0), true).getLocation().subtract(0, .25, 0);
                             for (int i = 0; i < 8; i++) {
                                 Vec3 motion = new Vec3(
                                         Utils.getRandomScaled(.2f),

@@ -38,6 +38,12 @@ import java.util.Optional;
 @AutoSpellConfig
 public class TelekinesisSpell extends AbstractEldritchSpell implements IParameterizedSpell {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "telekinesis");
+    private static final String PARAM_RANGE_BASE = "rangeBase";
+    private static final String PARAM_RANGE_PER_LEVEL = "rangePerLevel";
+    private static final String PARAM_FORCE_SCALE = "forceScale";
+    private float rangeBase = 12;
+    private float rangePerLevel = 2;
+    private float forceScale = .6f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -124,7 +130,7 @@ public class TelekinesisSpell extends AbstractEldritchSpell implements IParamete
     public void onServerCastTick(Level level, int spellLevel, LivingEntity entity, @Nullable MagicData playerMagicData) {
         super.onServerCastTick(level, spellLevel, entity, playerMagicData);
         if (playerMagicData != null && (playerMagicData.getCastDurationRemaining()) % 2 == 0) {
-            handleTelekinesis((ServerLevel) level, entity, playerMagicData, .6f);
+            handleTelekinesis((ServerLevel) level, entity, playerMagicData, forceScale);
         }
     }
 
@@ -172,7 +178,7 @@ public class TelekinesisSpell extends AbstractEldritchSpell implements IParamete
     }
 
     private int getRange(int spellLevel, LivingEntity caster) {
-        return 12 + (spellLevel - 1) * 2;
+        return (int) (rangeBase + (spellLevel - 1) * rangePerLevel);
     }
 
     @Override
@@ -206,6 +212,9 @@ public class TelekinesisSpell extends AbstractEldritchSpell implements IParamete
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_RANGE_BASE, ParameterType.DOUBLE, rangeBase, "基础抓取距离")
+                .optional(PARAM_RANGE_PER_LEVEL, ParameterType.DOUBLE, rangePerLevel, "每级抓取距离增量")
+                .optional(PARAM_FORCE_SCALE, ParameterType.DOUBLE, forceScale, "牵引强度倍率")
                 .build();
     }
 
@@ -215,8 +224,14 @@ public class TelekinesisSpell extends AbstractEldritchSpell implements IParamete
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.rangeBase = (float) parameters.getDouble(PARAM_RANGE_BASE, this.rangeBase);
+            this.rangePerLevel = (float) parameters.getDouble(PARAM_RANGE_PER_LEVEL, this.rangePerLevel);
+            this.forceScale = (float) parameters.getDouble(PARAM_FORCE_SCALE, this.forceScale);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.rangeBase = 12;
+            this.rangePerLevel = 2;
+            this.forceScale = .6f;
             this.restoreParameters(previous);
         }
     }

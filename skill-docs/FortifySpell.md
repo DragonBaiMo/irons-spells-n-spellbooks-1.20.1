@@ -9,5 +9,8 @@
 | levelScaling / spellPowerPerLevel | INT | 1 | 每级技能威力增量 |
 | castTime | INT | 40 | 施法时间 (tick) |
 | cooldown | DOUBLE | 35.0 | 默认冷却时间 (秒) |
+| durationSeconds | INT | 120 | 持续时间 (秒) |
+| absorptionScale | FLOAT | 1.0 | 吸收等级系数 |
+| targetingColor | INT | 16239960 | 范围指示颜色 |
 
 **说明**: 参数可在管理员通道中通过 SpellParameters 进行覆盖。

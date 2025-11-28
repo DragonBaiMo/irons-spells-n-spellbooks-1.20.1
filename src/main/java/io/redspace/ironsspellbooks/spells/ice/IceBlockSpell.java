@@ -37,6 +37,9 @@ import java.util.Optional;
 @AutoSpellConfig
 public class IceBlockSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "ice_block");
+    private int airTimeNoTarget = 25;
+    private int airTimeTarget = 35;
+    private float damageMultiplier = 1f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -56,6 +59,9 @@ public class IceBlockSpell extends AbstractSpell implements IParameterizedSpell 
         this.spellPowerPerLevel = 2;
         this.castTime = 30;
         this.baseManaCost = 40;
+        this.airTimeNoTarget = 25;
+        this.airTimeTarget = 35;
+        this.damageMultiplier = 1f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -119,7 +125,7 @@ public class IceBlockSpell extends AbstractSpell implements IParameterizedSpell 
 
         IceBlockProjectile iceBlock = new IceBlockProjectile(level, entity, target);
         iceBlock.moveTo(raiseWithCollision(spawn, 4, level));
-        iceBlock.setAirTime(target == null ? 25 : 35);
+        iceBlock.setAirTime(target == null ? airTimeNoTarget : airTimeTarget);
         iceBlock.setDamage(getDamage(spellLevel, entity));
         level.addFreshEntity(iceBlock);
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
@@ -142,7 +148,7 @@ public class IceBlockSpell extends AbstractSpell implements IParameterizedSpell 
     }
 
     private float getDamage(int spellLevel, LivingEntity entity) {
-        return this.getSpellPower(spellLevel, entity);
+        return this.getSpellPower(spellLevel, entity) * damageMultiplier;
     }
 
     
@@ -171,6 +177,9 @@ public class IceBlockSpell extends AbstractSpell implements IParameterizedSpell 
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("airTimeNoTarget", ParameterType.INT, this.airTimeNoTarget, "未锁定目标时悬空时长 (tick)")
+                .optional("airTimeTarget", ParameterType.INT, this.airTimeTarget, "锁定目标时悬空时长 (tick)")
+                .optional("damageMultiplier", ParameterType.FLOAT, this.damageMultiplier, "伤害威力倍率")
                 .build();
     }
 
@@ -179,10 +188,29 @@ public class IceBlockSpell extends AbstractSpell implements IParameterizedSpell 
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams previousExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(previousExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.airTimeNoTarget, this.airTimeTarget, this.damageMultiplier);
+        this.airTimeNoTarget = parameters.getInt("airTimeNoTarget", this.airTimeNoTarget);
+        this.airTimeTarget = parameters.getInt("airTimeTarget", this.airTimeTarget);
+        this.damageMultiplier = parameters.getFloat("damageMultiplier", this.damageMultiplier);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.airTimeNoTarget = previous.airTimeNoTarget();
+        this.airTimeTarget = previous.airTimeTarget();
+        this.damageMultiplier = previous.damageMultiplier();
+    }
+
+    private record ExtraParams(int airTimeNoTarget, int airTimeTarget, float damageMultiplier) {
     }
 }

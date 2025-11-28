@@ -32,6 +32,10 @@ import java.util.Optional;
 @AutoSpellConfig
 public class FangWardSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "fang_ward");
+    private int ringsBase = 2;
+    private float ringSpacing = 1.5f;
+    private int fangsFirstRing = 5;
+    private int groundSearchMaxSteps = 5;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -52,6 +56,10 @@ public class FangWardSpell extends AbstractSpell implements IParameterizedSpell 
         this.spellPowerPerLevel = 1;
         this.castTime = 15;
         this.baseManaCost = 45;
+        this.ringsBase = 2;
+        this.ringSpacing = 1.5f;
+        this.fangsFirstRing = 5;
+        this.groundSearchMaxSteps = 5;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -93,10 +101,10 @@ public class FangWardSpell extends AbstractSpell implements IParameterizedSpell 
         Vec3 center = entity.getEyePosition();
 
         for (int r = 0; r < rings; r++) {
-            float fangs = count + r * r;
+            float fangs = fangsFirstRing + r * r;
             for (int i = 0; i < fangs; i++) {
-                Vec3 spawn = center.add(new Vec3(0, 0, 1.5 * (r + 1)).yRot(entity.getYRot() * Mth.DEG_TO_RAD + ((6.281f / fangs) * i)));
-                spawn = Utils.moveToRelativeGroundLevel(world, spawn, 5);
+                Vec3 spawn = center.add(new Vec3(0, 0, ringSpacing * (r + 1)).yRot(entity.getYRot() * Mth.DEG_TO_RAD + ((6.281f / fangs) * i)));
+                spawn = Utils.moveToRelativeGroundLevel(world, spawn, groundSearchMaxSteps);
                 if (!world.getBlockState(BlockPos.containing(spawn).below()).isAir()) {
                     ExtendedEvokerFang fang = new ExtendedEvokerFang(world, spawn.x, spawn.y, spawn.z, get2DAngle(center, spawn), r, entity, getDamage(spellLevel, entity));
                     world.addFreshEntity(fang);
@@ -128,7 +136,7 @@ public class FangWardSpell extends AbstractSpell implements IParameterizedSpell 
     }
 
     private int getRings(int spellLevel, LivingEntity entity) {
-        return 2 + (spellLevel - 1) / 3;
+        return ringsBase + (spellLevel - 1) / 3;
     }
 
     @Override
@@ -163,6 +171,10 @@ public class FangWardSpell extends AbstractSpell implements IParameterizedSpell 
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("ringsBase", ParameterType.INT, this.ringsBase, "基础环数")
+                .optional("ringSpacing", ParameterType.FLOAT, this.ringSpacing, "环间距")
+                .optional("fangsFirstRing", ParameterType.INT, this.fangsFirstRing, "第一圈獠牙数量")
+                .optional("groundSearchMaxSteps", ParameterType.INT, this.groundSearchMaxSteps, "地面搜索最大步数")
                 .build();
     }
 
@@ -171,10 +183,31 @@ public class FangWardSpell extends AbstractSpell implements IParameterizedSpell 
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams prevExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(prevExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.ringsBase, this.ringSpacing, this.fangsFirstRing, this.groundSearchMaxSteps);
+        this.ringsBase = parameters.getInt("ringsBase", this.ringsBase);
+        this.ringSpacing = parameters.getFloat("ringSpacing", this.ringSpacing);
+        this.fangsFirstRing = parameters.getInt("fangsFirstRing", this.fangsFirstRing);
+        this.groundSearchMaxSteps = parameters.getInt("groundSearchMaxSteps", this.groundSearchMaxSteps);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.ringsBase = previous.ringsBase();
+        this.ringSpacing = previous.ringSpacing();
+        this.fangsFirstRing = previous.fangsFirstRing();
+        this.groundSearchMaxSteps = previous.groundSearchMaxSteps();
+    }
+
+    private record ExtraParams(int ringsBase, float ringSpacing, int fangsFirstRing, int groundSearchMaxSteps) {
     }
 }

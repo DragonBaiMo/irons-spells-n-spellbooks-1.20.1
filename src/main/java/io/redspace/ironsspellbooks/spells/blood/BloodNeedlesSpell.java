@@ -31,6 +31,9 @@ import java.util.Optional;
 @AutoSpellConfig
 public class BloodNeedlesSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "blood_needles");
+    private int projectileCount = 5;
+    private float damageMultiplier = .25f;
+    private float lifestealPercent = .25f;
     private final DefaultConfig defaultConfig = new DefaultConfig()
             .setMinRarity(SpellRarity.UNCOMMON)
             .setSchoolResource(SchoolRegistry.BLOOD_RESOURCE)
@@ -100,15 +103,15 @@ public class BloodNeedlesSpell extends AbstractSpell implements IParameterizedSp
 
     @Override
     public SpellDamageSource getDamageSource(@Nullable Entity projectile, Entity attacker) {
-        return super.getDamageSource(projectile, attacker).setLifestealPercent(.25f);
+        return super.getDamageSource(projectile, attacker).setLifestealPercent(lifestealPercent);
     }
 
     private int getCount(int spellLevel) {
-        return 5;
+        return projectileCount;
     }
 
     private float getDamage(int spellLevel, LivingEntity caster) {
-        return getSpellPower(spellLevel, caster) * .25f;
+        return getSpellPower(spellLevel, caster) * damageMultiplier;
     }
 
     
@@ -137,6 +140,9 @@ public class BloodNeedlesSpell extends AbstractSpell implements IParameterizedSp
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("projectileCount", ParameterType.INT, projectileCount, "针数")
+                .optional("damageMultiplier", ParameterType.DOUBLE, damageMultiplier, "伤害系数")
+                .optional("lifestealPercent", ParameterType.DOUBLE, lifestealPercent, "吸血比例 (0-1)")
                 .build();
     }
 
@@ -145,9 +151,18 @@ public class BloodNeedlesSpell extends AbstractSpell implements IParameterizedSp
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        int previousProjectileCount = this.projectileCount;
+        float previousDamageMultiplier = this.damageMultiplier;
+        float previousLifestealPercent = this.lifestealPercent;
+        this.projectileCount = parameters.getInt("projectileCount", this.projectileCount);
+        this.damageMultiplier = (float) parameters.getDouble("damageMultiplier", this.damageMultiplier);
+        this.lifestealPercent = (float) parameters.getDouble("lifestealPercent", this.lifestealPercent);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.projectileCount = previousProjectileCount;
+            this.damageMultiplier = previousDamageMultiplier;
+            this.lifestealPercent = previousLifestealPercent;
             this.restoreParameters(previous);
         }
     }

@@ -33,6 +33,9 @@ import java.util.Optional;
 @AutoSpellConfig
 public class ConeOfColdSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "cone_of_cold");
+    private float damageBase = 1f;
+    private float damagePerPower = .75f;
+    private int freezeDurationTicks = 80;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -110,11 +113,11 @@ public class ConeOfColdSpell extends AbstractSpell implements IParameterizedSpel
 
     @Override
     public SpellDamageSource getDamageSource(@Nullable Entity projectile, Entity attacker) {
-        return super.getDamageSource(projectile, attacker).setFreezeTicks(80);
+        return super.getDamageSource(projectile, attacker).setFreezeTicks(freezeDurationTicks);
     }
 
     public float getDamage(int spellLevel, LivingEntity caster) {
-        return 1 + getSpellPower(spellLevel, caster) * .75f;
+        return damageBase + getSpellPower(spellLevel, caster) * damagePerPower;
     }
 
     @Override
@@ -148,6 +151,9 @@ public class ConeOfColdSpell extends AbstractSpell implements IParameterizedSpel
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("damageBase", ParameterType.DOUBLE, damageBase, "基础伤害")
+                .optional("damagePerPower", ParameterType.DOUBLE, damagePerPower, "每点威力附加伤害")
+                .optional("freezeDurationTicks", ParameterType.INT, freezeDurationTicks, "冰冻时长 (tick)")
                 .build();
     }
 
@@ -156,9 +162,18 @@ public class ConeOfColdSpell extends AbstractSpell implements IParameterizedSpel
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        float previousDamageBase = this.damageBase;
+        float previousDamagePerPower = this.damagePerPower;
+        int previousFreezeDuration = this.freezeDurationTicks;
+        this.damageBase = (float) parameters.getDouble("damageBase", this.damageBase);
+        this.damagePerPower = (float) parameters.getDouble("damagePerPower", this.damagePerPower);
+        this.freezeDurationTicks = parameters.getInt("freezeDurationTicks", this.freezeDurationTicks);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.damageBase = previousDamageBase;
+            this.damagePerPower = previousDamagePerPower;
+            this.freezeDurationTicks = previousFreezeDuration;
             this.restoreParameters(previous);
         }
     }

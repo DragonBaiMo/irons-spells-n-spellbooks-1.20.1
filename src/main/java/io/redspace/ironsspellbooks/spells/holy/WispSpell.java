@@ -32,6 +32,8 @@ import java.util.Optional;
 @AutoSpellConfig
 public class WispSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "wisp");
+    private static final String PARAM_WISP_LIFETIME = "wispLifetimeTicks";
+    private int wispLifetimeTicks = 200;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -104,6 +106,7 @@ public class WispSpell extends AbstractSpell implements IParameterizedSpell  {
         if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData targetingData) {
             var targetEntity = targetingData.getTarget((ServerLevel) world);
             WispEntity wispEntity = new WispEntity(world, entity, getSpellPower(spellLevel, entity));
+            wispEntity.setLifetimeLimit(wispLifetimeTicks);
             wispEntity.setTarget(targetEntity);
             wispEntity.setPos(Utils.getPositionFromEntityLookDirection(entity, 2).subtract(0, .2, 0));
             world.addFreshEntity(wispEntity);
@@ -155,6 +158,7 @@ public class WispSpell extends AbstractSpell implements IParameterizedSpell  {
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_WISP_LIFETIME, ParameterType.INT, wispLifetimeTicks, "幽火持续时间上限 (tick)")
                 .build();
     }
 
@@ -164,8 +168,10 @@ public class WispSpell extends AbstractSpell implements IParameterizedSpell  {
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.wispLifetimeTicks = parameters.getInt(PARAM_WISP_LIFETIME, this.wispLifetimeTicks);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.wispLifetimeTicks = 200;
             this.restoreParameters(previous);
         }
     }

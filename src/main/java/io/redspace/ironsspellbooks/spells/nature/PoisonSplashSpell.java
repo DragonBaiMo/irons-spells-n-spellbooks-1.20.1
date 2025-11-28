@@ -32,6 +32,16 @@ import java.util.Optional;
 @AutoSpellConfig
 public class PoisonSplashSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "poison_splash");
+    private static final String PARAM_TARGET_RANGE = "targetRange";
+    private static final String PARAM_DAMAGE_MULTIPLIER = "damageMultiplier";
+    private static final String PARAM_DURATION_BASE = "durationBase";
+    private static final String PARAM_DURATION_PER_LEVEL = "durationPerLevel";
+    private static final String PARAM_CLOUD_RADIUS = "cloudRadius";
+    private float targetRange = 32;
+    private float damageMultiplier = 1f;
+    private int durationBase = 100;
+    private int durationPerLevel = 40;
+    private float cloudRadius = 2f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -95,7 +105,7 @@ public class PoisonSplashSpell extends AbstractSpell implements IParameterizedSp
 
     @Override
     public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        Utils.preCastTargetHelper(level, entity, playerMagicData, this, 32, .35f, false);
+        Utils.preCastTargetHelper(level, entity, playerMagicData, this, (int) targetRange, .35f, false);
         return true;
     }
 
@@ -107,7 +117,7 @@ public class PoisonSplashSpell extends AbstractSpell implements IParameterizedSp
             spawn = castTargetingData.getTargetPosition((ServerLevel) level);
         }
         if (spawn == null) {
-            HitResult raycast = Utils.raycastForEntity(level, entity, 32, true);
+            HitResult raycast = Utils.raycastForEntity(level, entity, targetRange, true);
             if (raycast.getType() == HitResult.Type.ENTITY) {
                 spawn = ((EntityHitResult) raycast).getEntity().position();
             } else {
@@ -120,17 +130,18 @@ public class PoisonSplashSpell extends AbstractSpell implements IParameterizedSp
         poisonSplash.moveTo(spawn);
         poisonSplash.setDamage(getDamage(spellLevel, entity));
         poisonSplash.setEffectDuration(getDuration(spellLevel, entity));
+        poisonSplash.setRadius(cloudRadius);
         level.addFreshEntity(poisonSplash);
 
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 
     private float getDamage(int spellLevel, LivingEntity entity) {
-        return this.getSpellPower(spellLevel, entity);
+        return this.getSpellPower(spellLevel, entity) * damageMultiplier;
     }
 
     private int getDuration(int spellLevel, LivingEntity entity) {
-        return 100 + spellLevel * 40;
+        return durationBase + spellLevel * durationPerLevel;
     }
 
     
@@ -159,6 +170,11 @@ public class PoisonSplashSpell extends AbstractSpell implements IParameterizedSp
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_TARGET_RANGE, ParameterType.DOUBLE, targetRange, "目标选择最大距离")
+                .optional(PARAM_DAMAGE_MULTIPLIER, ParameterType.DOUBLE, damageMultiplier, "伤害倍率 (基于技能威力)")
+                .optional(PARAM_DURATION_BASE, ParameterType.INT, durationBase, "基础持续时间 (tick)")
+                .optional(PARAM_DURATION_PER_LEVEL, ParameterType.INT, durationPerLevel, "每级持续时间增量 (tick)")
+                .optional(PARAM_CLOUD_RADIUS, ParameterType.DOUBLE, cloudRadius, "毒云半径")
                 .build();
     }
 
@@ -168,8 +184,18 @@ public class PoisonSplashSpell extends AbstractSpell implements IParameterizedSp
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.targetRange = (float) parameters.getDouble(PARAM_TARGET_RANGE, this.targetRange);
+            this.damageMultiplier = (float) parameters.getDouble(PARAM_DAMAGE_MULTIPLIER, this.damageMultiplier);
+            this.durationBase = parameters.getInt(PARAM_DURATION_BASE, this.durationBase);
+            this.durationPerLevel = parameters.getInt(PARAM_DURATION_PER_LEVEL, this.durationPerLevel);
+            this.cloudRadius = (float) parameters.getDouble(PARAM_CLOUD_RADIUS, this.cloudRadius);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.targetRange = 32;
+            this.damageMultiplier = 1f;
+            this.durationBase = 100;
+            this.durationPerLevel = 40;
+            this.cloudRadius = 2f;
             this.restoreParameters(previous);
         }
     }

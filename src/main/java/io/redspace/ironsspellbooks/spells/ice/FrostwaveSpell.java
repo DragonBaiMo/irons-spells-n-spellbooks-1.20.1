@@ -38,6 +38,9 @@ import java.util.Optional;
 @AutoSpellConfig
 public class FrostwaveSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "frostwave");
+    private float radiusBase = 6f;
+    private float radiusPerLevel = .75f;
+    private float durationPerPower = 20f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -60,6 +63,9 @@ public class FrostwaveSpell extends AbstractSpell implements IParameterizedSpell
         this.spellPowerPerLevel = 3;
         this.castTime = 20;
         this.baseManaCost = 50;
+        this.radiusBase = 6f;
+        this.radiusPerLevel = .75f;
+        this.durationPerPower = 20f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -109,11 +115,11 @@ public class FrostwaveSpell extends AbstractSpell implements IParameterizedSpell
     }
 
     public float getRadius(int spellLevel, LivingEntity caster) {
-        return 6 + spellLevel * .75f;
+        return radiusBase + spellLevel * radiusPerLevel;
     }
 
     public int getDuration(int spellLevel, LivingEntity caster) {
-        return (int) (getSpellPower(spellLevel, caster) * 20);
+        return (int) (getSpellPower(spellLevel, caster) * durationPerPower);
     }
 
     @Override
@@ -152,6 +158,9 @@ public class FrostwaveSpell extends AbstractSpell implements IParameterizedSpell
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("radiusBase", ParameterType.FLOAT, this.radiusBase, "基础半径")
+                .optional("radiusPerLevel", ParameterType.FLOAT, this.radiusPerLevel, "每级增加半径")
+                .optional("durationPerPower", ParameterType.FLOAT, this.durationPerPower, "每点威力增加持续 (tick)")
                 .build();
     }
 
@@ -160,10 +169,29 @@ public class FrostwaveSpell extends AbstractSpell implements IParameterizedSpell
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams prevExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(prevExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.radiusBase, this.radiusPerLevel, this.durationPerPower);
+        this.radiusBase = parameters.getFloat("radiusBase", this.radiusBase);
+        this.radiusPerLevel = parameters.getFloat("radiusPerLevel", this.radiusPerLevel);
+        this.durationPerPower = parameters.getFloat("durationPerPower", this.durationPerPower);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.radiusBase = previous.radiusBase();
+        this.radiusPerLevel = previous.radiusPerLevel();
+        this.durationPerPower = previous.durationPerPower();
+    }
+
+    private record ExtraParams(float radiusBase, float radiusPerLevel, float durationPerPower) {
     }
 }

@@ -36,14 +36,25 @@ import java.util.concurrent.atomic.AtomicInteger;
 @AutoSpellConfig
 public class SlowSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "slow");
-    private static final int MAX_TARGETS = 5;
+    private static final String PARAM_TARGET_RANGE = "targetRange";
+    private static final String PARAM_RADIUS = "radius";
+    private static final String PARAM_MAX_TARGETS = "maxTargets";
+    private static final String PARAM_DURATION_PER_POWER = "durationPerPower";
+    private static final String PARAM_BASE_AMPLIFIER = "baseAmplifier";
+    private static final String PARAM_AMPLIFIER_PER_LEVEL = "amplifierPerLevel";
+    private float targetRange = 32;
+    private float radius = 3f;
+    private int maxTargets = 5;
+    private int durationPerPower = 20;
+    private int baseAmplifier = 0;
+    private int amplifierPerLevel = 1;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
                 Component.translatable("ui.irons_spellbooks.slowed", Utils.stringTruncation((1 + getAmplifier(spellLevel, caster)) * .1f * 100, 1)),
                 Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getDuration(spellLevel, caster), 1)),
-                Component.translatable("ui.irons_spellbooks.max_victims", MAX_TARGETS)
+                Component.translatable("ui.irons_spellbooks.max_victims", maxTargets)
         );
     }
 
@@ -96,8 +107,8 @@ public class SlowSpell extends AbstractSpell implements IParameterizedSpell  {
 
     @Override
     public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        if (Utils.preCastTargetHelper(level, entity, playerMagicData, this, 32, .35f)) {
-            float radius = 3f;
+        if (Utils.preCastTargetHelper(level, entity, playerMagicData, this, (int) targetRange, .35f)) {
+            float radius = this.radius;
             var target = ((TargetEntityCastData) playerMagicData.getAdditionalCastData()).getTarget((ServerLevel) level);
             var area = TargetedAreaEntity.createTargetAreaEntity(level, target.position(), radius, MobEffects.MOVEMENT_SLOWDOWN.getColor(), target);
             playerMagicData.setAdditionalCastData(new TargetedTargetAreaCastData(target, area));
@@ -114,7 +125,7 @@ public class SlowSpell extends AbstractSpell implements IParameterizedSpell  {
                 float radius = 3;
                 AtomicInteger targets = new AtomicInteger(0);
                 targetEntity.level.getEntitiesOfClass(LivingEntity.class, targetEntity.getBoundingBox().inflate(radius)).forEach((victim) -> {
-                    if (targets.get() < MAX_TARGETS && victim != entity && victim.distanceToSqr(targetEntity) < radius * radius && !DamageSources.isFriendlyFireBetween(entity, victim)) {
+                    if (targets.get() < maxTargets && victim != entity && victim.distanceToSqr(targetEntity) < radius * radius && !DamageSources.isFriendlyFireBetween(entity, victim)) {
                         victim.addEffect(new MobEffectInstance(MobEffectRegistry.SLOWED.get(), getDuration(spellLevel, entity), getAmplifier(spellLevel, entity)));
                         targets.incrementAndGet();
                     }
@@ -125,11 +136,11 @@ public class SlowSpell extends AbstractSpell implements IParameterizedSpell  {
     }
 
     public int getAmplifier(int spellLevel, LivingEntity caster) {
-        return spellLevel - 1;
+        return baseAmplifier + amplifierPerLevel * (spellLevel - 1);
     }
 
     public int getDuration(int spellLevel, LivingEntity caster) {
-        return (int) (getSpellPower(spellLevel, caster) * 20);
+        return (int) (getSpellPower(spellLevel, caster) * durationPerPower);
     }
 
     @Override
@@ -163,6 +174,12 @@ public class SlowSpell extends AbstractSpell implements IParameterizedSpell  {
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_TARGET_RANGE, ParameterType.DOUBLE, targetRange, "目标选取距离")
+                .optional(PARAM_RADIUS, ParameterType.DOUBLE, radius, "减速范围半径")
+                .optional(PARAM_MAX_TARGETS, ParameterType.INT, maxTargets, "最多命中目标数")
+                .optional(PARAM_DURATION_PER_POWER, ParameterType.INT, durationPerPower, "每点威力对应的持续时间 (tick)")
+                .optional(PARAM_BASE_AMPLIFIER, ParameterType.INT, baseAmplifier, "基础减速等级")
+                .optional(PARAM_AMPLIFIER_PER_LEVEL, ParameterType.INT, amplifierPerLevel, "每级增加的减速等级")
                 .build();
     }
 
@@ -172,8 +189,20 @@ public class SlowSpell extends AbstractSpell implements IParameterizedSpell  {
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.targetRange = (float) parameters.getDouble(PARAM_TARGET_RANGE, this.targetRange);
+            this.radius = (float) parameters.getDouble(PARAM_RADIUS, this.radius);
+            this.maxTargets = parameters.getInt(PARAM_MAX_TARGETS, this.maxTargets);
+            this.durationPerPower = parameters.getInt(PARAM_DURATION_PER_POWER, this.durationPerPower);
+            this.baseAmplifier = parameters.getInt(PARAM_BASE_AMPLIFIER, this.baseAmplifier);
+            this.amplifierPerLevel = parameters.getInt(PARAM_AMPLIFIER_PER_LEVEL, this.amplifierPerLevel);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.targetRange = 32;
+            this.radius = 3f;
+            this.maxTargets = 5;
+            this.durationPerPower = 20;
+            this.baseAmplifier = 0;
+            this.amplifierPerLevel = 1;
             this.restoreParameters(previous);
         }
     }

@@ -30,12 +30,14 @@ import java.util.Optional;
 @AutoSpellConfig
 public class SpiderAspectSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "spider_aspect");
+    private static final String PARAM_DURATION_PER_POWER = "durationPerPower";
+    private int durationPerPower = 20;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
                 Component.translatable("ui.irons_spellbooks.additional_poisoned_damage", Utils.stringTruncation(getPercentDamage(spellLevel, caster), 0)),
-                Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1))
+                Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(spellLevel, caster) * durationPerPower, 1))
         );
     }
 
@@ -93,7 +95,7 @@ public class SpiderAspectSpell extends AbstractSpell implements IParameterizedSp
 
     @Override
     public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.SPIDER_ASPECT.get(), (int) (getSpellPower(spellLevel, entity) * 20), spellLevel - 1, false, false, true));
+        entity.addEffect(new MobEffectInstance(MobEffectRegistry.SPIDER_ASPECT.get(), (int) (getSpellPower(spellLevel, entity) * durationPerPower), spellLevel - 1, false, false, true));
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 
@@ -132,6 +134,7 @@ public class SpiderAspectSpell extends AbstractSpell implements IParameterizedSp
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_DURATION_PER_POWER, ParameterType.INT, durationPerPower, "每点威力对应的持续时间 (tick)")
                 .build();
     }
 
@@ -141,8 +144,10 @@ public class SpiderAspectSpell extends AbstractSpell implements IParameterizedSp
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.durationPerPower = parameters.getInt(PARAM_DURATION_PER_POWER, this.durationPerPower);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.durationPerPower = 20;
             this.restoreParameters(previous);
         }
     }

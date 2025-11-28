@@ -33,6 +33,9 @@ import java.util.Optional;
 @AutoSpellConfig
 public class HealingCircleSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "healing_circle");
+    private float radius = 5f;
+    private int durationTicks = 200;
+    private float healMultiplier = .25f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -56,6 +59,9 @@ public class HealingCircleSpell extends AbstractSpell implements IParameterizedS
         this.spellPowerPerLevel = 1;
         this.castTime = 20;
         this.baseManaCost = 40;
+        this.radius = 5f;
+        this.durationTicks = 200;
+        this.healMultiplier = .25f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -130,15 +136,15 @@ public class HealingCircleSpell extends AbstractSpell implements IParameterizedS
     }
 
     private float getHealing(int spellLevel, LivingEntity caster) {
-        return getSpellPower(spellLevel, caster) * .25f;
+        return getSpellPower(spellLevel, caster) * healMultiplier;
     }
 
     private float getRadius(int spellLevel, LivingEntity caster) {
-        return 5;
+        return radius;
     }
 
     private int getDuration(int spellLevel, LivingEntity caster) {
-        return 200;
+        return durationTicks;
     }
 
     @Override
@@ -177,6 +183,9 @@ public class HealingCircleSpell extends AbstractSpell implements IParameterizedS
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("radius", ParameterType.FLOAT, this.radius, "治疗半径")
+                .optional("duration", ParameterType.INT, this.durationTicks, "持续时间 (tick)")
+                .optional("healMultiplier", ParameterType.FLOAT, this.healMultiplier, "治疗系数 (威力倍率)")
                 .build();
     }
 
@@ -185,10 +194,29 @@ public class HealingCircleSpell extends AbstractSpell implements IParameterizedS
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams previousExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(previousExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.radius, this.durationTicks, this.healMultiplier);
+        this.radius = parameters.getFloat("radius", this.radius);
+        this.durationTicks = parameters.getInt("duration", this.durationTicks);
+        this.healMultiplier = parameters.getFloat("healMultiplier", this.healMultiplier);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.radius = previous.radius();
+        this.durationTicks = previous.durationTicks();
+        this.healMultiplier = previous.healMultiplier();
+    }
+
+    private record ExtraParams(float radius, int durationTicks, float healMultiplier) {
     }
 }

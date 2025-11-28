@@ -9,5 +9,7 @@
 | levelScaling / spellPowerPerLevel | INT | 1 | 每级技能威力增量 |
 | castTime | INT | 40 | 施法时间 (tick) |
 | cooldown | DOUBLE | 35.0 | 默认冷却时间 (秒) |
+| maxTargetRange | DOUBLE | 32.0 | 最大选取距离 |
+| durationPerPower | INT | 20 | 每点威力对应的束缚时长 (tick) |
 
 **说明**: 参数可在管理员通道中通过 SpellParameters 进行覆盖。

@@ -28,6 +28,11 @@ import java.util.Optional;
 @AutoSpellConfig
 public class MagmaBombSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "magma_bomb");
+    private float radiusBase = 3f;
+    private float radiusPowerScale = 1f;
+    private float directDamageMultiplier = 1f;
+    private float aoeDamageBase = 1f;
+    private float aoeDamageRatio = .1f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -51,6 +56,11 @@ public class MagmaBombSpell extends AbstractSpell implements IParameterizedSpell
         this.spellPowerPerLevel = 3;
         this.castTime = 20;
         this.baseManaCost = 30;
+        this.radiusBase = 3f;
+        this.radiusPowerScale = 1f;
+        this.directDamageMultiplier = 1f;
+        this.aoeDamageBase = 1f;
+        this.aoeDamageRatio = .1f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -104,15 +114,15 @@ public class MagmaBombSpell extends AbstractSpell implements IParameterizedSpell
     }
 
     public float getRadius(int spellLevel, LivingEntity caster) {
-        return 3 + getEntityPowerMultiplier(caster);
+        return radiusBase + radiusPowerScale * getEntityPowerMultiplier(caster);
     }
 
     public float getDamage(int spellLevel, LivingEntity caster) {
-        return getSpellPower(spellLevel, caster);
+        return getSpellPower(spellLevel, caster) * directDamageMultiplier;
     }
 
     public float getAoeDamage(int spellLevel, LivingEntity caster) {
-        return 1 + getSpellPower(spellLevel, caster) * .1f;
+        return aoeDamageBase + getSpellPower(spellLevel, caster) * aoeDamageRatio;
     }
 
     @Override
@@ -146,6 +156,11 @@ public class MagmaBombSpell extends AbstractSpell implements IParameterizedSpell
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("radiusBase", ParameterType.FLOAT, this.radiusBase, "爆炸半径基础值")
+                .optional("radiusPowerScale", ParameterType.FLOAT, this.radiusPowerScale, "爆炸半径威力系数")
+                .optional("directDamageMultiplier", ParameterType.FLOAT, this.directDamageMultiplier, "直击伤害威力倍率")
+                .optional("aoeDamageBase", ParameterType.FLOAT, this.aoeDamageBase, "范围伤害基础值")
+                .optional("aoeDamageRatio", ParameterType.FLOAT, this.aoeDamageRatio, "范围伤害威力系数")
                 .build();
     }
 
@@ -154,10 +169,33 @@ public class MagmaBombSpell extends AbstractSpell implements IParameterizedSpell
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams previousExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(previousExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.radiusBase, this.radiusPowerScale, this.directDamageMultiplier, this.aoeDamageBase, this.aoeDamageRatio);
+        this.radiusBase = parameters.getFloat("radiusBase", this.radiusBase);
+        this.radiusPowerScale = parameters.getFloat("radiusPowerScale", this.radiusPowerScale);
+        this.directDamageMultiplier = parameters.getFloat("directDamageMultiplier", this.directDamageMultiplier);
+        this.aoeDamageBase = parameters.getFloat("aoeDamageBase", this.aoeDamageBase);
+        this.aoeDamageRatio = parameters.getFloat("aoeDamageRatio", this.aoeDamageRatio);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.radiusBase = previous.radiusBase();
+        this.radiusPowerScale = previous.radiusPowerScale();
+        this.directDamageMultiplier = previous.directDamageMultiplier();
+        this.aoeDamageBase = previous.aoeDamageBase();
+        this.aoeDamageRatio = previous.aoeDamageRatio();
+    }
+
+    private record ExtraParams(float radiusBase, float radiusPowerScale, float directDamageMultiplier, float aoeDamageBase, float aoeDamageRatio) {
     }
 }

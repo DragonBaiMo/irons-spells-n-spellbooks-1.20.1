@@ -9,5 +9,9 @@
 | levelScaling / spellPowerPerLevel | INT | 15 | 每级技能威力增量 |
 | castTime | INT | 40 | 施法时间 (tick) |
 | cooldown | DOUBLE | 0.0 | 默认冷却时间 (秒) |
+| percentDamageScale | FLOAT | 0.01 | 冻结伤害百分比系数 |
+| icicleShardCount | INT | 8 | 碎冰弹数量 |
+| shardDamageSplit | FLOAT | 1.0 | 碎冰伤害分摊比例 |
+| castRange | FLOAT | 48.0 | 施法距离 |
 
 **说明**: 参数可在管理员通道中通过 SpellParameters 进行覆盖。

@@ -26,10 +26,13 @@ import java.util.Optional;
 @AutoSpellConfig
 public class EvasionSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "evasion");
+    private int durationSeconds = 60;
+    private float baseHits = 1f;
+    private float hitsPerPower = 1f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.hits_dodged", (int) getSpellPower(spellLevel, caster) + 1));
+        return List.of(Component.translatable("ui.irons_spellbooks.hits_dodged", getHitCount(spellLevel, caster)));
     }
 
     private final DefaultConfig defaultConfig = new DefaultConfig()
@@ -45,6 +48,9 @@ public class EvasionSpell extends AbstractSpell implements IParameterizedSpell  
         this.spellPowerPerLevel = 1;
         this.castTime = 0;
         this.baseManaCost = 40;
+        this.durationSeconds = 60;
+        this.baseHits = 1f;
+        this.hitsPerPower = 1f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -76,7 +82,7 @@ public class EvasionSpell extends AbstractSpell implements IParameterizedSpell  
 
     @Override
     public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.EVASION.get(), 60 * 20, (int) getSpellPower(spellLevel, entity), false, false, true));
+        entity.addEffect(new MobEffectInstance(MobEffectRegistry.EVASION.get(), durationSeconds * 20, getHitCount(spellLevel, entity) - 1, false, false, true));
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);
     }
 
@@ -106,6 +112,9 @@ public class EvasionSpell extends AbstractSpell implements IParameterizedSpell  
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("durationSeconds", ParameterType.INT, this.durationSeconds, "持续时间 (秒)")
+                .optional("baseHits", ParameterType.FLOAT, this.baseHits, "基础可闪避次数")
+                .optional("hitsPerPower", ParameterType.FLOAT, this.hitsPerPower, "每点威力增加的闪避次数")
                 .build();
     }
 
@@ -114,10 +123,33 @@ public class EvasionSpell extends AbstractSpell implements IParameterizedSpell  
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams prevExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(prevExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.durationSeconds, this.baseHits, this.hitsPerPower);
+        this.durationSeconds = parameters.getInt("durationSeconds", this.durationSeconds);
+        this.baseHits = parameters.getFloat("baseHits", this.baseHits);
+        this.hitsPerPower = parameters.getFloat("hitsPerPower", this.hitsPerPower);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.durationSeconds = previous.durationSeconds();
+        this.baseHits = previous.baseHits();
+        this.hitsPerPower = previous.hitsPerPower();
+    }
+
+    private record ExtraParams(int durationSeconds, float baseHits, float hitsPerPower) {
+    }
+
+    private int getHitCount(int spellLevel, LivingEntity caster) {
+        return Math.max(1, (int) (baseHits + getSpellPower(spellLevel, caster) * hitsPerPower));
     }
 }

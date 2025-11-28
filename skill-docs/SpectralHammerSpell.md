@@ -9,5 +9,8 @@
 | levelScaling / spellPowerPerLevel | INT | 1 | 每级技能威力增量 |
 | castTime | INT | 0 | 施法时间 (tick) |
 | cooldown | DOUBLE | 2.0 | 默认冷却时间 (秒) |
+| distance | INT | 16 | 最远挖掘距离 |
+| radiusMultiplier | DOUBLE | 0.5 | 半径倍率 (基于技能威力) |
+| depthMultiplier | DOUBLE | 1.0 | 深度倍率 (基于技能威力) |
 
 **说明**: 参数可在管理员通道中通过 SpellParameters 进行覆盖。

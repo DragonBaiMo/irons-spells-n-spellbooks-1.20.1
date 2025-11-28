@@ -29,11 +29,13 @@ import java.util.Optional;
 @AutoSpellConfig
 public class ChargeSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "charge");
+    private double durationSecondsPerPower = 1d;
+    private int amplifierOffset = -1;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1)),
+                Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks((float) (getSpellPower(spellLevel, caster) * durationSecondsPerPower * 20), 1)),
                 Component.translatable("attribute.modifier.plus.1", Utils.stringTruncation(getPercentSpeed(spellLevel, caster), 0), Component.translatable("attribute.name.generic.movement_speed")),
                 Component.translatable("attribute.modifier.plus.1", Utils.stringTruncation(getPercentAttackDamage(spellLevel, caster), 0), Component.translatable("attribute.name.generic.attack_damage")),
                 Component.translatable("attribute.modifier.plus.1", Utils.stringTruncation(getPercentSpellPower(spellLevel, caster), 0), Component.translatable("attribute.irons_spellbooks.spell_power"))
@@ -85,7 +87,7 @@ public class ChargeSpell extends AbstractSpell implements IParameterizedSpell  {
     @Override
     public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
 
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.CHARGED.get(), (int) (getSpellPower(spellLevel, entity) * 20), spellLevel - 1, false, false, true));
+        entity.addEffect(new MobEffectInstance(MobEffectRegistry.CHARGED.get(), (int) (getSpellPower(spellLevel, entity) * durationSecondsPerPower * 20), spellLevel + amplifierOffset, false, false, true));
 
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
@@ -133,6 +135,8 @@ public class ChargeSpell extends AbstractSpell implements IParameterizedSpell  {
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("durationSecondsPerPower", ParameterType.DOUBLE, durationSecondsPerPower, "每点威力对应的持续时间 (秒)")
+                .optional("amplifierOffset", ParameterType.INT, amplifierOffset, "效果等级偏移")
                 .build();
     }
 
@@ -141,9 +145,15 @@ public class ChargeSpell extends AbstractSpell implements IParameterizedSpell  {
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        double previousDurationSecondsPerPower = this.durationSecondsPerPower;
+        int previousAmplifierOffset = this.amplifierOffset;
+        this.durationSecondsPerPower = parameters.getDouble("durationSecondsPerPower", this.durationSecondsPerPower);
+        this.amplifierOffset = parameters.getInt("amplifierOffset", this.amplifierOffset);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.durationSecondsPerPower = previousDurationSecondsPerPower;
+            this.amplifierOffset = previousAmplifierOffset;
             this.restoreParameters(previous);
         }
     }

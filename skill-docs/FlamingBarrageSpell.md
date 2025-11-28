@@ -9,5 +9,9 @@
 | levelScaling / spellPowerPerLevel | INT | 2 | 每级技能威力增量 |
 | castTime | INT | 0 | 施法时间 (tick) |
 | cooldown | DOUBLE | 15.0 | 默认冷却时间 (秒) |
+| recastCount | INT | 5 | 重铸次数 |
+| recastIntervalTicks | INT | 80 | 重铸间隔 (tick) |
+| inaccuracyMin | FLOAT | 0.2 | 最小散射 |
+| inaccuracyMax | FLOAT | 1.4 | 最大散射 |
 
 **说明**: 参数可在管理员通道中通过 SpellParameters 进行覆盖。

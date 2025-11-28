@@ -32,11 +32,12 @@ import java.util.List;
 @AutoSpellConfig
 public class BlessingOfLifeSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "blessing_of_life");
+    private float healPerPower = 1f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.healing", Utils.stringTruncation(getSpellPower(spellLevel, caster), 1))
+                Component.translatable("ui.irons_spellbooks.healing", Utils.stringTruncation(getHealAmount(spellLevel, caster), 1))
         );
     }
 
@@ -92,7 +93,7 @@ public class BlessingOfLifeSpell extends AbstractSpell implements IParameterized
         if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData healTargetingData) {
             var targetEntity = healTargetingData.getTarget((ServerLevel) world);
             if (targetEntity != null) {
-                float healAmount = getSpellPower(spellLevel, entity);
+                float healAmount = getHealAmount(spellLevel, entity);
                 MinecraftForge.EVENT_BUS.post(new SpellHealEvent(entity, targetEntity, healAmount, getSchoolType()));
                 targetEntity.heal(healAmount);
                 Messages.sendToPlayersTrackingEntity(new ClientboundHealParticles(targetEntity.position()), targetEntity, true);
@@ -143,6 +144,7 @@ public class BlessingOfLifeSpell extends AbstractSpell implements IParameterized
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("healPerPower", ParameterType.DOUBLE, healPerPower, "每点威力对应的治疗量")
                 .build();
     }
 
@@ -151,10 +153,17 @@ public class BlessingOfLifeSpell extends AbstractSpell implements IParameterized
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        float previousHealPerPower = this.healPerPower;
+        this.healPerPower = (float) parameters.getDouble("healPerPower", this.healPerPower);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.healPerPower = previousHealPerPower;
             this.restoreParameters(previous);
         }
+    }
+
+    private float getHealAmount(int spellLevel, LivingEntity caster) {
+        return getSpellPower(spellLevel, caster) * healPerPower;
     }
 }

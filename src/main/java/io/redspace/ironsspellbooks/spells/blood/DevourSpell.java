@@ -44,6 +44,10 @@ public class DevourSpell extends AbstractSpell implements IParameterizedSpell  {
         );
     }
 
+    private float hpBonusMultiplier = .5f;
+    private float lifestealPercent = .15f;
+    private float targetRange = 9f;
+
     public DevourSpell() {
         this.manaCostPerLevel = 4;
         this.baseSpellPower = 6;
@@ -81,7 +85,7 @@ public class DevourSpell extends AbstractSpell implements IParameterizedSpell  {
 
     @Override
     public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        return Utils.preCastTargetHelper(level, entity, playerMagicData, this, 9, .1f);
+        return Utils.preCastTargetHelper(level, entity, playerMagicData, this, (int) targetRange, .1f);
     }
 
     @Override
@@ -103,7 +107,7 @@ public class DevourSpell extends AbstractSpell implements IParameterizedSpell  {
 
     @Override
     public SpellDamageSource getDamageSource(@Nullable Entity projectile, Entity attacker) {
-        return super.getDamageSource(projectile, attacker).setLifestealPercent(.15f);
+        return super.getDamageSource(projectile, attacker).setLifestealPercent(lifestealPercent);
     }
 
     public float getDamage(int spellLevel, LivingEntity caster) {
@@ -111,7 +115,7 @@ public class DevourSpell extends AbstractSpell implements IParameterizedSpell  {
     }
 
     public int getHpBonus(int spellLevel, LivingEntity caster) {
-        return 2 * (int) (getSpellPower(spellLevel, caster) * .25f);
+        return (int) (getSpellPower(spellLevel, caster) * hpBonusMultiplier);
     }
 
     
@@ -140,6 +144,9 @@ public class DevourSpell extends AbstractSpell implements IParameterizedSpell  {
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("hpBonusMultiplier", ParameterType.FLOAT, this.hpBonusMultiplier, "击杀生命加成系数")
+                .optional("lifestealPercent", ParameterType.FLOAT, this.lifestealPercent, "吸血比例")
+                .optional("targetRange", ParameterType.FLOAT, this.targetRange, "锁定目标距离")
                 .build();
     }
 
@@ -148,10 +155,29 @@ public class DevourSpell extends AbstractSpell implements IParameterizedSpell  {
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams prevExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(prevExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.hpBonusMultiplier, this.lifestealPercent, this.targetRange);
+        this.hpBonusMultiplier = parameters.getFloat("hpBonusMultiplier", this.hpBonusMultiplier);
+        this.lifestealPercent = parameters.getFloat("lifestealPercent", this.lifestealPercent);
+        this.targetRange = parameters.getFloat("targetRange", this.targetRange);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.hpBonusMultiplier = previous.hpBonusMultiplier();
+        this.lifestealPercent = previous.lifestealPercent();
+        this.targetRange = previous.targetRange();
+    }
+
+    private record ExtraParams(float hpBonusMultiplier, float lifestealPercent, float targetRange) {
     }
 }

@@ -37,6 +37,11 @@ import java.util.Optional;
 @AutoSpellConfig
 public class ArrowVolleySpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "arrow_volley");
+    private int baseRows = 4;
+    private int rowsPerLevel = 1;
+    private double arrowsPerRowPerLevel = .5d;
+    private double arrowsPerRowBase = 5d;
+    private float damageMultiplier = .25f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -139,15 +144,15 @@ public class ArrowVolleySpell extends AbstractSpell implements IParameterizedSpe
     }
 
     private int getRows(int spellLevel, LivingEntity entity) {
-        return 4 + spellLevel;
+        return baseRows + rowsPerLevel * spellLevel;
     }
 
     private int getArrowsPerRow(int spellLevel, LivingEntity entity) {
-        return 5 + spellLevel / 2;
+        return (int) Math.max(1, Math.floor(arrowsPerRowBase + arrowsPerRowPerLevel * spellLevel));
     }
 
     private float getDamage(int spellLevel, LivingEntity entity) {
-        return this.getSpellPower(spellLevel, entity) * .25f;
+        return this.getSpellPower(spellLevel, entity) * damageMultiplier;
     }
 
     @Override
@@ -186,6 +191,11 @@ public class ArrowVolleySpell extends AbstractSpell implements IParameterizedSpe
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("baseRows", ParameterType.INT, baseRows, "基础箭阵行数")
+                .optional("rowsPerLevel", ParameterType.INT, rowsPerLevel, "每级额外行数")
+                .optional("arrowsPerRowBase", ParameterType.DOUBLE, arrowsPerRowBase, "基础每行箭数")
+                .optional("arrowsPerRowPerLevel", ParameterType.DOUBLE, arrowsPerRowPerLevel, "每级增加的每行箭数")
+                .optional("damageMultiplier", ParameterType.DOUBLE, damageMultiplier, "伤害系数")
                 .build();
     }
 
@@ -194,9 +204,24 @@ public class ArrowVolleySpell extends AbstractSpell implements IParameterizedSpe
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        int previousBaseRows = this.baseRows;
+        int previousRowsPerLevel = this.rowsPerLevel;
+        double previousArrowsPerRowBase = this.arrowsPerRowBase;
+        double previousArrowsPerRowPerLevel = this.arrowsPerRowPerLevel;
+        float previousDamageMultiplier = this.damageMultiplier;
+        this.baseRows = parameters.getInt("baseRows", this.baseRows);
+        this.rowsPerLevel = parameters.getInt("rowsPerLevel", this.rowsPerLevel);
+        this.arrowsPerRowBase = parameters.getDouble("arrowsPerRowBase", this.arrowsPerRowBase);
+        this.arrowsPerRowPerLevel = parameters.getDouble("arrowsPerRowPerLevel", this.arrowsPerRowPerLevel);
+        this.damageMultiplier = (float) parameters.getDouble("damageMultiplier", this.damageMultiplier);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.baseRows = previousBaseRows;
+            this.rowsPerLevel = previousRowsPerLevel;
+            this.arrowsPerRowBase = previousArrowsPerRowBase;
+            this.arrowsPerRowPerLevel = previousArrowsPerRowPerLevel;
+            this.damageMultiplier = previousDamageMultiplier;
             this.restoreParameters(previous);
         }
     }

@@ -28,6 +28,10 @@ import java.util.List;
 @AutoSpellConfig
 public class AcupunctureSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "acupuncture");
+    private int baseNeedles = 4;
+    private int needlesPerLevel = 1;
+    private float damageBase = 1f;
+    private float damagePerPower = 1f;
 
     private final DefaultConfig defaultConfig = new DefaultConfig()
             .setMinRarity(SpellRarity.RARE)
@@ -110,11 +114,11 @@ public class AcupunctureSpell extends AbstractSpell implements IParameterizedSpe
     }
 
     private int getCount(int spellLevel, LivingEntity caster) {
-        return (int) ((4 + spellLevel) * getSpellPower(spellLevel, caster));
+        return (int) ((baseNeedles + needlesPerLevel * spellLevel) * getSpellPower(spellLevel, caster));
     }
 
     private float getDamage(int spellLevel, LivingEntity caster) {
-        return 1 + getSpellPower(spellLevel, caster);
+        return damageBase + damagePerPower * getSpellPower(spellLevel, caster);
     }
 
     
@@ -143,6 +147,10 @@ public class AcupunctureSpell extends AbstractSpell implements IParameterizedSpe
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("baseNeedles", ParameterType.INT, baseNeedles, "基础针数")
+                .optional("needlesPerLevel", ParameterType.INT, needlesPerLevel, "每级新增针数")
+                .optional("damageBase", ParameterType.DOUBLE, damageBase, "基础伤害")
+                .optional("damagePerPower", ParameterType.DOUBLE, damagePerPower, "每点威力附加伤害")
                 .build();
     }
 
@@ -151,9 +159,21 @@ public class AcupunctureSpell extends AbstractSpell implements IParameterizedSpe
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        int previousBaseNeedles = this.baseNeedles;
+        int previousNeedlesPerLevel = this.needlesPerLevel;
+        float previousDamageBase = this.damageBase;
+        float previousDamagePerPower = this.damagePerPower;
+        this.baseNeedles = parameters.getInt("baseNeedles", this.baseNeedles);
+        this.needlesPerLevel = parameters.getInt("needlesPerLevel", this.needlesPerLevel);
+        this.damageBase = (float) parameters.getDouble("damageBase", this.damageBase);
+        this.damagePerPower = (float) parameters.getDouble("damagePerPower", this.damagePerPower);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.baseNeedles = previousBaseNeedles;
+            this.needlesPerLevel = previousNeedlesPerLevel;
+            this.damageBase = previousDamageBase;
+            this.damagePerPower = previousDamagePerPower;
             this.restoreParameters(previous);
         }
     }

@@ -30,6 +30,7 @@ import java.util.Optional;
 @AutoSpellConfig
 public class BloodSlashSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "blood_slash");
+    private float lifestealPercent = .15f;
     private final DefaultConfig defaultConfig = new DefaultConfig()
             .setMinRarity(SpellRarity.RARE)
             .setSchoolResource(SchoolRegistry.BLOOD_RESOURCE)
@@ -89,7 +90,7 @@ public class BloodSlashSpell extends AbstractSpell implements IParameterizedSpel
 
     @Override
     public SpellDamageSource getDamageSource(@Nullable Entity projectile, Entity attacker) {
-        return super.getDamageSource(projectile, attacker).setLifestealPercent(.15f);
+        return super.getDamageSource(projectile, attacker).setLifestealPercent(lifestealPercent);
     }
 
     @Override
@@ -123,6 +124,7 @@ public class BloodSlashSpell extends AbstractSpell implements IParameterizedSpel
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("lifestealPercent", ParameterType.DOUBLE, lifestealPercent, "吸血比例 (0-1)")
                 .build();
     }
 
@@ -131,9 +133,12 @@ public class BloodSlashSpell extends AbstractSpell implements IParameterizedSpel
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        float previousLifestealPercent = this.lifestealPercent;
+        this.lifestealPercent = (float) parameters.getDouble("lifestealPercent", this.lifestealPercent);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.lifestealPercent = previousLifestealPercent;
             this.restoreParameters(previous);
         }
     }

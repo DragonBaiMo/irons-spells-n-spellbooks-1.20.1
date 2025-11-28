@@ -9,5 +9,8 @@
 | levelScaling / spellPowerPerLevel | INT | 1 | 每级技能威力增量 |
 | castTime | INT | 30 | 施法时间 (tick) |
 | cooldown | DOUBLE | 10.0 | 默认冷却时间 (秒) |
+| targetRange | DOUBLE | 64.0 | 目标选取距离 |
+| randomColor | BOOLEAN | true | 是否随机染色 |
+| fixedColor | STRING | random | 固定染色颜色（MC 颜色名，填 random 表示随机） |
 
 **说明**: 参数可在管理员通道中通过 SpellParameters 进行覆盖。

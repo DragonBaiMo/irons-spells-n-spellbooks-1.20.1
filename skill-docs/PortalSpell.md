@@ -9,5 +9,8 @@
 | levelScaling / spellPowerPerLevel | INT | 120 | 每级技能威力增量 |
 | castTime | INT | 0 | 施法时间 (tick) |
 | cooldown | DOUBLE | 180.0 | 默认冷却时间 (秒) |
+| portalDurationTicks | INT | 20 | 每点威力对应的传送门持续时间 (tick) |
+| recastWindowTicks | INT | 2400 | 二段施法允许的窗口时长 (tick) |
+| maxRange | DOUBLE | 48.0 | 最大放置距离 |
 
 **说明**: 参数可在管理员通道中通过 SpellParameters 进行覆盖。

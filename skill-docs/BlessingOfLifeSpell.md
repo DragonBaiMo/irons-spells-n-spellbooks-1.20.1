@@ -9,5 +9,6 @@
 | levelScaling / spellPowerPerLevel | INT | 1 | 每级技能威力增量 |
 | castTime | INT | 30 | 施法时间 (tick) |
 | cooldown | DOUBLE | 10.0 | 默认冷却时间 (秒) |
+| healPerPower | DOUBLE | 1.0 | 每点威力对应的治疗量 |
 
 **说明**: 参数可在管理员通道中通过 SpellParameters 进行覆盖。

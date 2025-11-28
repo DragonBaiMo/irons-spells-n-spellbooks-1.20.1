@@ -28,6 +28,12 @@ import java.util.Optional;
 @AutoSpellConfig
 public class WitherSkullSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "wither_skull");
+    private static final String PARAM_BASE_SPEED = "baseSpeed";
+    private static final String PARAM_SPEED_PER_LEVEL = "speedPerLevel";
+    private static final String PARAM_DAMAGE_MULTIPLIER = "damageMultiplier";
+    private float baseSpeed = 8;
+    private float speedPerLevel = 1;
+    private float damageMultiplier = .5f;
     private final DefaultConfig defaultConfig = new DefaultConfig()
             .setMinRarity(SpellRarity.UNCOMMON)
             .setSchoolResource(SchoolRegistry.BLOOD_RESOURCE)
@@ -87,7 +93,7 @@ public class WitherSkullSpell extends AbstractSpell implements IParameterizedSpe
 
     @Override
     public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        float speed = (8 + spellLevel) * .01f;
+        float speed = (baseSpeed + speedPerLevel * spellLevel) * .01f;
         float damage = getDamage(spellLevel, entity);
         ExtendedWitherSkull skull = new ExtendedWitherSkull(entity, level, speed, damage);
         Vec3 spawn = entity.getEyePosition().add(entity.getForward());
@@ -97,7 +103,7 @@ public class WitherSkullSpell extends AbstractSpell implements IParameterizedSpe
     }
 
     private float getDamage(int spellLevel, LivingEntity entity) {
-        return this.getSpellPower(spellLevel, entity) * .5f;
+        return this.getSpellPower(spellLevel, entity) * damageMultiplier;
     }
 
     
@@ -126,6 +132,9 @@ public class WitherSkullSpell extends AbstractSpell implements IParameterizedSpe
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_BASE_SPEED, ParameterType.DOUBLE, baseSpeed, "基础速度系数 (最终速度除以100)")
+                .optional(PARAM_SPEED_PER_LEVEL, ParameterType.DOUBLE, speedPerLevel, "每级速度增量系数")
+                .optional(PARAM_DAMAGE_MULTIPLIER, ParameterType.DOUBLE, damageMultiplier, "伤害倍率 (基于技能威力)")
                 .build();
     }
 
@@ -135,8 +144,14 @@ public class WitherSkullSpell extends AbstractSpell implements IParameterizedSpe
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.baseSpeed = (float) parameters.getDouble(PARAM_BASE_SPEED, this.baseSpeed);
+            this.speedPerLevel = (float) parameters.getDouble(PARAM_SPEED_PER_LEVEL, this.speedPerLevel);
+            this.damageMultiplier = (float) parameters.getDouble(PARAM_DAMAGE_MULTIPLIER, this.damageMultiplier);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.baseSpeed = 8;
+            this.speedPerLevel = 1;
+            this.damageMultiplier = .5f;
             this.restoreParameters(previous);
         }
     }

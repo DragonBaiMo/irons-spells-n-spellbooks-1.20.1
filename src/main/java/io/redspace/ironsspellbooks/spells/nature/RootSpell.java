@@ -34,6 +34,10 @@ import java.util.Optional;
 @AutoSpellConfig
 public class RootSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "root");
+    private static final String PARAM_MAX_TARGET_RANGE = "maxTargetRange";
+    private static final String PARAM_DURATION_PER_POWER = "durationPerPower";
+    private float maxTargetRange = 32;
+    private int durationPerPower = 20;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -96,7 +100,7 @@ public class RootSpell extends AbstractSpell implements IParameterizedSpell  {
 
     @Override
     public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        return Utils.preCastTargetHelper(level, entity, playerMagicData, this, 32, .35f);
+        return Utils.preCastTargetHelper(level, entity, playerMagicData, this, (int) maxTargetRange, .35f);
     }
 
     @Override
@@ -152,7 +156,7 @@ public class RootSpell extends AbstractSpell implements IParameterizedSpell  {
     }
 
     public int getDuration(int spellLevel, LivingEntity caster) {
-        return (int) (getSpellPower(spellLevel, caster) * 20);
+        return (int) (getSpellPower(spellLevel, caster) * durationPerPower);
     }
 
     
@@ -181,6 +185,8 @@ public class RootSpell extends AbstractSpell implements IParameterizedSpell  {
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_MAX_TARGET_RANGE, ParameterType.DOUBLE, maxTargetRange, "最大选取距离")
+                .optional(PARAM_DURATION_PER_POWER, ParameterType.INT, durationPerPower, "每点威力对应的束缚时长 (tick)")
                 .build();
     }
 
@@ -190,8 +196,12 @@ public class RootSpell extends AbstractSpell implements IParameterizedSpell  {
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.maxTargetRange = (float) parameters.getDouble(PARAM_MAX_TARGET_RANGE, this.maxTargetRange);
+            this.durationPerPower = parameters.getInt(PARAM_DURATION_PER_POWER, this.durationPerPower);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.maxTargetRange = 32;
+            this.durationPerPower = 20;
             this.restoreParameters(previous);
         }
     }

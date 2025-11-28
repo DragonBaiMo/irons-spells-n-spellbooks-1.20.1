@@ -31,6 +31,9 @@ import java.util.Optional;
 @AutoSpellConfig
 public class AcidOrbSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "acid_orb");
+    private float radiusPerPower = 3f;
+    private int rendAmplifierOffset = 2;
+    private double rendDurationSecondsPerPower = 20d;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -106,15 +109,15 @@ public class AcidOrbSpell extends AbstractSpell implements IParameterizedSpell  
     }
 
     public float getRadius(int spellLevel, LivingEntity caster) {
-        return getSpellPower(spellLevel, caster) * 3;
+        return (float) (getSpellPower(spellLevel, caster) * radiusPerPower);
     }
 
     public int getRendAmplifier(int spellLevel, LivingEntity caster) {
-        return spellLevel + 2;
+        return spellLevel + rendAmplifierOffset;
     }
 
     public int getRendDuration(int spellLevel, LivingEntity caster) {
-        return (int) (getSpellPower(spellLevel, caster) * 20 * 20);
+        return (int) (getSpellPower(spellLevel, caster) * rendDurationSecondsPerPower * 20);
     }
 
     @Override
@@ -158,6 +161,9 @@ public class AcidOrbSpell extends AbstractSpell implements IParameterizedSpell  
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("radiusPerPower", ParameterType.DOUBLE, radiusPerPower, "每点威力对应的爆炸半径")
+                .optional("rendAmplifierOffset", ParameterType.INT, rendAmplifierOffset, "破甲等级基础偏移值")
+                .optional("rendDurationSecondsPerPower", ParameterType.DOUBLE, rendDurationSecondsPerPower, "每点威力附加的破甲持续秒数")
                 .build();
     }
 
@@ -166,9 +172,18 @@ public class AcidOrbSpell extends AbstractSpell implements IParameterizedSpell  
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        float previousRadiusPerPower = this.radiusPerPower;
+        int previousRendAmplifierOffset = this.rendAmplifierOffset;
+        double previousRendDurationSecondsPerPower = this.rendDurationSecondsPerPower;
+        this.radiusPerPower = (float) parameters.getDouble("radiusPerPower", this.radiusPerPower);
+        this.rendAmplifierOffset = parameters.getInt("rendAmplifierOffset", this.rendAmplifierOffset);
+        this.rendDurationSecondsPerPower = parameters.getDouble("rendDurationSecondsPerPower", this.rendDurationSecondsPerPower);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.radiusPerPower = previousRadiusPerPower;
+            this.rendAmplifierOffset = previousRendAmplifierOffset;
+            this.rendDurationSecondsPerPower = previousRendDurationSecondsPerPower;
             this.restoreParameters(previous);
         }
     }

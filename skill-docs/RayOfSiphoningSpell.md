@@ -9,5 +9,7 @@
 | levelScaling / spellPowerPerLevel | INT | 1 | 每级技能威力增量 |
 | castTime | INT | 100 | 施法时间 (tick) |
 | cooldown | DOUBLE | 15.0 | 默认冷却时间 (秒) |
+| range | DOUBLE | 12.0 | 最大射程 |
+| damageMultiplier | DOUBLE | 0.25 | 每点威力伤害倍率 |
 
 **说明**: 参数可在管理员通道中通过 SpellParameters 进行覆盖。

@@ -36,14 +36,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 @AutoSpellConfig
 public class HasteSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "haste");
-    private static final int MAX_TARGETS = 5;
+    private float hasteRadius = 3f;
+    private int maxTargets = 5;
+    private float durationPerPower = 20f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
                 Component.translatable("ui.irons_spellbooks.hastened", Utils.stringTruncation((1 + getAmplifier(spellLevel, caster)) * .1f * 100, 1)),
                 Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getDuration(spellLevel, caster), 1)),
-                Component.translatable("ui.irons_spellbooks.max_victims", MAX_TARGETS)
+                Component.translatable("ui.irons_spellbooks.max_victims", maxTargets)
         );
     }
 
@@ -60,6 +62,9 @@ public class HasteSpell extends AbstractSpell implements IParameterizedSpell  {
         this.spellPowerPerLevel = 5;
         this.castTime = 30;
         this.baseManaCost = 50;
+        this.hasteRadius = 3f;
+        this.maxTargets = 5;
+        this.durationPerPower = 20f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -103,9 +108,8 @@ public class HasteSpell extends AbstractSpell implements IParameterizedSpell  {
                 serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(Component.translatable("ui.irons_spellbooks.spell_target_success_self", this.getDisplayName(serverPlayer)).withStyle(ChatFormatting.GREEN)));
             }
         }
-        float radius = 3f;
         var target = ((TargetEntityCastData) playerMagicData.getAdditionalCastData()).getTarget((ServerLevel) level);
-        var area = TargetedAreaEntity.createTargetAreaEntity(level, target.position(), radius, Utils.packRGB(this.getTargetingColor()), target);
+        var area = TargetedAreaEntity.createTargetAreaEntity(level, target.position(), hasteRadius, Utils.packRGB(this.getTargetingColor()), target);
         playerMagicData.setAdditionalCastData(new TargetedTargetAreaCastData(target, area));
         return true;
     }
@@ -115,10 +119,9 @@ public class HasteSpell extends AbstractSpell implements IParameterizedSpell  {
         if (playerMagicData.getAdditionalCastData() instanceof TargetedTargetAreaCastData targetData) {
             var targetEntity = targetData.getTarget((ServerLevel) world);
             if (targetEntity != null) {
-                float radius = 3;
                 AtomicInteger targets = new AtomicInteger(0);
-                targetEntity.level.getEntitiesOfClass(LivingEntity.class, targetEntity.getBoundingBox().inflate(radius)).forEach((victim) -> {
-                    if (targets.get() < MAX_TARGETS && victim.distanceToSqr(targetEntity) < radius * radius && Utils.shouldHealEntity(entity, victim)) {
+                targetEntity.level.getEntitiesOfClass(LivingEntity.class, targetEntity.getBoundingBox().inflate(hasteRadius)).forEach((victim) -> {
+                    if (targets.get() < maxTargets && victim.distanceToSqr(targetEntity) < hasteRadius * hasteRadius && Utils.shouldHealEntity(entity, victim)) {
                         victim.addEffect(new MobEffectInstance(MobEffectRegistry.HASTENED.get(), getDuration(spellLevel, entity), getAmplifier(spellLevel, entity)));
                         targets.incrementAndGet();
                     }
@@ -133,7 +136,7 @@ public class HasteSpell extends AbstractSpell implements IParameterizedSpell  {
     }
 
     public int getDuration(int spellLevel, LivingEntity caster) {
-        return (int) (getSpellPower(spellLevel, caster) * 20);
+        return (int) (getSpellPower(spellLevel, caster) * durationPerPower);
     }
 
     
@@ -162,6 +165,9 @@ public class HasteSpell extends AbstractSpell implements IParameterizedSpell  {
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("hasteRadius", ParameterType.FLOAT, this.hasteRadius, "生效半径")
+                .optional("maxTargets", ParameterType.INT, this.maxTargets, "最大友方数量")
+                .optional("durationPerPower", ParameterType.FLOAT, this.durationPerPower, "持续时间系数 (tick/威力)")
                 .build();
     }
 
@@ -170,10 +176,29 @@ public class HasteSpell extends AbstractSpell implements IParameterizedSpell  {
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams previousExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(previousExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.hasteRadius, this.maxTargets, this.durationPerPower);
+        this.hasteRadius = parameters.getFloat("hasteRadius", this.hasteRadius);
+        this.maxTargets = parameters.getInt("maxTargets", this.maxTargets);
+        this.durationPerPower = parameters.getFloat("durationPerPower", this.durationPerPower);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.hasteRadius = previous.hasteRadius();
+        this.maxTargets = previous.maxTargets();
+        this.durationPerPower = previous.durationPerPower();
+    }
+
+    private record ExtraParams(float hasteRadius, int maxTargets, float durationPerPower) {
     }
 }

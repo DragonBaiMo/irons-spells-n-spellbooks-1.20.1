@@ -33,6 +33,10 @@ import java.util.Optional;
 @AutoSpellConfig
 public class BlackHoleSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "black_hole");
+    private float baseRadius = 4f;
+    private float radiusPerLevel = 2f;
+    private float radiusPerPower = .125f;
+    private float damageMultiplier = 2f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -118,11 +122,11 @@ public class BlackHoleSpell extends AbstractSpell implements IParameterizedSpell
     }
 
     private float getDamage(int spellLevel, LivingEntity entity) {
-        return getSpellPower(spellLevel, entity) * 2;
+        return getSpellPower(spellLevel, entity) * damageMultiplier;
     }
 
     private float getRadius(int spellLevel, LivingEntity entity) {
-        return (2 * spellLevel + 4) + (1 * .125f * getSpellPower(spellLevel, entity));
+        return baseRadius + radiusPerLevel * spellLevel + radiusPerPower * getSpellPower(spellLevel, entity);
     }
 
     @Override
@@ -166,6 +170,10 @@ public class BlackHoleSpell extends AbstractSpell implements IParameterizedSpell
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("baseRadius", ParameterType.DOUBLE, baseRadius, "基础半径")
+                .optional("radiusPerLevel", ParameterType.DOUBLE, radiusPerLevel, "每级额外半径")
+                .optional("radiusPerPower", ParameterType.DOUBLE, radiusPerPower, "每点威力额外半径")
+                .optional("damageMultiplier", ParameterType.DOUBLE, damageMultiplier, "伤害系数")
                 .build();
     }
 
@@ -174,9 +182,21 @@ public class BlackHoleSpell extends AbstractSpell implements IParameterizedSpell
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        float previousBaseRadius = this.baseRadius;
+        float previousRadiusPerLevel = this.radiusPerLevel;
+        float previousRadiusPerPower = this.radiusPerPower;
+        float previousDamageMultiplier = this.damageMultiplier;
+        this.baseRadius = (float) parameters.getDouble("baseRadius", this.baseRadius);
+        this.radiusPerLevel = (float) parameters.getDouble("radiusPerLevel", this.radiusPerLevel);
+        this.radiusPerPower = (float) parameters.getDouble("radiusPerPower", this.radiusPerPower);
+        this.damageMultiplier = (float) parameters.getDouble("damageMultiplier", this.damageMultiplier);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.baseRadius = previousBaseRadius;
+            this.radiusPerLevel = previousRadiusPerLevel;
+            this.radiusPerPower = previousRadiusPerPower;
+            this.damageMultiplier = previousDamageMultiplier;
             this.restoreParameters(previous);
         }
     }

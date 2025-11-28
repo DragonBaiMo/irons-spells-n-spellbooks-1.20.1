@@ -9,5 +9,8 @@
 | levelScaling / spellPowerPerLevel | INT | 5 | 每级技能威力增量 |
 | castTime | INT | 0 | 施法时间 (tick) |
 | cooldown | DOUBLE | 60.0 | 默认冷却时间 (秒) |
+| baseAmplifier | INT | 4 | 基础增益等级 |
+| amplifierPerLevel | FLOAT | 1.0 | 每级增益系数 |
+| radius | FLOAT | 3.0 | 作用半径 |
 
 **说明**: 参数可在管理员通道中通过 SpellParameters 进行覆盖。

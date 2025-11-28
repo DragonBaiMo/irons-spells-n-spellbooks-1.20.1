@@ -37,6 +37,13 @@ import java.util.Optional;
 @AutoSpellConfig
 public class SonicBoomSpell extends AbstractEldritchSpell implements IParameterizedSpell {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "sonic_boom");
+    private static final String PARAM_BASE_RANGE = "baseRange";
+    private static final String PARAM_RANGE_PER_LEVEL = "rangePerLevel";
+    private static final String PARAM_BEAM_WIDTH = "beamWidth";
+
+    private float baseRange = 15;
+    private float rangePerLevel = 5;
+    private float beamWidth = .4f;
     private final DefaultConfig defaultConfig = new DefaultConfig()
             .setMinRarity(SpellRarity.LEGENDARY)
             .setSchoolResource(SchoolRegistry.ELDRITCH_RESOURCE)
@@ -66,9 +73,9 @@ public class SonicBoomSpell extends AbstractEldritchSpell implements IParameteri
             this.manaCostPerLevel = parameters.manaCostPerLevel();
             this.baseSpellPower = parameters.baseSpellPower();
             this.spellPowerPerLevel = parameters.spellPowerPerLevel();
-            this.castTime = parameters.castTime();
-            this.defaultConfig.cooldownInSeconds = parameters.cooldownSeconds();
-        }
+        this.castTime = parameters.castTime();
+        this.defaultConfig.cooldownInSeconds = parameters.cooldownSeconds();
+    }
 
     }
 
@@ -107,7 +114,7 @@ public class SonicBoomSpell extends AbstractEldritchSpell implements IParameteri
 
         List<? extends Entity> entities = level.getEntities(entity, boundingBox);
         for (Entity target : entities) {
-            HitResult hit = Utils.checkEntityIntersecting(target, start, end, .4f);
+            HitResult hit = Utils.checkEntityIntersecting(target, start, end, beamWidth);
             if (hit.getType() != HitResult.Type.MISS) {
                 DamageSources.applyDamage(target, getDamage(spellLevel, entity), getDamageSource(entity));
             }
@@ -131,8 +138,8 @@ public class SonicBoomSpell extends AbstractEldritchSpell implements IParameteri
 
     }
 
-    public static float getRange(int level, LivingEntity caster) {
-        return 15 + 5 * level;
+    public float getRange(int level, LivingEntity caster) {
+        return baseRange + rangePerLevel * level;
     }
 
     private float getDamage(int spellLevel, LivingEntity caster) {
@@ -170,6 +177,9 @@ public class SonicBoomSpell extends AbstractEldritchSpell implements IParameteri
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_BASE_RANGE, ParameterType.DOUBLE, baseRange, "基础射程")
+                .optional(PARAM_RANGE_PER_LEVEL, ParameterType.DOUBLE, rangePerLevel, "每级射程增量")
+                .optional(PARAM_BEAM_WIDTH, ParameterType.DOUBLE, beamWidth, "判定宽度")
                 .build();
     }
 
@@ -179,8 +189,14 @@ public class SonicBoomSpell extends AbstractEldritchSpell implements IParameteri
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.baseRange = (float) parameters.getDouble(PARAM_BASE_RANGE, this.baseRange);
+            this.rangePerLevel = (float) parameters.getDouble(PARAM_RANGE_PER_LEVEL, this.rangePerLevel);
+            this.beamWidth = (float) parameters.getDouble(PARAM_BEAM_WIDTH, this.beamWidth);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.baseRange = 15;
+            this.rangePerLevel = 5;
+            this.beamWidth = .4f;
             this.restoreParameters(previous);
         }
     }

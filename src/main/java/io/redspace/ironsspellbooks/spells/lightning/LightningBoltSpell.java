@@ -36,6 +36,7 @@ import java.util.Optional;
 @AutoSpellConfig
 public class LightningBoltSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "lightning_bolt");
+    private float radius = 4f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -55,6 +56,7 @@ public class LightningBoltSpell extends AbstractSpell implements IParameterizedS
         this.spellPowerPerLevel = 2;
         this.castTime = 0;
         this.baseManaCost = 75;
+        this.radius = 4f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -104,7 +106,7 @@ public class LightningBoltSpell extends AbstractSpell implements IParameterizedS
         lightningBolt.setPos(pos);
         level.addFreshEntity(lightningBolt);
 
-        float radius = 4;
+        float radius = this.radius;
         float damage = getSpellPower(spellLevel, entity);
         var finalpos = pos;
         level.getEntities(entity, AABB.ofSize(finalpos, radius * 2, radius * 2, radius * 2), (target) -> this.canHit(entity, target)).forEach(target -> {
@@ -150,6 +152,7 @@ public class LightningBoltSpell extends AbstractSpell implements IParameterizedS
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("radius", ParameterType.FLOAT, this.radius, "溅射半径")
                 .build();
     }
 
@@ -158,9 +161,12 @@ public class LightningBoltSpell extends AbstractSpell implements IParameterizedS
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        float previousRadius = this.radius;
+        this.radius = parameters.getFloat("radius", this.radius);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.radius = previousRadius;
             this.restoreParameters(previous);
         }
     }

@@ -47,6 +47,14 @@ import java.util.Optional;
 @AutoSpellConfig
 public class SacrificeSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "sacrifice");
+    private static final String PARAM_TARGET_RANGE = "targetRange";
+    private static final String PARAM_HEALTH_DAMAGE_RATIO = "healthDamageRatio";
+    private static final String PARAM_EXPLOSION_RADIUS_BASE = "explosionRadiusBase";
+    private static final String PARAM_EXPLOSION_RADIUS_HEALTH_SCALE = "explosionRadiusHealthScale";
+    private float targetRange = 25f;
+    private float healthDamageRatio = .5f;
+    private float explosionRadiusBase = 3f;
+    private float explosionRadiusHealthScale = .5f;
 
     private final DefaultConfig defaultConfig = new DefaultConfig()
             .setMinRarity(SpellRarity.RARE)
@@ -106,7 +114,7 @@ public class SacrificeSpell extends AbstractSpell implements IParameterizedSpell
     @Override
     public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         float aimAssist = .25f;
-        float range = 25f;
+        float range = targetRange;
         Vec3 start = entity.getEyePosition();
         Vec3 end = entity.getLookAngle().normalize().scale(range).add(start);
         var target = Utils.raycastForEntity(entity.level, entity, start, end, true, aimAssist, (e) -> e instanceof MagicSummon summon && summon.getSummoner() == entity);
@@ -128,8 +136,8 @@ public class SacrificeSpell extends AbstractSpell implements IParameterizedSpell
         if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData targetData) {
             var targetEntity = targetData.getTarget((ServerLevel) level);
             if (targetEntity instanceof MagicSummon summon && summon.getSummoner().getUUID().equals(entity.getUUID())) {
-                float damage = getDamage(spellLevel, entity) + targetEntity.getHealth() * .5f;
-                float explosionRadius = 3f * (1 + .5f * targetEntity.getHealth() / targetEntity.getMaxHealth());
+                float totalDamage = getDamage(spellLevel, entity) + targetEntity.getHealth() * healthDamageRatio;
+                float explosionRadius = explosionRadiusBase * (1 + explosionRadiusHealthScale * targetEntity.getHealth() / targetEntity.getMaxHealth());
                 MagicManager.spawnParticles(level, ParticleHelper.BLOOD, targetEntity.getX(), targetEntity.getY() + .25f, targetEntity.getZ(), 100, .03, .4, .03, .4, true);
                 MagicManager.spawnParticles(level, ParticleHelper.BLOOD, targetEntity.getX(), targetEntity.getY() + .25f, targetEntity.getZ(), 100, .03, .4, .03, .4, false);
                 MagicManager.spawnParticles(level, new BlastwaveParticleOptions(SchoolRegistry.BLOOD.get().getTargetingColor(), explosionRadius), targetEntity.getX(), targetEntity.getBoundingBox().getCenter().y, targetEntity.getZ(), 1, 0, 0, 0, 0, true);
@@ -139,8 +147,7 @@ public class SacrificeSpell extends AbstractSpell implements IParameterizedSpell
                     if (distanceSqr < explosionRadius * explosionRadius && Utils.hasLineOfSight(level, targetEntity.getBoundingBox().getCenter(), victim.getBoundingBox().getCenter(), true)) {
                         float p = (float) (distanceSqr / (explosionRadius * explosionRadius));
                         p = 1 - p * p * p;
-                        //IronsSpellbooks.LOGGER.debug("sacrifice spell damage: distance: {}, p: {}, damage: {}/{}", Math.sqrt(distanceSqr), p, damage * p, damage);
-                        DamageSources.applyDamage(victim, damage * p, getDamageSource(targetEntity, entity));
+                        DamageSources.applyDamage(victim, totalDamage * p, getDamageSource(targetEntity, entity));
                     }
                 }
                 CameraShakeManager.addCameraShake(new CameraShakeData(10, targetEntity.position(), 20));
@@ -183,6 +190,10 @@ public class SacrificeSpell extends AbstractSpell implements IParameterizedSpell
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_TARGET_RANGE, ParameterType.DOUBLE, targetRange, "可选取召唤物的最大距离")
+                .optional(PARAM_HEALTH_DAMAGE_RATIO, ParameterType.DOUBLE, healthDamageRatio, "消耗目标生命的伤害系数")
+                .optional(PARAM_EXPLOSION_RADIUS_BASE, ParameterType.DOUBLE, explosionRadiusBase, "基础爆炸半径")
+                .optional(PARAM_EXPLOSION_RADIUS_HEALTH_SCALE, ParameterType.DOUBLE, explosionRadiusHealthScale, "爆炸半径随生命的比例")
                 .build();
     }
 
@@ -192,8 +203,16 @@ public class SacrificeSpell extends AbstractSpell implements IParameterizedSpell
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.targetRange = (float) parameters.getDouble(PARAM_TARGET_RANGE, this.targetRange);
+            this.healthDamageRatio = (float) parameters.getDouble(PARAM_HEALTH_DAMAGE_RATIO, this.healthDamageRatio);
+            this.explosionRadiusBase = (float) parameters.getDouble(PARAM_EXPLOSION_RADIUS_BASE, this.explosionRadiusBase);
+            this.explosionRadiusHealthScale = (float) parameters.getDouble(PARAM_EXPLOSION_RADIUS_HEALTH_SCALE, this.explosionRadiusHealthScale);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.targetRange = 25f;
+            this.healthDamageRatio = .5f;
+            this.explosionRadiusBase = 3f;
+            this.explosionRadiusHealthScale = .5f;
             this.restoreParameters(previous);
         }
     }

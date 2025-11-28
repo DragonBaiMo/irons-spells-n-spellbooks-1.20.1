@@ -42,6 +42,16 @@ import java.util.Optional;
 @AutoSpellConfig
 public class ScorchSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "scorch");
+    private static final String PARAM_TARGET_RANGE = "targetRange";
+    private static final String PARAM_RADIUS = "radius";
+    private static final String PARAM_DAMAGE_MULTIPLIER = "damageMultiplier";
+    private static final String PARAM_FIRE_FIELD_DURATION = "fireFieldDurationTicks";
+    private static final String PARAM_FIRE_FIELD_DAMAGE_MULTIPLIER = "fireFieldDamageMultiplier";
+    private float targetRange = 32;
+    private float radius = 2.5f;
+    private float damageMultiplier = 1f;
+    private int fireFieldDuration = 200;
+    private float fireFieldDamageMultiplier = .1f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -101,7 +111,7 @@ public class ScorchSpell extends AbstractSpell implements IParameterizedSpell  {
     @Override
     public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         float radius = getRadius(entity);
-        var hitResult = Utils.raycastForEntity(level, entity, 32, true, .2f);
+        var hitResult = Utils.raycastForEntity(level, entity, targetRange, true, .2f);
         var area = TargetedAreaEntity.createTargetAreaEntity(level, hitResult.getLocation(), radius, Utils.packRGB(this.getTargetingColor()));
         playerMagicData.setAdditionalCastData(new TargetAreaCastData(hitResult instanceof  EntityHitResult entityHit ? entityHit.getEntity().position() : hitResult.getLocation(), area));
         return true;
@@ -130,8 +140,8 @@ public class ScorchSpell extends AbstractSpell implements IParameterizedSpell  {
                     });
             FireField fire = new FireField(level);
             fire.setOwner(entity);
-            fire.setDuration(200);
-            fire.setDamage(damage * .1f);
+            fire.setDuration(fireFieldDuration);
+            fire.setDamage(damage * fireFieldDamageMultiplier);
             fire.setRadius(radius);
             fire.setCircular();
             fire.moveTo(targetArea);
@@ -153,11 +163,11 @@ public class ScorchSpell extends AbstractSpell implements IParameterizedSpell  {
     }
 
     private float getDamage(int spellLevel, LivingEntity caster) {
-        return getSpellPower(spellLevel, caster);
+        return getSpellPower(spellLevel, caster) * damageMultiplier;
     }
 
     private float getRadius(LivingEntity caster) {
-        return 2.5f;
+        return radius;
     }
 //
 //    @Override
@@ -201,6 +211,11 @@ public class ScorchSpell extends AbstractSpell implements IParameterizedSpell  {
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_TARGET_RANGE, ParameterType.DOUBLE, targetRange, "选取目标最大距离")
+                .optional(PARAM_RADIUS, ParameterType.DOUBLE, radius, "爆炸/火场半径")
+                .optional(PARAM_DAMAGE_MULTIPLIER, ParameterType.DOUBLE, damageMultiplier, "伤害倍率 (基于技能威力)")
+                .optional(PARAM_FIRE_FIELD_DURATION, ParameterType.INT, fireFieldDuration, "火场持续时间 (tick)")
+                .optional(PARAM_FIRE_FIELD_DAMAGE_MULTIPLIER, ParameterType.DOUBLE, fireFieldDamageMultiplier, "火场伤害倍率")
                 .build();
     }
 
@@ -210,8 +225,18 @@ public class ScorchSpell extends AbstractSpell implements IParameterizedSpell  {
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.targetRange = (float) parameters.getDouble(PARAM_TARGET_RANGE, this.targetRange);
+            this.radius = (float) parameters.getDouble(PARAM_RADIUS, this.radius);
+            this.damageMultiplier = (float) parameters.getDouble(PARAM_DAMAGE_MULTIPLIER, this.damageMultiplier);
+            this.fireFieldDuration = parameters.getInt(PARAM_FIRE_FIELD_DURATION, this.fireFieldDuration);
+            this.fireFieldDamageMultiplier = (float) parameters.getDouble(PARAM_FIRE_FIELD_DAMAGE_MULTIPLIER, this.fireFieldDamageMultiplier);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.targetRange = 32;
+            this.radius = 2.5f;
+            this.damageMultiplier = 1f;
+            this.fireFieldDuration = 200;
+            this.fireFieldDamageMultiplier = .1f;
             this.restoreParameters(previous);
         }
     }

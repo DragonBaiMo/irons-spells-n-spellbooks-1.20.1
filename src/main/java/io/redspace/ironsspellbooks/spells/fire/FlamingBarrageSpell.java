@@ -38,6 +38,10 @@ public class FlamingBarrageSpell extends AbstractSpell implements IParameterized
             .setMaxLevel(5)
             .setCooldownSeconds(15)
             .build();
+    private int recastCount = 5;
+    private int recastIntervalTicks = 80;
+    private float inaccuracyMin = .2f;
+    private float inaccuracyMax = 1.4f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -53,6 +57,10 @@ public class FlamingBarrageSpell extends AbstractSpell implements IParameterized
         this.spellPowerPerLevel = 2;
         this.castTime = 0;
         this.baseManaCost = 80;
+        this.recastCount = 5;
+        this.recastIntervalTicks = 80;
+        this.inaccuracyMin = .2f;
+        this.inaccuracyMax = 1.4f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -84,7 +92,7 @@ public class FlamingBarrageSpell extends AbstractSpell implements IParameterized
 
     @Override
     public int getRecastCount(int spellLevel, @Nullable LivingEntity entity) {
-        return 5;
+        return recastCount;
     }
 
     @Override
@@ -97,7 +105,7 @@ public class FlamingBarrageSpell extends AbstractSpell implements IParameterized
         if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData targetEntityCastData) {
             var recasts = playerMagicData.getPlayerRecasts();
             if (!recasts.hasRecastForSpell(getSpellId())) {
-                recasts.addRecast(new RecastInstance(getSpellId(), spellLevel, getRecastCount(spellLevel, entity), 80, castSource, new MultiTargetEntityCastData(targetEntityCastData.getTarget((ServerLevel) level))), playerMagicData);
+                recasts.addRecast(new RecastInstance(getSpellId(), spellLevel, getRecastCount(spellLevel, entity), recastIntervalTicks, castSource, new MultiTargetEntityCastData(targetEntityCastData.getTarget((ServerLevel) level))), playerMagicData);
             } else {
                 var instance = recasts.getRecastInstance(this.getSpellId());
                 if (instance != null && instance.getCastData() instanceof MultiTargetEntityCastData targetingData) {
@@ -121,7 +129,7 @@ public class FlamingBarrageSpell extends AbstractSpell implements IParameterized
                     SmallMagicFireball fireball = new SmallMagicFireball(level, serverPlayer);
                     fireball.setPos(origin.subtract(0, fireball.getBbHeight(), 0));
                     var vec = target.getBoundingBox().getCenter().subtract(serverPlayer.getEyePosition()).normalize();
-                    var inaccuracy = (float) Mth.clampedLerp(.2f, 1.4f, target.position().distanceToSqr(serverPlayer.position()) / (32 * 32));
+                    var inaccuracy = (float) Mth.clampedLerp(inaccuracyMin, inaccuracyMax, target.position().distanceToSqr(serverPlayer.position()) / (32 * 32));
                     fireball.shoot(vec.scale(.75f), inaccuracy);
                     fireball.setDamage(getDamage(recastInstance.getSpellLevel(), serverPlayer));
                     fireball.setHomingTarget(target);
@@ -166,6 +174,10 @@ public class FlamingBarrageSpell extends AbstractSpell implements IParameterized
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("recastCount", ParameterType.INT, this.recastCount, "重铸次数")
+                .optional("recastIntervalTicks", ParameterType.INT, this.recastIntervalTicks, "重铸间隔 (tick)")
+                .optional("inaccuracyMin", ParameterType.FLOAT, this.inaccuracyMin, "最小散射")
+                .optional("inaccuracyMax", ParameterType.FLOAT, this.inaccuracyMax, "最大散射")
                 .build();
     }
 
@@ -174,10 +186,31 @@ public class FlamingBarrageSpell extends AbstractSpell implements IParameterized
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams prevExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(prevExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.recastCount, this.recastIntervalTicks, this.inaccuracyMin, this.inaccuracyMax);
+        this.recastCount = parameters.getInt("recastCount", this.recastCount);
+        this.recastIntervalTicks = parameters.getInt("recastIntervalTicks", this.recastIntervalTicks);
+        this.inaccuracyMin = parameters.getFloat("inaccuracyMin", this.inaccuracyMin);
+        this.inaccuracyMax = parameters.getFloat("inaccuracyMax", this.inaccuracyMax);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.recastCount = previous.recastCount();
+        this.recastIntervalTicks = previous.recastIntervalTicks();
+        this.inaccuracyMin = previous.inaccuracyMin();
+        this.inaccuracyMax = previous.inaccuracyMax();
+    }
+
+    private record ExtraParams(int recastCount, int recastIntervalTicks, float inaccuracyMin, float inaccuracyMax) {
     }
 }

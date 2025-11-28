@@ -31,6 +31,9 @@ import java.util.Optional;
 @AutoSpellConfig
 public class CloudOfRegenerationSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "cloud_of_regeneration");
+    public static final float DEFAULT_RADIUS = 5f;
+    private float healPerPower = .5f;
+    private float radius = DEFAULT_RADIUS;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -39,8 +42,6 @@ public class CloudOfRegenerationSpell extends AbstractSpell implements IParamete
                 Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(radius, 1))
         );
     }
-
-    public static final float radius = 5;
 
     private final DefaultConfig defaultConfig = new DefaultConfig()
             .setMinRarity(SpellRarity.COMMON)
@@ -86,7 +87,7 @@ public class CloudOfRegenerationSpell extends AbstractSpell implements IParamete
     }
 
     private float getHealing(int spellLevel, LivingEntity caster) {
-        return getSpellPower(spellLevel, caster) * .5f;
+        return getSpellPower(spellLevel, caster) * healPerPower;
     }
 
     @Override
@@ -140,6 +141,8 @@ public class CloudOfRegenerationSpell extends AbstractSpell implements IParamete
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("healPerPower", ParameterType.DOUBLE, healPerPower, "每点威力对应的治疗量")
+                .optional("radius", ParameterType.DOUBLE, radius, "治疗半径")
                 .build();
     }
 
@@ -148,9 +151,15 @@ public class CloudOfRegenerationSpell extends AbstractSpell implements IParamete
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        float previousHealPerPower = this.healPerPower;
+        float previousRadius = this.radius;
+        this.healPerPower = (float) parameters.getDouble("healPerPower", this.healPerPower);
+        this.radius = (float) parameters.getDouble("radius", this.radius);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.healPerPower = previousHealPerPower;
+            this.radius = previousRadius;
             this.restoreParameters(previous);
         }
     }

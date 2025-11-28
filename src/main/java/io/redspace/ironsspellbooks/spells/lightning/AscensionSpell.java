@@ -33,6 +33,7 @@ import java.util.List;
 @AutoSpellConfig
 public class AscensionSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "ascension");
+    private float strikeRadius = 5f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -116,7 +117,7 @@ public class AscensionSpell extends AbstractSpell implements IParameterizedSpell
         level.addFreshEntity(lightningBolt);
 
         //livingEntity.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 100));
-        float radius = 5;
+        float radius = strikeRadius;
         level.getEntities(entity, entity.getBoundingBox().inflate(radius)).forEach(target -> {
             double distance = target.distanceToSqr(strikePos);
             if (distance < radius * radius) {
@@ -169,6 +170,7 @@ public class AscensionSpell extends AbstractSpell implements IParameterizedSpell
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("strikeRadius", ParameterType.DOUBLE, strikeRadius, "闪电落点影响半径")
                 .build();
     }
 
@@ -177,9 +179,12 @@ public class AscensionSpell extends AbstractSpell implements IParameterizedSpell
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        float previousStrikeRadius = this.strikeRadius;
+        this.strikeRadius = (float) parameters.getDouble("strikeRadius", this.strikeRadius);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.strikeRadius = previousStrikeRadius;
             this.restoreParameters(previous);
         }
     }

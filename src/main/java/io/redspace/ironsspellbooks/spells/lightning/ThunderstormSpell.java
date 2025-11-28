@@ -29,6 +29,12 @@ import java.util.Optional;
 @AutoSpellConfig
 public class ThunderstormSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "thunderstorm");
+    private static final String PARAM_BASE_DURATION_SECONDS = "durationBaseSeconds";
+    private static final String PARAM_DURATION_PER_LEVEL_SECONDS = "durationPerLevelSeconds";
+    private static final String PARAM_BASE_AMPLIFIER = "baseAmplifier";
+    private int baseDurationSeconds = 20;
+    private int durationPerLevelSeconds = 2;
+    private int baseAmplifier = 8;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -93,11 +99,11 @@ public class ThunderstormSpell extends AbstractSpell implements IParameterizedSp
     }
 
     private int getAmplifierForLevel(int spellLevel, LivingEntity caster) {
-        return 8 + (int) ((spellLevel - 1) * getEntityPowerMultiplier(caster));
+        return baseAmplifier + (int) ((spellLevel - 1) * getEntityPowerMultiplier(caster));
     }
 
     public int getDurationTicks(int spellLevel, LivingEntity caster) {
-        return (int) ((20 + (2 * (spellLevel - 1) * getEntityPowerMultiplier(caster))) * 20);
+        return (int) ((baseDurationSeconds + (durationPerLevelSeconds * (spellLevel - 1) * getEntityPowerMultiplier(caster))) * 20);
     }
 
     
@@ -126,6 +132,9 @@ public class ThunderstormSpell extends AbstractSpell implements IParameterizedSp
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_BASE_DURATION_SECONDS, ParameterType.INT, baseDurationSeconds, "基础持续时间 (秒)")
+                .optional(PARAM_DURATION_PER_LEVEL_SECONDS, ParameterType.INT, durationPerLevelSeconds, "每级持续时间增量 (秒)")
+                .optional(PARAM_BASE_AMPLIFIER, ParameterType.INT, baseAmplifier, "基础威力等级")
                 .build();
     }
 
@@ -135,8 +144,14 @@ public class ThunderstormSpell extends AbstractSpell implements IParameterizedSp
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.baseDurationSeconds = parameters.getInt(PARAM_BASE_DURATION_SECONDS, this.baseDurationSeconds);
+            this.durationPerLevelSeconds = parameters.getInt(PARAM_DURATION_PER_LEVEL_SECONDS, this.durationPerLevelSeconds);
+            this.baseAmplifier = parameters.getInt(PARAM_BASE_AMPLIFIER, this.baseAmplifier);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.baseDurationSeconds = 20;
+            this.durationPerLevelSeconds = 2;
+            this.baseAmplifier = 8;
             this.restoreParameters(previous);
         }
     }

@@ -43,6 +43,13 @@ import java.util.Optional;
 @AutoSpellConfig
 public class WallOfFireSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "wall_of_fire");
+    private static final String PARAM_MAX_WALL_LENGTH = "maxWallLength";
+    private static final String PARAM_RECAST_COUNT = "recastCount";
+    private static final String PARAM_RECAST_COOLDOWN_TICKS = "recastCooldownTicks";
+
+    private float maxWallLength = 0;
+    private int recastCountOverride = 3;
+    private int recastCooldownTicks = 40;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -65,6 +72,7 @@ public class WallOfFireSpell extends AbstractSpell implements IParameterizedSpel
         this.spellPowerPerLevel = 1;
         this.castTime = 0;
         this.baseManaCost = 30;
+        this.maxWallLength = getWallLength(defaultConfig.maxLevel, null);
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -101,7 +109,7 @@ public class WallOfFireSpell extends AbstractSpell implements IParameterizedSpel
 
     @Override
     public int getRecastCount(int spellLevel, @Nullable LivingEntity entity) {
-        return 3;
+        return recastCountOverride;
     }
 
     @Override
@@ -112,7 +120,7 @@ public class WallOfFireSpell extends AbstractSpell implements IParameterizedSpel
             addAnchor(fireWallData, world, entity, recast);
         } else {
             var fireWallData = new FireWallData(getWallLength(spellLevel, entity));
-            var recast = new RecastInstance(getSpellId(), spellLevel, getRecastCount(spellLevel, entity), 40, castSource, fireWallData);
+            var recast = new RecastInstance(getSpellId(), spellLevel, getRecastCount(spellLevel, entity), recastCooldownTicks, castSource, fireWallData);
             addAnchor(fireWallData, world, entity, recast);
             playerMagicData.getPlayerRecasts().addRecast(recast, playerMagicData);
         }
@@ -149,7 +157,8 @@ public class WallOfFireSpell extends AbstractSpell implements IParameterizedSpel
     }
 
     private float getWallLength(int spellLevel, LivingEntity entity) {
-        return 10 + spellLevel * 3 * getEntityPowerMultiplier(entity);
+        float base = 10 + spellLevel * 3 * getEntityPowerMultiplier(entity);
+        return Math.min(base, maxWallLength);
     }
 
     private float getDamage(int spellLevel, LivingEntity sourceEntity) {
@@ -290,6 +299,9 @@ public class WallOfFireSpell extends AbstractSpell implements IParameterizedSpel
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_MAX_WALL_LENGTH, ParameterType.DOUBLE, maxWallLength, "最大火墙总长度")
+                .optional(PARAM_RECAST_COUNT, ParameterType.INT, recastCountOverride, "可用锚点次数")
+                .optional(PARAM_RECAST_COOLDOWN_TICKS, ParameterType.INT, recastCooldownTicks, "锚点窗口时长 (tick)")
                 .build();
     }
 
@@ -299,8 +311,14 @@ public class WallOfFireSpell extends AbstractSpell implements IParameterizedSpel
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.maxWallLength = (float) parameters.getDouble(PARAM_MAX_WALL_LENGTH, this.maxWallLength);
+            this.recastCountOverride = parameters.getInt(PARAM_RECAST_COUNT, this.recastCountOverride);
+            this.recastCooldownTicks = parameters.getInt(PARAM_RECAST_COOLDOWN_TICKS, this.recastCooldownTicks);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.maxWallLength = getWallLength(defaultConfig.maxLevel, entity);
+            this.recastCountOverride = 3;
+            this.recastCooldownTicks = 40;
             this.restoreParameters(previous);
         }
     }

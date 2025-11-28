@@ -31,6 +31,8 @@ import java.util.Optional;
 @AutoSpellConfig
 public class BlightSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "blight");
+    private int amplifierOffset = -1;
+    private double durationSecondsPerPower = 30d;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -111,11 +113,11 @@ public class BlightSpell extends AbstractSpell implements IParameterizedSpell  {
     }
 
     public int getAmplifier(int spellLevel, LivingEntity caster) {
-        return (int) (spellLevel - 1);
+        return (int) (spellLevel + amplifierOffset);
     }
 
     public int getDuration(int spellLevel, LivingEntity caster) {
-        return (int) (getSpellPower(spellLevel, caster) * 20 * 30);
+        return (int) (getSpellPower(spellLevel, caster) * durationSecondsPerPower * 20);
     }
 
     
@@ -144,6 +146,8 @@ public class BlightSpell extends AbstractSpell implements IParameterizedSpell  {
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("amplifierOffset", ParameterType.INT, amplifierOffset, "效果等级偏移")
+                .optional("durationSecondsPerPower", ParameterType.DOUBLE, durationSecondsPerPower, "每点威力对应的持续时间 (秒)")
                 .build();
     }
 
@@ -152,9 +156,15 @@ public class BlightSpell extends AbstractSpell implements IParameterizedSpell  {
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        int previousAmplifierOffset = this.amplifierOffset;
+        double previousDurationSecondsPerPower = this.durationSecondsPerPower;
+        this.amplifierOffset = parameters.getInt("amplifierOffset", this.amplifierOffset);
+        this.durationSecondsPerPower = parameters.getDouble("durationSecondsPerPower", this.durationSecondsPerPower);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.amplifierOffset = previousAmplifierOffset;
+            this.durationSecondsPerPower = previousDurationSecondsPerPower;
             this.restoreParameters(previous);
         }
     }

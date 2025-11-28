@@ -41,6 +41,11 @@ import java.util.Optional;
 @AutoSpellConfig
 public class FlamingStrikeSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "flaming_strike");
+    private float arcRadius = 3.25f;
+    private float arcDistance = 1.9f;
+    private float fireTimeSeconds = 3f;
+    private float weaponDamageScale = 1f;
+    private float bonusDamageScale = 1f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -60,6 +65,11 @@ public class FlamingStrikeSpell extends AbstractSpell implements IParameterizedS
         this.spellPowerPerLevel = 2;
         this.castTime = 10;
         this.baseManaCost = 30;
+        this.arcRadius = 3.25f;
+        this.arcDistance = 1.9f;
+        this.fireTimeSeconds = 3f;
+        this.weaponDamageScale = 1f;
+        this.bonusDamageScale = 1f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -113,7 +123,7 @@ public class FlamingStrikeSpell extends AbstractSpell implements IParameterizedS
     @Override
     public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
         float radius = 3.25f;
-        float distance = 1.9f;
+        float distance = arcDistance;
         Vec3 forward = entity.getForward();
         Vec3 hitLocation = entity.position().add(0, entity.getBbHeight() * .3f, 0).add(forward.scale(distance));
         var entities = level.getEntities(entity, AABB.ofSize(hitLocation, radius * 2, radius, radius * 2));
@@ -140,11 +150,11 @@ public class FlamingStrikeSpell extends AbstractSpell implements IParameterizedS
 
     @Override
     public SpellDamageSource getDamageSource(Entity projectile, Entity attacker) {
-        return super.getDamageSource(projectile, attacker).setFireTime(3);
+        return super.getDamageSource(projectile, attacker).setFireTime((int) fireTimeSeconds);
     }
 
     private float getDamage(int spellLevel, LivingEntity entity) {
-        return getSpellPower(spellLevel, entity) + Utils.getWeaponDamage(entity, MobType.UNDEFINED) + EnchantmentHelper.getFireAspect(entity);
+        return getSpellPower(spellLevel, entity) * bonusDamageScale + Utils.getWeaponDamage(entity, MobType.UNDEFINED) * weaponDamageScale + EnchantmentHelper.getFireAspect(entity);
     }
 
     private String getDamageText(int spellLevel, LivingEntity entity) {
@@ -196,6 +206,11 @@ public class FlamingStrikeSpell extends AbstractSpell implements IParameterizedS
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("arcRadius", ParameterType.FLOAT, this.arcRadius, "挥击半径")
+                .optional("arcDistance", ParameterType.FLOAT, this.arcDistance, "前探距离")
+                .optional("fireTimeSeconds", ParameterType.FLOAT, this.fireTimeSeconds, "点燃时长 (秒)")
+                .optional("weaponDamageScale", ParameterType.FLOAT, this.weaponDamageScale, "武器伤害系数")
+                .optional("bonusDamageScale", ParameterType.FLOAT, this.bonusDamageScale, "技能威力系数")
                 .build();
     }
 
@@ -204,10 +219,33 @@ public class FlamingStrikeSpell extends AbstractSpell implements IParameterizedS
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams prevExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(prevExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.arcRadius, this.arcDistance, this.fireTimeSeconds, this.weaponDamageScale, this.bonusDamageScale);
+        this.arcRadius = parameters.getFloat("arcRadius", this.arcRadius);
+        this.arcDistance = parameters.getFloat("arcDistance", this.arcDistance);
+        this.fireTimeSeconds = parameters.getFloat("fireTimeSeconds", this.fireTimeSeconds);
+        this.weaponDamageScale = parameters.getFloat("weaponDamageScale", this.weaponDamageScale);
+        this.bonusDamageScale = parameters.getFloat("bonusDamageScale", this.bonusDamageScale);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.arcRadius = previous.arcRadius();
+        this.arcDistance = previous.arcDistance();
+        this.fireTimeSeconds = previous.fireTimeSeconds();
+        this.weaponDamageScale = previous.weaponDamageScale();
+        this.bonusDamageScale = previous.bonusDamageScale();
+    }
+
+    private record ExtraParams(float arcRadius, float arcDistance, float fireTimeSeconds, float weaponDamageScale, float bonusDamageScale) {
     }
 }

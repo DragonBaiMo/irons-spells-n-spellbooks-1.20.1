@@ -41,6 +41,14 @@ import java.util.Optional;
 @AutoSpellConfig
 public class RaiseDeadSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "raise_dead");
+    private static final String PARAM_SUMMON_DURATION = "summonDurationTicks";
+    private static final String PARAM_BASE_RADIUS = "baseRadius";
+    private static final String PARAM_RADIUS_PER_LEVEL = "radiusPerLevel";
+    private static final String PARAM_SKELETON_CHANCE = "skeletonChance";
+    private int summonDurationTicks = 20 * 60 * 10;
+    private float baseRadius = 1.5f;
+    private float radiusPerLevel = .185f;
+    private float skeletonChance = .3f;
     private final DefaultConfig defaultConfig = new DefaultConfig()
             .setMinRarity(SpellRarity.UNCOMMON)
             .setSchoolResource(SchoolRegistry.BLOOD_RESOURCE)
@@ -100,10 +108,10 @@ public class RaiseDeadSpell extends AbstractSpell implements IParameterizedSpell
 
     @Override
     public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        int summonTime = 20 * 60 * 10;
-        float radius = 1.5f + .185f * spellLevel;
+        int summonTime = summonDurationTicks;
+        float radius = baseRadius + radiusPerLevel * spellLevel;
         for (int i = 0; i < spellLevel; i++) {
-            boolean isSkeleton = Utils.random.nextDouble() < .3;
+            boolean isSkeleton = Utils.random.nextDouble() < skeletonChance;
             var equipment = getEquipment(getSpellPower(spellLevel, entity), Utils.random);
 
             Monster undead = isSkeleton ? new SummonedSkeleton(world, entity, true) : new SummonedZombie(world, entity, true);
@@ -191,6 +199,10 @@ public class RaiseDeadSpell extends AbstractSpell implements IParameterizedSpell
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_SUMMON_DURATION, ParameterType.INT, summonDurationTicks, "亡灵持续时间 (tick)")
+                .optional(PARAM_BASE_RADIUS, ParameterType.DOUBLE, baseRadius, "召唤基础环半径")
+                .optional(PARAM_RADIUS_PER_LEVEL, ParameterType.DOUBLE, radiusPerLevel, "每级半径增量")
+                .optional(PARAM_SKELETON_CHANCE, ParameterType.DOUBLE, skeletonChance, "生成骷髅概率 (0-1)")
                 .build();
     }
 
@@ -200,8 +212,16 @@ public class RaiseDeadSpell extends AbstractSpell implements IParameterizedSpell
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.summonDurationTicks = parameters.getInt(PARAM_SUMMON_DURATION, this.summonDurationTicks);
+            this.baseRadius = (float) parameters.getDouble(PARAM_BASE_RADIUS, this.baseRadius);
+            this.radiusPerLevel = (float) parameters.getDouble(PARAM_RADIUS_PER_LEVEL, this.radiusPerLevel);
+            this.skeletonChance = (float) parameters.getDouble(PARAM_SKELETON_CHANCE, this.skeletonChance);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.summonDurationTicks = 20 * 60 * 10;
+            this.baseRadius = 1.5f;
+            this.radiusPerLevel = .185f;
+            this.skeletonChance = .3f;
             this.restoreParameters(previous);
         }
     }

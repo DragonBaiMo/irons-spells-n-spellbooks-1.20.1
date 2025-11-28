@@ -49,6 +49,7 @@ public class WispEntity extends PathfinderMob implements GeoEntity {
     private Vec3 targetSearchStart;
     private Vec3 lastTickPos;
     private float damageAmount;
+    private int maxLifetimeTicks = 200;
 
     public WispEntity(EntityType<? extends WispEntity> entityType, Level level) {
         super(entityType, level);
@@ -112,7 +113,7 @@ public class WispEntity extends PathfinderMob implements GeoEntity {
         } else {
             var target = this.getTarget();
             if (target == null || target.isRemoved()) {
-                if (tickCount > 10) {
+                if (tickCount > 10 || tickCount > maxLifetimeTicks) {
                     this.popAndDie();
                 }
             } else {
@@ -127,6 +128,10 @@ public class WispEntity extends PathfinderMob implements GeoEntity {
             }
         }
         lastTickPos = this.position();
+    }
+
+    public void setLifetimeLimit(int ticks) {
+        this.maxLifetimeTicks = ticks;
     }
 
     public void setOwner(@Nullable Entity pOwner) {

@@ -42,6 +42,9 @@ import java.util.Optional;
 @AutoSpellConfig
 public class DivineSmiteSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "divine_smite");
+    private float smiteRadius = 2.2f;
+    private float smiteRange = 1.7f;
+    private float particleYOffset = 2f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -61,6 +64,9 @@ public class DivineSmiteSpell extends AbstractSpell implements IParameterizedSpe
         this.spellPowerPerLevel = 3;
         this.castTime = 16;
         this.baseManaCost = 30;
+        this.smiteRadius = 2.2f;
+        this.smiteRange = 1.7f;
+        this.particleYOffset = 2f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -113,10 +119,10 @@ public class DivineSmiteSpell extends AbstractSpell implements IParameterizedSpe
 
     @Override
     public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        float radius = 2.2f;
-        float range = 1.7f;
+        float radius = smiteRadius;
+        float range = smiteRange;
         Vec3 smiteLocation = Utils.raycastForBlock(level, entity.getEyePosition(), entity.getEyePosition().add(entity.getForward().multiply(range, 0, range)), ClipContext.Fluid.NONE).getLocation();
-        Vec3 particleLocation = level.clip(new ClipContext(smiteLocation, smiteLocation.add(0, -2, 0), ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, null)).getLocation().add(0, 0.1, 0);
+        Vec3 particleLocation = level.clip(new ClipContext(smiteLocation, smiteLocation.add(0, -particleYOffset, 0), ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, null)).getLocation().add(0, 0.1, 0);
         MagicManager.spawnParticles(level, new BlastwaveParticleOptions(SchoolRegistry.HOLY.get().getTargetingColor(), radius * 2),
                 particleLocation.x, particleLocation.y, particleLocation.z, 1, 0, 0, 0, 0, true);
         MagicManager.spawnParticles(level, ParticleTypes.ELECTRIC_SPARK, particleLocation.x, particleLocation.y, particleLocation.z, 50, 0, 0, 0, 1, false);
@@ -191,6 +197,9 @@ public class DivineSmiteSpell extends AbstractSpell implements IParameterizedSpe
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("smiteRadius", ParameterType.FLOAT, this.smiteRadius, "冲击半径")
+                .optional("smiteRange", ParameterType.FLOAT, this.smiteRange, "落点前推距离")
+                .optional("particleYOffset", ParameterType.FLOAT, this.particleYOffset, "落点向下探测高度")
                 .build();
     }
 
@@ -199,10 +208,29 @@ public class DivineSmiteSpell extends AbstractSpell implements IParameterizedSpe
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams prevExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(prevExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.smiteRadius, this.smiteRange, this.particleYOffset);
+        this.smiteRadius = parameters.getFloat("smiteRadius", this.smiteRadius);
+        this.smiteRange = parameters.getFloat("smiteRange", this.smiteRange);
+        this.particleYOffset = parameters.getFloat("particleYOffset", this.particleYOffset);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.smiteRadius = previous.smiteRadius();
+        this.smiteRange = previous.smiteRange();
+        this.particleYOffset = previous.particleYOffset();
+    }
+
+    private record ExtraParams(float smiteRadius, float smiteRange, float particleYOffset) {
     }
 }

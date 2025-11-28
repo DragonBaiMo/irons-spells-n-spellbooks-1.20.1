@@ -9,5 +9,8 @@
 | levelScaling / spellPowerPerLevel | INT | 1 | 每级技能威力增量 |
 | castTime | INT | 100 | 施法时间 (tick) |
 | cooldown | DOUBLE | 12.0 | 默认冷却时间 (秒) |
+| damageBase | FLOAT | 1.0 | 基础伤害加值 |
+| damageScale | FLOAT | 0.75 | 伤害系数 |
+| aiStopRange | FLOAT | 10.0 | AI 停止施法距离 |
 
 **说明**: 参数可在管理员通道中通过 SpellParameters 进行覆盖。

@@ -9,5 +9,7 @@
 | levelScaling / spellPowerPerLevel | INT | 0 | 每级技能威力增量 |
 | castTime | INT | 30 | 施法时间 (tick) |
 | cooldown | DOUBLE | 15.0 | 默认冷却时间 (秒) |
+| baseCount | INT | 3 | 基础爆炸头数量 |
+| countPerLevel | INT | 1 | 每级额外数量 |
 
 **说明**: 参数可在管理员通道中通过 SpellParameters 进行覆盖。

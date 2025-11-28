@@ -29,6 +29,12 @@ import java.util.Optional;
 @AutoSpellConfig
 public class WololoSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "wololo");
+    private static final String PARAM_TARGET_RANGE = "targetRange";
+    private static final String PARAM_RANDOM_COLOR = "randomColor";
+    private static final String PARAM_FIXED_COLOR = "fixedColor";
+    private float targetRange = 64;
+    private boolean randomColor = true;
+    private String fixedColor = "";
 
     private final DefaultConfig defaultConfig = new DefaultConfig()
             .setMinRarity(SpellRarity.LEGENDARY)
@@ -79,7 +85,7 @@ public class WololoSpell extends AbstractSpell implements IParameterizedSpell  {
 
     @Override
     public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        return Utils.preCastTargetHelper(level, entity, playerMagicData, this, 64, 1.0f, true, livingEntity -> livingEntity instanceof Sheep sheep/* && sheep.getColor() == DyeColor.BLUE*/);
+        return Utils.preCastTargetHelper(level, entity, playerMagicData, this, (int) targetRange, 1.0f, true, livingEntity -> livingEntity instanceof Sheep sheep);
     }
 
     @Override
@@ -87,7 +93,17 @@ public class WololoSpell extends AbstractSpell implements IParameterizedSpell  {
         if (playerMagicData.getAdditionalCastData() instanceof TargetEntityCastData healTargetingData) {
             var targetEntity = healTargetingData.getTarget((ServerLevel) world);
             if (targetEntity instanceof Sheep sheep) {
-                sheep.setColor(DyeColor.values()[Utils.random.nextInt(DyeColor.values().length)]);
+                if (randomColor && fixedColor.isEmpty()) {
+                    sheep.setColor(DyeColor.values()[Utils.random.nextInt(DyeColor.values().length)]);
+                } else if (!fixedColor.isEmpty()) {
+                    try {
+                        sheep.setColor(DyeColor.valueOf(fixedColor.toUpperCase()));
+                    } catch (IllegalArgumentException ignored) {
+                        sheep.setColor(DyeColor.values()[Utils.random.nextInt(DyeColor.values().length)]);
+                    }
+                } else {
+                    sheep.setColor(DyeColor.WHITE);
+                }
                 MagicManager.spawnParticles(world, ParticleTypes.CRIT, sheep.getX(), sheep.getY() + .6, sheep.getZ(), 25, .5, .5, .5, 0, false);
             }
         }
@@ -120,6 +136,9 @@ public class WololoSpell extends AbstractSpell implements IParameterizedSpell  {
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_TARGET_RANGE, ParameterType.DOUBLE, targetRange, "目标选取距离")
+                .optional(PARAM_RANDOM_COLOR, ParameterType.BOOLEAN, randomColor, "是否随机染色")
+                .optional(PARAM_FIXED_COLOR, ParameterType.STRING, fixedColor.isEmpty() ? "random" : fixedColor, "固定染色颜色 (使用 MC 颜色名，空为默认随机)")
                 .build();
     }
 
@@ -129,8 +148,15 @@ public class WololoSpell extends AbstractSpell implements IParameterizedSpell  {
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.targetRange = (float) parameters.getDouble(PARAM_TARGET_RANGE, this.targetRange);
+            this.randomColor = parameters.getBoolean(PARAM_RANDOM_COLOR, this.randomColor);
+            String color = parameters.getString(PARAM_FIXED_COLOR, this.fixedColor);
+            this.fixedColor = "random".equalsIgnoreCase(color) ? "" : color;
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.targetRange = 64;
+            this.randomColor = true;
+            this.fixedColor = "";
             this.restoreParameters(previous);
         }
     }

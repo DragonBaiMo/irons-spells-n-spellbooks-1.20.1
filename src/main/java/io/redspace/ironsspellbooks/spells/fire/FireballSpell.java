@@ -28,6 +28,10 @@ import java.util.Optional;
 @AutoSpellConfig
 public class FireballSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "fireball");
+    private float damageBase = 5f;
+    private float damageScale = 5f;
+    private int radiusBase = 2;
+    private float radiusPerPower = 1f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -50,6 +54,10 @@ public class FireballSpell extends AbstractSpell implements IParameterizedSpell 
         this.spellPowerPerLevel = 1;
         this.castTime = 40;
         this.baseManaCost = 60;
+        this.damageBase = 5f;
+        this.damageScale = 5f;
+        this.radiusBase = 2;
+        this.radiusPerPower = 1f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -101,11 +109,11 @@ public class FireballSpell extends AbstractSpell implements IParameterizedSpell 
     }
 
     public float getDamage(int spellLevel, LivingEntity caster) {
-        return 5 + 5 * getSpellPower(spellLevel, caster);
+        return damageBase + damageScale * getSpellPower(spellLevel, caster);
     }
 
     public int getRadius(int spellLevel, LivingEntity caster) {
-        return 2 + (int) getSpellPower(spellLevel, caster);
+        return radiusBase + (int) (radiusPerPower * getSpellPower(spellLevel, caster));
     }
 
     
@@ -134,6 +142,10 @@ public class FireballSpell extends AbstractSpell implements IParameterizedSpell 
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("damageBase", ParameterType.FLOAT, this.damageBase, "基础伤害加值")
+                .optional("damageScale", ParameterType.FLOAT, this.damageScale, "伤害系数")
+                .optional("radiusBase", ParameterType.INT, this.radiusBase, "基础半径")
+                .optional("radiusPerPower", ParameterType.FLOAT, this.radiusPerPower, "每点威力增加半径")
                 .build();
     }
 
@@ -142,10 +154,31 @@ public class FireballSpell extends AbstractSpell implements IParameterizedSpell 
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams prevExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(prevExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.damageBase, this.damageScale, this.radiusBase, this.radiusPerPower);
+        this.damageBase = parameters.getFloat("damageBase", this.damageBase);
+        this.damageScale = parameters.getFloat("damageScale", this.damageScale);
+        this.radiusBase = parameters.getInt("radiusBase", this.radiusBase);
+        this.radiusPerPower = parameters.getFloat("radiusPerPower", this.radiusPerPower);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.damageBase = previous.damageBase();
+        this.damageScale = previous.damageScale();
+        this.radiusBase = previous.radiusBase();
+        this.radiusPerPower = previous.radiusPerPower();
+    }
+
+    private record ExtraParams(float damageBase, float damageScale, int radiusBase, float radiusPerPower) {
     }
 }

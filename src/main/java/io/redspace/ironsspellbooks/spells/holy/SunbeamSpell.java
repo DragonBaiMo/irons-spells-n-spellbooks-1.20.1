@@ -31,6 +31,10 @@ import java.util.List;
 @AutoSpellConfig
 public class SunbeamSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "sunbeam");
+    private static final String PARAM_TARGET_RANGE = "targetRange";
+    private static final String PARAM_DAMAGE_MULTIPLIER = "damageMultiplier";
+    private float targetRange = 48;
+    private float damageMultiplier = .5f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -83,7 +87,7 @@ public class SunbeamSpell extends AbstractSpell implements IParameterizedSpell  
 
     @Override
     public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        Utils.preCastTargetHelper(level, entity, playerMagicData, this, 48, .5f, false);
+        Utils.preCastTargetHelper(level, entity, playerMagicData, this, (int) targetRange, .5f, false);
         return true;
     }
 
@@ -96,7 +100,7 @@ public class SunbeamSpell extends AbstractSpell implements IParameterizedSpell  
             sunbeam.setTarget(castTargetingData.getTarget((ServerLevel) level));
         }
         if (spawn == null) {
-            HitResult raycast = Utils.raycastForEntity(level, entity, 48, true);
+            HitResult raycast = Utils.raycastForEntity(level, entity, targetRange, true);
             if (raycast.getType() == HitResult.Type.ENTITY) {
                 spawn = ((EntityHitResult) raycast).getEntity().position();
             } else {
@@ -114,7 +118,7 @@ public class SunbeamSpell extends AbstractSpell implements IParameterizedSpell  
     }
 
     private float getDamage(int spellLevel, LivingEntity entity) {
-        return this.getSpellPower(spellLevel, entity) * .5f;
+        return this.getSpellPower(spellLevel, entity) * damageMultiplier;
     }
 
     private int getDuration(int spellLevel, LivingEntity entity) {
@@ -147,6 +151,8 @@ public class SunbeamSpell extends AbstractSpell implements IParameterizedSpell  
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_TARGET_RANGE, ParameterType.DOUBLE, targetRange, "目标选取距离")
+                .optional(PARAM_DAMAGE_MULTIPLIER, ParameterType.DOUBLE, damageMultiplier, "伤害倍率 (基于技能威力)")
                 .build();
     }
 
@@ -156,8 +162,12 @@ public class SunbeamSpell extends AbstractSpell implements IParameterizedSpell  
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.targetRange = (float) parameters.getDouble(PARAM_TARGET_RANGE, this.targetRange);
+            this.damageMultiplier = (float) parameters.getDouble(PARAM_DAMAGE_MULTIPLIER, this.damageMultiplier);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.targetRange = 48;
+            this.damageMultiplier = .5f;
             this.restoreParameters(previous);
         }
     }

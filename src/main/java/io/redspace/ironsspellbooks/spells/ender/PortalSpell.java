@@ -41,6 +41,9 @@ import java.util.Optional;
 public class PortalSpell extends AbstractSpell implements IParameterizedSpell  {
     public static final int PORTAL_RECAST_COUNT = 2;
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "portal");
+    private static final String PARAM_PORTAL_DURATION_TICKS = "portalDurationTicks";
+    private static final String PARAM_RECAST_WINDOW_TICKS = "recastWindowTicks";
+    private static final String PARAM_MAX_RANGE = "maxRange";
 
     private final DefaultConfig defaultConfig = new DefaultConfig()
             .setMinRarity(SpellRarity.UNCOMMON)
@@ -48,6 +51,9 @@ public class PortalSpell extends AbstractSpell implements IParameterizedSpell  {
             .setMaxLevel(3)
             .setCooldownSeconds(180)
             .build();
+    private int portalDurationPerPower = 20;
+    private int recastWindowTicks = 20 * 120;
+    private float maxCastRange = 48;
 
     public PortalSpell() {
         this.baseSpellPower = 5 * 60;
@@ -66,7 +72,6 @@ public class PortalSpell extends AbstractSpell implements IParameterizedSpell  {
             this.castTime = parameters.castTime();
             this.defaultConfig.cooldownInSeconds = parameters.cooldownSeconds();
         }
-
     }
 
     @Override
@@ -171,15 +176,15 @@ public class PortalSpell extends AbstractSpell implements IParameterizedSpell  {
     }
 
     public int getRecastDuration(int spellLevel, LivingEntity caster) {
-        return 20 * 120;
+        return recastWindowTicks;
     }
 
     public int getPortalDuration(int spellLevel, LivingEntity caster) {
-        return (int) (getSpellPower(spellLevel, caster) * 20);
+        return (int) (getSpellPower(spellLevel, caster) * portalDurationPerPower);
     }
 
     private float getCastDistance(int spellLevel, LivingEntity sourceEntity) {
-        return 48;
+        return maxCastRange;
     }
 
     @Override
@@ -216,6 +221,9 @@ public class PortalSpell extends AbstractSpell implements IParameterizedSpell  {
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_PORTAL_DURATION_TICKS, ParameterType.INT, portalDurationPerPower, "每点威力对应的传送门持续时间 (tick)")
+                .optional(PARAM_RECAST_WINDOW_TICKS, ParameterType.INT, recastWindowTicks, "二段施法可用的持续时间窗口 (tick)")
+                .optional(PARAM_MAX_RANGE, ParameterType.DOUBLE, maxCastRange, "最大放置距离")
                 .build();
     }
 
@@ -225,8 +233,14 @@ public class PortalSpell extends AbstractSpell implements IParameterizedSpell  {
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.portalDurationPerPower = parameters.getInt(PARAM_PORTAL_DURATION_TICKS, this.portalDurationPerPower);
+            this.recastWindowTicks = parameters.getInt(PARAM_RECAST_WINDOW_TICKS, this.recastWindowTicks);
+            this.maxCastRange = (float) parameters.getDouble(PARAM_MAX_RANGE, this.maxCastRange);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.portalDurationPerPower = 20;
+            this.recastWindowTicks = 20 * 120;
+            this.maxCastRange = 48;
             this.restoreParameters(previous);
         }
     }

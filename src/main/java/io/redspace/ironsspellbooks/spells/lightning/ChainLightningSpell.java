@@ -26,6 +26,10 @@ import java.util.List;
 @AutoSpellConfig
 public class ChainLightningSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "chain_lightning");
+    private int baseConnections = 3;
+    private int connectionsPerLevel = 1;
+    private float rangeBase = 1f;
+    private float rangePerPower = .5f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -104,11 +108,11 @@ public class ChainLightningSpell extends AbstractSpell implements IParameterized
     }
 
     public int getMaxConnections(int spellLevel, LivingEntity caster) {
-        return 3 + spellLevel;
+        return baseConnections + connectionsPerLevel * spellLevel;
     }
 
     public float getRange(int spellLevel, LivingEntity caster) {
-        return 1f + getSpellPower(spellLevel, caster) * .5f;
+        return rangeBase + getSpellPower(spellLevel, caster) * rangePerPower;
     }
 
     
@@ -137,6 +141,10 @@ public class ChainLightningSpell extends AbstractSpell implements IParameterized
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("baseConnections", ParameterType.INT, baseConnections, "基础跳跃次数")
+                .optional("connectionsPerLevel", ParameterType.INT, connectionsPerLevel, "每级额外跳跃次数")
+                .optional("rangeBase", ParameterType.DOUBLE, rangeBase, "基础跳跃距离")
+                .optional("rangePerPower", ParameterType.DOUBLE, rangePerPower, "每点威力附加跳跃距离")
                 .build();
     }
 
@@ -145,9 +153,21 @@ public class ChainLightningSpell extends AbstractSpell implements IParameterized
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        int previousBaseConnections = this.baseConnections;
+        int previousConnectionsPerLevel = this.connectionsPerLevel;
+        float previousRangeBase = this.rangeBase;
+        float previousRangePerPower = this.rangePerPower;
+        this.baseConnections = parameters.getInt("baseConnections", this.baseConnections);
+        this.connectionsPerLevel = parameters.getInt("connectionsPerLevel", this.connectionsPerLevel);
+        this.rangeBase = (float) parameters.getDouble("rangeBase", this.rangeBase);
+        this.rangePerPower = (float) parameters.getDouble("rangePerPower", this.rangePerPower);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.baseConnections = previousBaseConnections;
+            this.connectionsPerLevel = previousConnectionsPerLevel;
+            this.rangeBase = previousRangeBase;
+            this.rangePerPower = previousRangePerPower;
             this.restoreParameters(previous);
         }
     }

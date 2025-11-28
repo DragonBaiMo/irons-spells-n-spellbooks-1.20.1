@@ -33,6 +33,12 @@ import java.util.Optional;
 @AutoSpellConfig
 public class RayOfFrostSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "ray_of_frost");
+    private static final String PARAM_RANGE = "range";
+    private static final String PARAM_DAMAGE_MULTIPLIER = "damageMultiplier";
+    private static final String PARAM_FREEZE_PER_POWER = "freezePerPower";
+    private float range = 30;
+    private float damageMultiplier = 1.5f;
+    private int freezePerPower = 15;
     private final DefaultConfig defaultConfig = new DefaultConfig()
             .setMinRarity(SpellRarity.COMMON)
             .setSchoolResource(SchoolRegistry.ICE_RESOURCE)
@@ -110,16 +116,16 @@ public class RayOfFrostSpell extends AbstractSpell implements IParameterizedSpel
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
 
-    public static float getRange(int level, LivingEntity caster) {
-        return 30;
+    public float getRange(int level, LivingEntity caster) {
+        return range;
     }
 
     private float getDamage(int spellLevel, LivingEntity caster) {
-        return 3 + getSpellPower(spellLevel, caster) * 1.5f;
+        return 3 + getSpellPower(spellLevel, caster) * damageMultiplier;
     }
 
     private int getFreezeTime(int spellLevel, LivingEntity caster) {
-        return (int) (getSpellPower(spellLevel, caster) * 15);
+        return (int) (getSpellPower(spellLevel, caster) * freezePerPower);
     }
 
     
@@ -148,6 +154,9 @@ public class RayOfFrostSpell extends AbstractSpell implements IParameterizedSpel
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_RANGE, ParameterType.DOUBLE, range, "最大射程")
+                .optional(PARAM_DAMAGE_MULTIPLIER, ParameterType.DOUBLE, damageMultiplier, "伤害倍率 (基于技能威力)")
+                .optional(PARAM_FREEZE_PER_POWER, ParameterType.INT, freezePerPower, "每点威力附加冻结时长 (tick)")
                 .build();
     }
 
@@ -157,8 +166,14 @@ public class RayOfFrostSpell extends AbstractSpell implements IParameterizedSpel
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.range = (float) parameters.getDouble(PARAM_RANGE, this.range);
+            this.damageMultiplier = (float) parameters.getDouble(PARAM_DAMAGE_MULTIPLIER, this.damageMultiplier);
+            this.freezePerPower = parameters.getInt(PARAM_FREEZE_PER_POWER, this.freezePerPower);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.range = 30;
+            this.damageMultiplier = 1.5f;
+            this.freezePerPower = 15;
             this.restoreParameters(previous);
         }
     }

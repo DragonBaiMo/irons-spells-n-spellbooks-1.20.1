@@ -60,10 +60,11 @@ public class SpellRenderingHelper {
 
 
         var pose = poseStack.last();
-        Vec3 start = Vec3.ZERO;//caster.getEyePosition(partialTicks);
+        Vec3 start = Vec3.ZERO;
         Vec3 end;
-        //TODO: too expensive?
-        Vec3 impact = Utils.raycastForEntity(entity.level(), entity, RayOfSiphoningSpell.getRange(0), true).getLocation();
+        RayOfSiphoningSpell raySpell = (RayOfSiphoningSpell) SpellRegistry.RAY_OF_SIPHONING_SPELL.get();
+        float rayRange = raySpell.getRange(0);
+        Vec3 impact = Utils.raycastForEntity(entity.level(), entity, rayRange, true).getLocation();
         float distance = (float) entity.getEyePosition().distanceTo(impact);
         float radius = .12f;
         int r = (int) (255 * .7f);

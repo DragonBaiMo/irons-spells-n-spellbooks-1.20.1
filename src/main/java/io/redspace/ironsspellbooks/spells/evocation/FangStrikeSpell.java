@@ -32,6 +32,11 @@ import java.util.Optional;
 @AutoSpellConfig
 public class FangStrikeSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "fang_strike");
+    private int baseCount = 7;
+    private int countPerLevel = 1;
+    private float spacing = 1f;
+    private int delayDivisor = 3;
+    private int groundSearchMaxSteps = 8;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -52,6 +57,11 @@ public class FangStrikeSpell extends AbstractSpell implements IParameterizedSpel
         this.spellPowerPerLevel = 1;
         this.castTime = 15;
         this.baseManaCost = 30;
+        this.baseCount = 7;
+        this.countPerLevel = 1;
+        this.spacing = 1f;
+        this.delayDivisor = 3;
+        this.groundSearchMaxSteps = 8;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -89,13 +99,13 @@ public class FangStrikeSpell extends AbstractSpell implements IParameterizedSpel
     @Override
     public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
         Vec3 forward = entity.getForward().multiply(1, 0, 1).normalize();
-        Vec3 start = entity.getEyePosition().add(forward.scale(1.5));
+        Vec3 start = entity.getEyePosition().add(forward.scale(spacing * 1.5f));
 
         for (int i = 0; i < getCount(spellLevel, entity); i++) {
-            Vec3 spawn = start.add(forward.scale(i));
-            spawn = new Vec3(spawn.x, getGroundLevel(world, spawn, 8), spawn.z);
+            Vec3 spawn = start.add(forward.scale(i * spacing));
+            spawn = new Vec3(spawn.x, getGroundLevel(world, spawn, groundSearchMaxSteps), spawn.z);
             if (!world.getBlockState(BlockPos.containing(spawn).below()).isAir()) {
-                int delay = i / 3;
+                int delay = delayDivisor > 0 ? i / delayDivisor : 0;
                 ExtendedEvokerFang fang = new ExtendedEvokerFang(world, spawn.x, spawn.y, spawn.z, (entity.getYRot() - 90) * Mth.DEG_TO_RAD, delay, entity, getDamage(spellLevel, entity));
                 world.addFreshEntity(fang);
             }
@@ -118,12 +128,12 @@ public class FangStrikeSpell extends AbstractSpell implements IParameterizedSpel
 
     @Override
     public boolean shouldAIStopCasting(int spellLevel, Mob mob, LivingEntity target) {
-        float f = this.getCount(spellLevel, mob) * 1.2f;
+        float f = this.getCount(spellLevel, mob) * spacing * 1.2f;
         return mob.distanceToSqr(target) > (f * f);
     }
 
     private int getCount(int spellLevel, LivingEntity entity) {
-        return 7 + spellLevel;
+        return baseCount + spellLevel * countPerLevel;
     }
 
     private float getDamage(int spellLevel, LivingEntity entity) {
@@ -156,6 +166,11 @@ public class FangStrikeSpell extends AbstractSpell implements IParameterizedSpel
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("baseCount", ParameterType.INT, this.baseCount, "基础獠牙数量")
+                .optional("countPerLevel", ParameterType.INT, this.countPerLevel, "每级追加数量")
+                .optional("spacing", ParameterType.FLOAT, this.spacing, "獠牙间距")
+                .optional("delayDivisor", ParameterType.INT, this.delayDivisor, "生成延迟除数")
+                .optional("groundSearchMaxSteps", ParameterType.INT, this.groundSearchMaxSteps, "地面搜索最大步数")
                 .build();
     }
 
@@ -164,10 +179,33 @@ public class FangStrikeSpell extends AbstractSpell implements IParameterizedSpel
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams prevExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(prevExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.baseCount, this.countPerLevel, this.spacing, this.delayDivisor, this.groundSearchMaxSteps);
+        this.baseCount = parameters.getInt("baseCount", this.baseCount);
+        this.countPerLevel = parameters.getInt("countPerLevel", this.countPerLevel);
+        this.spacing = parameters.getFloat("spacing", this.spacing);
+        this.delayDivisor = parameters.getInt("delayDivisor", this.delayDivisor);
+        this.groundSearchMaxSteps = parameters.getInt("groundSearchMaxSteps", this.groundSearchMaxSteps);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.baseCount = previous.baseCount();
+        this.countPerLevel = previous.countPerLevel();
+        this.spacing = previous.spacing();
+        this.delayDivisor = previous.delayDivisor();
+        this.groundSearchMaxSteps = previous.groundSearchMaxSteps();
+    }
+
+    private record ExtraParams(int baseCount, int countPerLevel, float spacing, int delayDivisor, int groundSearchMaxSteps) {
     }
 }

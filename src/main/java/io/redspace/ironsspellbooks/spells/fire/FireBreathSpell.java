@@ -33,6 +33,9 @@ import java.util.Optional;
 @AutoSpellConfig
 public class FireBreathSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "fire_breath");
+    private float damageBase = 1f;
+    private float damageScale = .75f;
+    private float aiStopRange = 10f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -52,6 +55,9 @@ public class FireBreathSpell extends AbstractSpell implements IParameterizedSpel
         this.spellPowerPerLevel = 1;
         this.castTime = 100;
         this.baseManaCost = 5;
+        this.damageBase = 1f;
+        this.damageScale = .75f;
+        this.aiStopRange = 10f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -104,7 +110,7 @@ public class FireBreathSpell extends AbstractSpell implements IParameterizedSpel
     }
 
     public float getDamage(int spellLevel, LivingEntity caster) {
-        return 1 + getSpellPower(spellLevel, caster) * .75f;
+        return damageBase + getSpellPower(spellLevel, caster) * damageScale;
     }
 
     @Override
@@ -114,7 +120,7 @@ public class FireBreathSpell extends AbstractSpell implements IParameterizedSpel
 
     @Override
     public boolean shouldAIStopCasting(int spellLevel, Mob mob, LivingEntity target) {
-        return mob.distanceToSqr(target) > (10 * 10) * 1.2;
+        return mob.distanceToSqr(target) > (aiStopRange * aiStopRange) * 1.2;
     }
 
     
@@ -143,6 +149,9 @@ public class FireBreathSpell extends AbstractSpell implements IParameterizedSpel
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("damageBase", ParameterType.FLOAT, this.damageBase, "基础伤害加值")
+                .optional("damageScale", ParameterType.FLOAT, this.damageScale, "伤害系数")
+                .optional("aiStopRange", ParameterType.FLOAT, this.aiStopRange, "AI 停止施法距离")
                 .build();
     }
 
@@ -151,10 +160,29 @@ public class FireBreathSpell extends AbstractSpell implements IParameterizedSpel
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams prevExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(prevExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.damageBase, this.damageScale, this.aiStopRange);
+        this.damageBase = parameters.getFloat("damageBase", this.damageBase);
+        this.damageScale = parameters.getFloat("damageScale", this.damageScale);
+        this.aiStopRange = parameters.getFloat("aiStopRange", this.aiStopRange);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.damageBase = previous.damageBase();
+        this.damageScale = previous.damageScale();
+        this.aiStopRange = previous.aiStopRange();
+    }
+
+    private record ExtraParams(float damageBase, float damageScale, float aiStopRange) {
     }
 }

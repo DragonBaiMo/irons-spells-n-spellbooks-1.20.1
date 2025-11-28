@@ -162,7 +162,7 @@ public class ClientSpellCastHelper {
             float xDeg = 360f / xSteps * Mth.DEG_TO_RAD;
             for (int x = 0; x < xSteps; x++) {
                 for (int y = 0; y < ySteps; y++) {
-                    Vec3 offset = new Vec3(0, 0, CloudOfRegenerationSpell.radius).yRot(y * yDeg).xRot(x * xDeg).zRot(-Mth.PI / 2).multiply(1, .85f, 1);
+                    Vec3 offset = new Vec3(0, 0, CloudOfRegenerationSpell.DEFAULT_RADIUS).yRot(y * yDeg).xRot(x * xDeg).zRot(-Mth.PI / 2).multiply(1, .85f, 1);
                     level.addParticle(DustParticleOptions.REDSTONE, pos.x + offset.x, pos.y + offset.y, pos.z + offset.z, 0, 0, 0);
                 }
             }

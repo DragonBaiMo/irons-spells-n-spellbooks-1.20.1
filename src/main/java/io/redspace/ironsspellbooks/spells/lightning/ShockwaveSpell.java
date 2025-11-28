@@ -41,6 +41,17 @@ import java.util.Optional;
 @AutoSpellConfig
 public class ShockwaveSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "shockwave");
+    private static final String PARAM_BASE_RADIUS = "baseRadius";
+    private static final String PARAM_RADIUS_PER_LEVEL = "radiusPerLevel";
+    private static final String PARAM_BASE_DAMAGE = "baseDamage";
+    private static final String PARAM_DAMAGE_PER_POWER = "damagePerPower";
+    private static final String PARAM_MAX_TARGETS = "maxTargets";
+
+    private float baseRadius = 8;
+    private float radiusPerLevel = 1;
+    private float baseDamage = 4;
+    private float damagePerPower = .75f;
+    private int maxTargets = Integer.MAX_VALUE;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -120,7 +131,11 @@ public class ShockwaveSpell extends AbstractSpell implements IParameterizedSpell
         var dummyLightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, level);
         dummyLightningBolt.setDamage(0);
         dummyLightningBolt.setVisualOnly(true);
+        int[] hitCount = {0};
         level.getEntities(entity, entity.getBoundingBox().inflate(radius, radius, radius), (target) -> !DamageSources.isFriendlyFireBetween(target, entity) && Utils.hasLineOfSight(level, entity, target, true)).forEach(target -> {
+            if (hitCount[0] >= maxTargets) {
+                return;
+            }
             if (target instanceof LivingEntity livingEntity && canHit(entity, target) && livingEntity.distanceToSqr(entity) < radius * radius) {
                 Vec3 dest = livingEntity.getBoundingBox().getCenter();
                 ((ServerLevel) level).sendParticles(new ZapParticleOption(dest), start.x, start.y, start.z, 1, 0, 0, 0, 0);
@@ -129,6 +144,7 @@ public class ShockwaveSpell extends AbstractSpell implements IParameterizedSpell
                 if (target instanceof Creeper creeper) {
                     creeper.thunderHit((ServerLevel) level, dummyLightningBolt);
                 }
+                hitCount[0]++;
             }
         });
         ((ServerLevel) level).sendParticles(new ZapParticleOption(start), start.x, start.y + 4, start.z, 7, 4, 2.5, 4, 0);
@@ -140,11 +156,11 @@ public class ShockwaveSpell extends AbstractSpell implements IParameterizedSpell
     }
 
     public float getRadius(int spellLevel, LivingEntity caster) {
-        return 8 + spellLevel;
+        return baseRadius + radiusPerLevel * spellLevel;
     }
 
     public float getDamage(int spellLevel, LivingEntity caster) {
-        return 4 + (getSpellPower(spellLevel, caster) * .75f);
+        return baseDamage + (getSpellPower(spellLevel, caster) * damagePerPower);
     }
 
     @Override
@@ -188,6 +204,11 @@ public class ShockwaveSpell extends AbstractSpell implements IParameterizedSpell
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_BASE_RADIUS, ParameterType.DOUBLE, baseRadius, "基础半径")
+                .optional(PARAM_RADIUS_PER_LEVEL, ParameterType.DOUBLE, radiusPerLevel, "每级半径增量")
+                .optional(PARAM_BASE_DAMAGE, ParameterType.DOUBLE, baseDamage, "基础伤害")
+                .optional(PARAM_DAMAGE_PER_POWER, ParameterType.DOUBLE, damagePerPower, "每点威力的伤害加成")
+                .optional(PARAM_MAX_TARGETS, ParameterType.INT, maxTargets == Integer.MAX_VALUE ? -1 : maxTargets, "最多命中目标数 (-1 表示不限制)")
                 .build();
     }
 
@@ -197,8 +218,19 @@ public class ShockwaveSpell extends AbstractSpell implements IParameterizedSpell
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.baseRadius = (float) parameters.getDouble(PARAM_BASE_RADIUS, this.baseRadius);
+            this.radiusPerLevel = (float) parameters.getDouble(PARAM_RADIUS_PER_LEVEL, this.radiusPerLevel);
+            this.baseDamage = (float) parameters.getDouble(PARAM_BASE_DAMAGE, this.baseDamage);
+            this.damagePerPower = (float) parameters.getDouble(PARAM_DAMAGE_PER_POWER, this.damagePerPower);
+            int configuredMaxTargets = parameters.getInt(PARAM_MAX_TARGETS, maxTargets == Integer.MAX_VALUE ? -1 : maxTargets);
+            this.maxTargets = configuredMaxTargets < 0 ? Integer.MAX_VALUE : configuredMaxTargets;
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.baseRadius = 8;
+            this.radiusPerLevel = 1;
+            this.baseDamage = 4;
+            this.damagePerPower = .75f;
+            this.maxTargets = Integer.MAX_VALUE;
             this.restoreParameters(previous);
         }
     }

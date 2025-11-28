@@ -32,6 +32,8 @@ import java.util.Optional;
 @AutoSpellConfig
 public class SummonVexSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "summon_vex");
+    private static final String PARAM_SUMMON_DURATION = "summonDurationTicks";
+    private int summonDurationTicks = 20 * 60 * 10;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -94,7 +96,7 @@ public class SummonVexSpell extends AbstractSpell implements IParameterizedSpell
 
     @Override
     public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        int summonTime = 20 * 60 * 10;
+        int summonTime = summonDurationTicks;
 
         for (int i = 0; i < spellLevel; i++) {
             SummonedVex vex = new SummonedVex(world, entity);
@@ -136,6 +138,7 @@ public class SummonVexSpell extends AbstractSpell implements IParameterizedSpell
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_SUMMON_DURATION, ParameterType.INT, summonDurationTicks, "召唤物持续时间 (tick)")
                 .build();
     }
 
@@ -145,8 +148,10 @@ public class SummonVexSpell extends AbstractSpell implements IParameterizedSpell
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.summonDurationTicks = parameters.getInt(PARAM_SUMMON_DURATION, this.summonDurationTicks);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.summonDurationTicks = 20 * 60 * 10;
             this.restoreParameters(previous);
         }
     }

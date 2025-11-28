@@ -36,6 +36,12 @@ import java.util.Optional;
 @AutoSpellConfig
 public class StompSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "stomp");
+    private static final String PARAM_BASE_RANGE = "baseRange";
+    private static final String PARAM_RANGE_PER_LEVEL = "rangePerLevel";
+    private static final String PARAM_DAMAGE_MULTIPLIER = "damageMultiplier";
+    private float baseRange = 4;
+    private float rangePerLevel = 1;
+    private float damageMultiplier = 1f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -120,11 +126,11 @@ public class StompSpell extends AbstractSpell implements IParameterizedSpell  {
     }
 
     private float getDamage(int spellLevel, LivingEntity caster) {
-        return getSpellPower(spellLevel, caster);
+        return getSpellPower(spellLevel, caster) * damageMultiplier;
     }
 
     private int getRange(int spellLevel, LivingEntity caster) {
-        return (int) (4 + spellLevel * getEntityPowerMultiplier(caster));
+        return (int) (baseRange + rangePerLevel * spellLevel * getEntityPowerMultiplier(caster));
     }
 
     @Override
@@ -169,6 +175,9 @@ public class StompSpell extends AbstractSpell implements IParameterizedSpell  {
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_BASE_RANGE, ParameterType.DOUBLE, baseRange, "基础范围")
+                .optional(PARAM_RANGE_PER_LEVEL, ParameterType.DOUBLE, rangePerLevel, "每级范围增量")
+                .optional(PARAM_DAMAGE_MULTIPLIER, ParameterType.DOUBLE, damageMultiplier, "伤害倍率 (基于技能威力)")
                 .build();
     }
 
@@ -178,8 +187,14 @@ public class StompSpell extends AbstractSpell implements IParameterizedSpell  {
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.baseRange = (float) parameters.getDouble(PARAM_BASE_RANGE, this.baseRange);
+            this.rangePerLevel = (float) parameters.getDouble(PARAM_RANGE_PER_LEVEL, this.rangePerLevel);
+            this.damageMultiplier = (float) parameters.getDouble(PARAM_DAMAGE_MULTIPLIER, this.damageMultiplier);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.baseRange = 4;
+            this.rangePerLevel = 1;
+            this.damageMultiplier = 1f;
             this.restoreParameters(previous);
         }
     }

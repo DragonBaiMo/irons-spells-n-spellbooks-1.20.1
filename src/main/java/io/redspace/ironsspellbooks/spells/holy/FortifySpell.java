@@ -35,6 +35,10 @@ import java.util.Optional;
 @AutoSpellConfig
 public class FortifySpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "fortify");
+    public static final float radius = 8;
+    private int durationSeconds = 120;
+    private float absorptionScale = 1f;
+    private int targetingColor = 16239960;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -43,8 +47,6 @@ public class FortifySpell extends AbstractSpell implements IParameterizedSpell  
                 Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(radius, 1))
         );
     }
-
-    public static final float radius = 8;
 
     private final DefaultConfig defaultConfig = new DefaultConfig()
             .setMinRarity(SpellRarity.COMMON)
@@ -59,6 +61,9 @@ public class FortifySpell extends AbstractSpell implements IParameterizedSpell  
         this.spellPowerPerLevel = 1;
         this.castTime = 40;
         this.baseManaCost = 40;
+        this.durationSeconds = 120;
+        this.absorptionScale = 1f;
+        this.targetingColor = 16239960;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -98,7 +103,7 @@ public class FortifySpell extends AbstractSpell implements IParameterizedSpell  
         super.onServerPreCast(level, spellLevel, entity, playerMagicData);
         if (playerMagicData == null)
             return;
-        TargetedAreaEntity targetedAreaEntity = TargetedAreaEntity.createTargetAreaEntity(level, entity.position(), radius, 16239960, entity);
+        TargetedAreaEntity targetedAreaEntity = TargetedAreaEntity.createTargetAreaEntity(level, entity.position(), radius, targetingColor, entity);
         playerMagicData.setAdditionalCastData(new TargetAreaCastData(entity.position(), targetedAreaEntity));
     }
 
@@ -106,7 +111,7 @@ public class FortifySpell extends AbstractSpell implements IParameterizedSpell  
     public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
         level.getEntitiesOfClass(LivingEntity.class, new AABB(entity.position().subtract(radius, radius, radius), entity.position().add(radius, radius, radius))).forEach((target) -> {
             if (Utils.shouldHealEntity(entity, target) && entity.distanceTo(target) <= radius) {
-                target.addEffect(new MobEffectInstance(MobEffectRegistry.FORTIFY.get(), 20 * 120, (int) getSpellPower(spellLevel, entity) - 1, false, false, true));
+                target.addEffect(new MobEffectInstance(MobEffectRegistry.FORTIFY.get(), 20 * durationSeconds, (int) (getSpellPower(spellLevel, entity) * absorptionScale) - 1, false, false, true));
                 Messages.sendToPlayersTrackingEntity(new ClientboundAborptionParticles(target.position()), entity, true);
             }
         });
@@ -141,6 +146,9 @@ public class FortifySpell extends AbstractSpell implements IParameterizedSpell  
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("durationSeconds", ParameterType.INT, this.durationSeconds, "持续时间 (秒)")
+                .optional("absorptionScale", ParameterType.FLOAT, this.absorptionScale, "吸收等级系数")
+                .optional("targetingColor", ParameterType.INT, this.targetingColor, "范围指示颜色")
                 .build();
     }
 
@@ -149,10 +157,29 @@ public class FortifySpell extends AbstractSpell implements IParameterizedSpell  
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        ExtraParams prevExtra = applyExtraParameters(parameters);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            restoreExtraParameters(prevExtra);
             this.restoreParameters(previous);
         }
+    }
+
+    private ExtraParams applyExtraParameters(SpellParameters parameters) {
+        ExtraParams previous = new ExtraParams(this.durationSeconds, this.absorptionScale, this.targetingColor);
+        this.durationSeconds = parameters.getInt("durationSeconds", this.durationSeconds);
+        this.absorptionScale = parameters.getFloat("absorptionScale", this.absorptionScale);
+        this.targetingColor = parameters.getInt("targetingColor", this.targetingColor);
+        return previous;
+    }
+
+    private void restoreExtraParameters(ExtraParams previous) {
+        this.durationSeconds = previous.durationSeconds();
+        this.absorptionScale = previous.absorptionScale();
+        this.targetingColor = previous.targetingColor();
+    }
+
+    private record ExtraParams(int durationSeconds, float absorptionScale, int targetingColor) {
     }
 }

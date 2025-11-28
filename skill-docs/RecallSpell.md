@@ -9,5 +9,8 @@
 | levelScaling / spellPowerPerLevel | INT | 1 | 每级技能威力增量 |
 | castTime | INT | 100 | 施法时间 (tick) |
 | cooldown | DOUBLE | 300.0 | 默认冷却时间 (秒) |
+| teleportYOffset | DOUBLE | 0.0 | 传送高度偏移 |
+| allowOverworldFallback | BOOLEAN | true | 无重生点时是否回主世界出生点 |
+| requireRespawnPoint | BOOLEAN | false | 无重生点时是否直接失败 |
 
 **说明**: 参数可在管理员通道中通过 SpellParameters 进行覆盖。

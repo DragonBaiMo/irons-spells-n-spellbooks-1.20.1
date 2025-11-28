@@ -44,6 +44,12 @@ import java.util.function.Function;
 @AutoSpellConfig
 public class RecallSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "recall");
+    private static final String PARAM_TELEPORT_Y_OFFSET = "teleportYOffset";
+    private static final String PARAM_ALLOW_OVERWORLD_FALLBACK = "allowOverworldFallback";
+    private static final String PARAM_REQUIRE_RESPAWN_POINT = "requireRespawnPoint";
+    private double teleportYOffset = 0.0;
+    private boolean allowOverworldFallback = true;
+    private boolean requireRespawnPoint = false;
 
     public RecallSpell() {
         this.manaCostPerLevel = 1;
@@ -106,14 +112,14 @@ public class RecallSpell extends AbstractSpell implements IParameterizedSpell  {
             var spawnLocation = findSpawnPosition(respawnLevel, serverPlayer);
             //IronsSpellbooks.LOGGER.debug("Recall.onCast findSpawnLocation: {}", spawnLocation);
             if (spawnLocation.isPresent()) {
-                Vec3 vec3 = spawnLocation.get();
+                Vec3 vec3 = spawnLocation.get().add(0, teleportYOffset, 0);
                 //IronsSpellbooks.LOGGER.debug("Recall.onCast.a dimension: {} -> {}", serverPlayer.level.dimension(), respawnLevel.dimension());
                 if (serverPlayer.level.dimension() != respawnLevel.dimension()) {
                     serverPlayer.changeDimension(respawnLevel, new PortalTeleporter(vec3));
                 } else {
                     serverPlayer.teleportTo(vec3.x, vec3.y, vec3.z);
                 }
-            } else {
+            } else if (allowOverworldFallback && !requireRespawnPoint) {
                 respawnLevel = world.getServer().overworld();
                 //IronsSpellbooks.LOGGER.debug("Recall.onCast.b dimension: {} -> {}", serverPlayer.level.dimension(), respawnLevel.dimension());
                 if (serverPlayer.level.dimension() != respawnLevel.dimension()) {
@@ -126,7 +132,7 @@ public class RecallSpell extends AbstractSpell implements IParameterizedSpell  {
         } else if (entity instanceof HomeOwner homeOwner && homeOwner.getHome() != null) {
             //no dimension check because lazy
             var pos = homeOwner.getHome();
-            entity.teleportTo(pos.getX(), pos.getY() + .15, pos.getZ());
+            entity.teleportTo(pos.getX(), pos.getY() + .15 + teleportYOffset, pos.getZ());
         }
         super.onCast(world, spellLevel, entity, castSource, playerMagicData);
     }
@@ -242,6 +248,9 @@ public class RecallSpell extends AbstractSpell implements IParameterizedSpell  {
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_TELEPORT_Y_OFFSET, ParameterType.DOUBLE, teleportYOffset, "传送高度偏移")
+                .optional(PARAM_ALLOW_OVERWORLD_FALLBACK, ParameterType.BOOLEAN, allowOverworldFallback, "无重生点时是否回主世界出生点")
+                .optional(PARAM_REQUIRE_RESPAWN_POINT, ParameterType.BOOLEAN, requireRespawnPoint, "无重生点时是否直接失败")
                 .build();
     }
 
@@ -251,8 +260,14 @@ public class RecallSpell extends AbstractSpell implements IParameterizedSpell  {
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.teleportYOffset = parameters.getDouble(PARAM_TELEPORT_Y_OFFSET, this.teleportYOffset);
+            this.allowOverworldFallback = parameters.getBoolean(PARAM_ALLOW_OVERWORLD_FALLBACK, this.allowOverworldFallback);
+            this.requireRespawnPoint = parameters.getBoolean(PARAM_REQUIRE_RESPAWN_POINT, this.requireRespawnPoint);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.teleportYOffset = 0.0;
+            this.allowOverworldFallback = true;
+            this.requireRespawnPoint = false;
             this.restoreParameters(previous);
         }
     }

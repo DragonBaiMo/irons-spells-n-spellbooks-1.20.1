@@ -40,6 +40,7 @@ import java.util.Optional;
 @AutoSpellConfig
 public class BloodStepSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "blood_step");
+    private int invisDurationTicks = 100;
     private final DefaultConfig defaultConfig = new DefaultConfig()
             .setMinRarity(SpellRarity.UNCOMMON)
             .setSchoolResource(SchoolRegistry.BLOOD_RESOURCE)
@@ -143,7 +144,7 @@ public class BloodStepSpell extends AbstractSpell implements IParameterizedSpell
 
         //Invis take 1 tick to set in
         entity.setInvisible(true);
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.TRUE_INVISIBILITY.get(), 100, 0, false, false, true));
+        entity.addEffect(new MobEffectInstance(MobEffectRegistry.TRUE_INVISIBILITY.get(), invisDurationTicks, 0, false, false, true));
 
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
@@ -183,6 +184,7 @@ public class BloodStepSpell extends AbstractSpell implements IParameterizedSpell
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("invisDurationTicks", ParameterType.INT, invisDurationTicks, "隐身持续时间 (tick)")
                 .build();
     }
 
@@ -191,9 +193,12 @@ public class BloodStepSpell extends AbstractSpell implements IParameterizedSpell
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        int previousInvisDuration = this.invisDurationTicks;
+        this.invisDurationTicks = parameters.getInt("invisDurationTicks", this.invisDurationTicks);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.invisDurationTicks = previousInvisDuration;
             this.restoreParameters(previous);
         }
     }

@@ -30,6 +30,21 @@ import java.util.Optional;
 @AutoSpellConfig
 public class SummonHorseSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "summon_horse");
+    private static final String PARAM_SUMMON_DURATION = "summonDurationTicks";
+    private static final String PARAM_SPEED_MIN = "speedMin";
+    private static final String PARAM_SPEED_MAX = "speedMax";
+    private static final String PARAM_JUMP_MIN = "jumpMin";
+    private static final String PARAM_JUMP_MAX = "jumpMax";
+    private static final String PARAM_HEALTH_MIN = "healthMin";
+    private static final String PARAM_HEALTH_MAX = "healthMax";
+
+    private int summonDurationTicks = 20 * 60 * 10;
+    private float speedMin = .2f;
+    private float speedMax = .45f;
+    private float jumpMin = .6f;
+    private float jumpMax = 1f;
+    private float healthMin = 10;
+    private float healthMax = 40;
 
     public SummonHorseSpell() {
         this.manaCostPerLevel = 2;
@@ -85,7 +100,7 @@ public class SummonHorseSpell extends AbstractSpell implements IParameterizedSpe
 
     @Override
     public void onCast(Level world, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        int summonTime = 20 * 60 * 10;
+        int summonTime = summonDurationTicks;
         Vec3 spawn = entity.position();
         Vec3 forward = entity.getForward().normalize().scale(1.5f);
         spawn.add(forward.x, 0.15f, forward.z);
@@ -109,18 +124,9 @@ public class SummonHorseSpell extends AbstractSpell implements IParameterizedSpe
         int maxPower = baseSpellPower + (ServerConfigs.getSpellConfig(this).maxLevel() - 1) * spellPowerPerLevel;
         float quality = power / (float) maxPower;
 
-        float minSpeed = .2f;
-        float maxSpeed = .45f;
-
-        float minJump = .6f;
-        float maxJump = 1f;
-
-        float minHealth = 10;
-        float maxHealth = 40;
-
-        horse.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(Mth.lerp(quality, minSpeed, maxSpeed));
-        horse.getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(Mth.lerp(quality, minJump, maxJump));
-        horse.getAttribute(Attributes.MAX_HEALTH).setBaseValue(Mth.lerp(quality, minHealth, maxHealth));
+        horse.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(Mth.lerp(quality, speedMin, speedMax));
+        horse.getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(Mth.lerp(quality, jumpMin, jumpMax));
+        horse.getAttribute(Attributes.MAX_HEALTH).setBaseValue(Mth.lerp(quality, healthMin, healthMax));
         if (!horse.isDeadOrDying())
             horse.setHealth(horse.getMaxHealth());
     }
@@ -151,6 +157,13 @@ public class SummonHorseSpell extends AbstractSpell implements IParameterizedSpe
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_SUMMON_DURATION, ParameterType.INT, summonDurationTicks, "召唤物持续时间 (tick)")
+                .optional(PARAM_SPEED_MIN, ParameterType.DOUBLE, speedMin, "最小移动速度")
+                .optional(PARAM_SPEED_MAX, ParameterType.DOUBLE, speedMax, "最大移动速度")
+                .optional(PARAM_JUMP_MIN, ParameterType.DOUBLE, jumpMin, "最小跳跃力")
+                .optional(PARAM_JUMP_MAX, ParameterType.DOUBLE, jumpMax, "最大跳跃力")
+                .optional(PARAM_HEALTH_MIN, ParameterType.DOUBLE, healthMin, "最小生命值")
+                .optional(PARAM_HEALTH_MAX, ParameterType.DOUBLE, healthMax, "最大生命值")
                 .build();
     }
 
@@ -160,8 +173,22 @@ public class SummonHorseSpell extends AbstractSpell implements IParameterizedSpe
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.summonDurationTicks = parameters.getInt(PARAM_SUMMON_DURATION, this.summonDurationTicks);
+            this.speedMin = (float) parameters.getDouble(PARAM_SPEED_MIN, this.speedMin);
+            this.speedMax = (float) parameters.getDouble(PARAM_SPEED_MAX, this.speedMax);
+            this.jumpMin = (float) parameters.getDouble(PARAM_JUMP_MIN, this.jumpMin);
+            this.jumpMax = (float) parameters.getDouble(PARAM_JUMP_MAX, this.jumpMax);
+            this.healthMin = (float) parameters.getDouble(PARAM_HEALTH_MIN, this.healthMin);
+            this.healthMax = (float) parameters.getDouble(PARAM_HEALTH_MAX, this.healthMax);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.summonDurationTicks = 20 * 60 * 10;
+            this.speedMin = .2f;
+            this.speedMax = .45f;
+            this.jumpMin = .6f;
+            this.jumpMax = 1f;
+            this.healthMin = 10;
+            this.healthMax = 40;
             this.restoreParameters(previous);
         }
     }

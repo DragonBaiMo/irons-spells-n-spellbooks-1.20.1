@@ -28,6 +28,7 @@ import java.util.Optional;
 @AutoSpellConfig
 public class MagicArrowSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "magic_arrow");
+    private float damageMultiplier = 1f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
@@ -47,6 +48,7 @@ public class MagicArrowSpell extends AbstractSpell implements IParameterizedSpel
         this.spellPowerPerLevel = 2;
         this.castTime = 30;
         this.baseManaCost = 40;
+        this.damageMultiplier = 1f;
         
         SpellParameterConfig defaults = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         if (SpellParameterLoader.hasConfig(getSpellId())) {
@@ -91,7 +93,7 @@ public class MagicArrowSpell extends AbstractSpell implements IParameterizedSpel
         MagicArrowProjectile magicArrow = new MagicArrowProjectile(level, entity);
         magicArrow.setPos(entity.position().add(0, entity.getEyeHeight() - magicArrow.getBoundingBox().getYsize() * .5f, 0).add(entity.getForward()));
         magicArrow.shoot(entity.getLookAngle());
-        magicArrow.setDamage(getSpellPower(spellLevel, entity));
+        magicArrow.setDamage(getSpellPower(spellLevel, entity) * damageMultiplier);
         level.addFreshEntity(magicArrow);
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }
@@ -132,6 +134,7 @@ public class MagicArrowSpell extends AbstractSpell implements IParameterizedSpel
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional("damageMultiplier", ParameterType.FLOAT, this.damageMultiplier, "伤害威力倍率")
                 .build();
     }
 
@@ -140,9 +143,12 @@ public class MagicArrowSpell extends AbstractSpell implements IParameterizedSpel
         SpellParameterConfig fallback = new SpellParameterConfig(this.baseManaCost, this.manaCostPerLevel, this.baseSpellPower, this.spellPowerPerLevel, this.castTime, this.defaultConfig.cooldownInSeconds);
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
+        float previousDamageMultiplier = this.damageMultiplier;
+        this.damageMultiplier = parameters.getFloat("damageMultiplier", this.damageMultiplier);
         try {
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.damageMultiplier = previousDamageMultiplier;
             this.restoreParameters(previous);
         }
     }

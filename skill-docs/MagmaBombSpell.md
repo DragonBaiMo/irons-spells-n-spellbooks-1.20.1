@@ -9,5 +9,10 @@
 | levelScaling / spellPowerPerLevel | INT | 3 | 每级技能威力增量 |
 | castTime | INT | 20 | 施法时间 (tick) |
 | cooldown | DOUBLE | 12.0 | 默认冷却时间 (秒) |
+| radiusBase | FLOAT | 3.0 | 爆炸半径基础值 |
+| radiusPowerScale | FLOAT | 1.0 | 爆炸半径威力系数 |
+| directDamageMultiplier | FLOAT | 1.0 | 直击伤害威力倍率 |
+| aoeDamageBase | FLOAT | 1.0 | 范围伤害基础值 |
+| aoeDamageRatio | FLOAT | 0.1 | 范围伤害威力系数 |
 
 **说明**: 参数可在管理员通道中通过 SpellParameters 进行覆盖。

@@ -36,6 +36,10 @@ import java.util.Optional;
 @AutoSpellConfig
 public class RayOfSiphoningSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "ray_of_siphoning");
+    private static final String PARAM_RANGE = "range";
+    private static final String PARAM_DAMAGE_MULTIPLIER = "damageMultiplier";
+    private float range = 12;
+    private float damageMultiplier = .25f;
     private final DefaultConfig defaultConfig = new DefaultConfig()
             .setMinRarity(SpellRarity.COMMON)
             .setSchoolResource(SchoolRegistry.BLOOD_RESOURCE)
@@ -96,7 +100,7 @@ public class RayOfSiphoningSpell extends AbstractSpell implements IParameterized
 
     @Override
     public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        var hitResult = Utils.raycastForEntity(level, entity, getRange(0), true, .15f);
+        var hitResult = Utils.raycastForEntity(level, entity, getRange(spellLevel), true, .15f);
         if (hitResult.getType() == HitResult.Type.ENTITY) {
             Entity target = ((EntityHitResult) hitResult).getEntity();
             if (target instanceof LivingEntity) {
@@ -113,12 +117,12 @@ public class RayOfSiphoningSpell extends AbstractSpell implements IParameterized
         return super.getDamageSource(projectile, attacker).setLifestealPercent(1f);
     }
 
-    public static float getRange(int level) {
-        return 12;
+    public float getRange(int level) {
+        return range;
     }
 
     private float getTickDamage(int spellLevel, LivingEntity caster) {
-        return getSpellPower(spellLevel, caster) * .25f;
+        return getSpellPower(spellLevel, caster) * damageMultiplier;
     }
 
     @Override
@@ -152,6 +156,8 @@ public class RayOfSiphoningSpell extends AbstractSpell implements IParameterized
                 .alias("levelScaling", "spellPowerPerLevel")
                 .optional("castTime", ParameterType.INT, parameters.castTime(), "施法时间 (tick)")
                 .optional("cooldown", ParameterType.DOUBLE, parameters.cooldownSeconds(), "默认冷却 (秒)")
+                .optional(PARAM_RANGE, ParameterType.DOUBLE, range, "最大射程")
+                .optional(PARAM_DAMAGE_MULTIPLIER, ParameterType.DOUBLE, damageMultiplier, "每点威力伤害倍率")
                 .build();
     }
 
@@ -161,8 +167,12 @@ public class RayOfSiphoningSpell extends AbstractSpell implements IParameterized
         SpellParameterConfig config = SpellParameterLoader.resolve(getSpellId(), parameters, fallback);
         SpellParameterConfig previous = this.applyParameterOverrides(config);
         try {
+            this.range = (float) parameters.getDouble(PARAM_RANGE, this.range);
+            this.damageMultiplier = (float) parameters.getDouble(PARAM_DAMAGE_MULTIPLIER, this.damageMultiplier);
             this.onCast(level, spellLevel, entity, castSource, playerMagicData);
         } finally {
+            this.range = 12;
+            this.damageMultiplier = .25f;
             this.restoreParameters(previous);
         }
     }
