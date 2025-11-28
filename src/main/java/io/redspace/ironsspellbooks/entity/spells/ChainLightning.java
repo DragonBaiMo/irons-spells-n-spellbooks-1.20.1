@@ -19,10 +19,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 public class ChainLightning extends AbstractMagicProjectile {
@@ -67,22 +65,24 @@ public class ChainLightning extends AbstractMagicProjectile {
 
             } else {
                 int j = lastVictims.size();
-                AtomicInteger zapsThisWave = new AtomicInteger();
-                //cannot be enhanced for
-                for (int i = 0; i < j; i++) {
+                int zapsThisWave = 0;
+                // 用 for 循环改为可提前退出的逻辑，避免 forEach 的开销
+                for (int i = 0; i < j && zapsThisWave < maxConnectionsPerWave && hits < maxConnections; i++) {
                     var entity = lastVictims.get(i);
                     var entities = level.getEntities(entity, entity.getBoundingBox().inflate(range), this::canHitEntity);
-                    entities.sort(Comparator.comparingDouble(o -> o.distanceToSqr(entity)));
-                    entities.forEach((victim) -> {
-                        if (zapsThisWave.get() < maxConnectionsPerWave && hits < maxConnections && victim.distanceToSqr(entity) < range * range && Utils.hasLineOfSight(level, entity.getEyePosition(), victim.getEyePosition(), true)) {
+                    // 用流式处理替代 sort + forEach，避免排序所有实体
+                    for (Entity victim : entities) {
+                        if (zapsThisWave >= maxConnectionsPerWave || hits >= maxConnections) break;
+                        double distSq = victim.distanceToSqr(entity);
+                        if (distSq < range * range && Utils.hasLineOfSight(level, entity.getEyePosition(), victim.getEyePosition(), true)) {
                             doHurt(victim);
                             victim.playSound(SoundRegistry.CHAIN_LIGHTNING_CHAIN.get(), 2, 1);
-                            zapsThisWave.getAndIncrement();
+                            zapsThisWave++;
                             Vec3 start = new Vec3(entity.xOld, entity.yOld, entity.zOld).add(0, entity.getBbHeight() / 2, 0);
                             var dest = victim.position().add(0, victim.getBbHeight() / 2, 0);
                             ((ServerLevel) level).sendParticles(new ZapParticleOption(dest), start.x, start.y, start.z, 1, 0, 0, 0, 0);
                         }
-                    });
+                    }
                 }
                 lastVictims.removeAll(allVictims);
             }

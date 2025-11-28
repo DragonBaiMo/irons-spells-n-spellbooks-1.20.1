@@ -44,7 +44,8 @@ public class MagicManager implements IMagicManager {
     public void tick(Level level) {
         boolean doManaRegen = level.getServer().getTickCount() % MANA_REGEN_TICKS == 0;
 
-        level.players().stream().toList().forEach(player -> {
+        // 优化：避免stream().toList()创建中间列表，直接迭代
+        for (Player player : level.players()) {
             if (player instanceof ServerPlayer serverPlayer) {
                 MagicData playerMagicData = MagicData.getPlayerMagicData(serverPlayer);
                 playerMagicData.getPlayerCooldowns().tick(1);
@@ -89,7 +90,7 @@ public class MagicManager implements IMagicManager {
                     }
                 }
             }
-        });
+        }
     }
 
     public void addCooldown(ServerPlayer serverPlayer, AbstractSpell spell, CastSource castSource) {

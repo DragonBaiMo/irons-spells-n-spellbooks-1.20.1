@@ -27,9 +27,26 @@ public final class SpellParameterLoader {
     }
 
     private static final String RESOURCE_PATH = "data/" + IronsSpellbooks.MODID + "/spell_parameters.json";
-    private static Map<String, LoadedConfig> CONFIGS;
+    private static volatile Map<String, LoadedConfig> CONFIGS;
+    private static volatile boolean LOADING = false;
 
     private SpellParameterLoader() {
+    }
+
+    /**
+     * 在服务器启动时异步预加载参数配置，避免首次施法时的主线程堵塞
+     */
+    public static void preload() {
+        if (CONFIGS == null && !LOADING) {
+            LOADING = true;
+            new Thread(() -> {
+                try {
+                    ensureLoaded();
+                } catch (Exception e) {
+                    IronsSpellbooks.LOGGER.error("背景预加载 spell_parameters.json 失败", e);
+                }
+            }, "IronsSpellbooks-ParameterLoader").start();
+        }
     }
 
     public static SpellParameterConfig get(String spellId) {
@@ -52,7 +69,8 @@ public final class SpellParameterLoader {
         return effective.withOverrides(parameters);
     }
 
-    private static void ensureLoaded() {
+    private static synchronized void ensureLoaded() {
+        // 双检查锁定：减少锁的持有时间
         if (CONFIGS != null) {
             return;
         }

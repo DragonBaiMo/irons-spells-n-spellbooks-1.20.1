@@ -92,11 +92,14 @@ public class PortalManager implements INBTSerializable<CompoundTag> {
     public void processCooldownTick(UUID portalUUID, int delta) {
         var playerCooldownsForPortal = cooldownLookup.get(portalUUID);
         if (playerCooldownsForPortal != null) {
-            playerCooldownsForPortal.entrySet()
-                    .stream()
-                    .filter(item -> item.getValue().addAndGet(delta) <= 0)
-                    .toList()
-                    .forEach(itemToRemove -> playerCooldownsForPortal.remove(itemToRemove.getKey()));
+            // 优化：使用迭代器避免创建中间列表，并在迭代时安全地删除
+            var iterator = playerCooldownsForPortal.entrySet().iterator();
+            while (iterator.hasNext()) {
+                var entry = iterator.next();
+                if (entry.getValue().addAndGet(delta) <= 0) {
+                    iterator.remove();
+                }
+            }
         }
     }
 

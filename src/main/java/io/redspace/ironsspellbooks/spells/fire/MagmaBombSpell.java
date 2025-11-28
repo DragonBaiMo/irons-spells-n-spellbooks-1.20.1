@@ -108,7 +108,7 @@ public class MagmaBombSpell extends AbstractSpell implements IParameterizedSpell
     }
 
     public float getDamage(int spellLevel, LivingEntity caster) {
-        return baseSpellPower * getEntityPowerMultiplier(caster);
+        return getSpellPower(spellLevel, caster);
     }
 
     public float getAoeDamage(int spellLevel, LivingEntity caster) {

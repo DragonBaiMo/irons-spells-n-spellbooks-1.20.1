@@ -35,11 +35,12 @@ import java.util.Optional;
 @AutoSpellConfig
 public class CleanseSpell extends AbstractSpell implements IParameterizedSpell  {
     private final ResourceLocation spellId = ResourceLocation.fromNamespaceAndPath(IronsSpellbooks.MODID, "cleanse");
+    private static final float CLEANSE_RADIUS = 2f;
 
     @Override
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.radius", 3)
+                Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(CLEANSE_RADIUS, 1))
         );
     }
 
@@ -92,22 +93,26 @@ public class CleanseSpell extends AbstractSpell implements IParameterizedSpell  
 
     @Override
     public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        float radius = 3;
-        var area = TargetedAreaEntity.createTargetAreaEntity(level, entity.position(), radius, Utils.packRGB(this.getTargetingColor()), entity);
+        var area = TargetedAreaEntity.createTargetAreaEntity(level, entity.position(), CLEANSE_RADIUS, Utils.packRGB(this.getTargetingColor()), entity);
         playerMagicData.setAdditionalCastData(new TargetAreaCastData(entity.position(), area));
         return true;
     }
 
     @Override
     public void onCast(Level level, int spellLevel, LivingEntity entity, CastSource castSource, MagicData playerMagicData) {
-        level.getEntitiesOfClass(LivingEntity.class, AABB.ofSize(entity.getBoundingBox().getCenter(), 6, 6, 6)).forEach(livingEntity -> {
+        // 维持 2 格净化半径，确保瞄准提示与实际效果一致
+        for (LivingEntity livingEntity : level.getEntitiesOfClass(LivingEntity.class, AABB.ofSize(entity.getBoundingBox().getCenter(), CLEANSE_RADIUS * 2, CLEANSE_RADIUS * 2, CLEANSE_RADIUS * 2))) {
             IronsSpellbooks.LOGGER.debug("cleanse: {}", livingEntity);
             if (Utils.shouldHealEntity(entity, livingEntity)) {
-                var effects = livingEntity.getActiveEffects().stream().map(MobEffectInstance::getEffect).filter(effect -> effect.getCategory() == MobEffectCategory.HARMFUL).toList();
-                effects.forEach(livingEntity::removeEffect);
+                // 优化：改用传统循环代替stream，直接移除有害效果，避免创建中间列表
+                for (MobEffectInstance effectInstance : livingEntity.getActiveEffects()) {
+                    if (effectInstance.getEffect().getCategory() == MobEffectCategory.HARMFUL) {
+                        livingEntity.removeEffect(effectInstance.getEffect());
+                    }
+                }
                 MagicManager.spawnParticles(level, ParticleHelper.WISP, livingEntity.getX(), livingEntity.getY() + .25, livingEntity.getZ(), 15, livingEntity.getBbWidth() * 0.5, livingEntity.getBbWidth() * 0.5, livingEntity.getBbWidth() * 0.5, 0, false);
             }
-        });
+        }
 
         super.onCast(level, spellLevel, entity, castSource, playerMagicData);
     }

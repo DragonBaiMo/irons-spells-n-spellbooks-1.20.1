@@ -365,17 +365,23 @@ public class Utils {
         }
         AABB range = originEntity.getBoundingBox().expandTowards(end.subtract(start));
 
-        List<HitResult> hits = new ArrayList<>();
+        // 优化：在遍历时直接找最近的实体，无需收集全部和排序
+        HitResult closest = null;
+        double closestDistance = Double.MAX_VALUE;
         List<? extends Entity> entities = level.getEntities(originEntity, range, filter);
         for (Entity target : entities) {
             HitResult hit = checkEntityIntersecting(target, start, end, bbInflation);
-            if (hit.getType() != HitResult.Type.MISS)
-                hits.add(hit);
+            if (hit.getType() != HitResult.Type.MISS) {
+                double distance = hit.getLocation().distanceToSqr(start);
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closest = hit;
+                }
+            }
         }
 
-        if (!hits.isEmpty()) {
-            hits.sort(Comparator.comparingDouble(o -> o.getLocation().distanceToSqr(start)));
-            return hits.get(0);
+        if (closest != null) {
+            return closest;
         } else if (checkForBlocks) {
             return blockHitResult;
         }

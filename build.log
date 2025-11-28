@@ -3,17 +3,117 @@ Daemon will be stopped at the end of the build
 
 > Configure project :
 MixinGradle is skipping eclipse integration, extension not found
-Java: 21.0.2, JVM: 21.0.2+13-58 (Oracle Corporation), Arch: amd64
+Java: 21.0.6, JVM: 21.0.6+8-LTS-188 (Oracle Corporation), Arch: amd64
 
 > Task :downloadMcpConfig
-> Task :extractSrg UP-TO-DATE
-> Task :createMcpToSrg UP-TO-DATE
-> Task :compileJava UP-TO-DATE
+> Task :extractSrg
+> Task :createMcpToSrg
+
+> Task :compileJava
+注: SpongePowered MIXIN Annotation Processor Version=0.8.5 (MixinGradle Version=0.7.38)
+注: Supported obfuscation types: ObfuscationServiceMCP supports [notch] ObfuscationServiceFG3 supports [searge]
+注: Loading searge mappings from I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\build\createMcpToSrg\output.tsrg
+注: Writing refmap to I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\build\tmp\compileJava\compileJava-refmap.json
+注: Writing refmap to I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\build\tmp\compileJava\compileJava-refmap.json
+注: Writing searge composite mappings to I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\build\tmp\compileJava\compileJava-mappings.tsrg
+注: Writing refmap to I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\build\tmp\compileJava\compileJava-refmap.json
+注: Writing refmap to I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\build\tmp\compileJava\compileJava-refmap.json
+注: Writing searge composite mappings to I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\build\tmp\compileJava\compileJava-mappings.tsrg
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\api\spells\SpellAnimations.java:24: 警告: [removal] AnimationHolder 中的 AnimationHolder(String,boolean,boolean) 已过时, 且标记为待删除
+    public static final AnimationHolder OVERHEAD_MELEE_SWING_ANIMATION = new AnimationHolder("overhead_two_handed_swing", true, true);
+                                                                         ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\api\spells\SpellAnimations.java:25: 警告: [removal] AnimationHolder 中的 AnimationHolder(String,boolean,boolean) 已过时, 且标记为待删除
+    public static final AnimationHolder TOUCH_GROUND_ANIMATION = new AnimationHolder("touch_ground", true, true);
+                                                                 ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\api\spells\SpellAnimations.java:28: 警告: [removal] AnimationHolder 中的 AnimationHolder(String,boolean,boolean) 已过时, 且标记为待删除
+    public static final AnimationHolder STOMP = new AnimationHolder("stomp", true, true);
+                                                ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\api\spells\AbstractSpell.java:138: 警告: [removal] ICuriosHelper 中的 findCurios(LivingEntity,Predicate<ItemStack>) 已过时, 且标记为待删除
+            addition = CuriosApi.getCuriosHelper().findCurios(caster, (itemStack) -> AffinityData.hasAffinityData(itemStack) && AffinityData.getAffinityData(itemStack).getSpell().equals(this)).size();
+                                                  ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\api\util\Utils.java:136: 警告: [removal] ICuriosHelper 中的 findCurio(LivingEntity,String,int) 已过时, 且标记为待删除
+        var slotResult = CuriosApi.getCuriosHelper().findCurio(player, Curios.SPELLBOOK_SLOT, 0);
+                                                    ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\api\util\Utils.java:143: 警告: [removal] ICuriosHelper 中的 findCurio(LivingEntity,String,int) 已过时, 且标记为待删除
+        return CuriosApi.getCuriosHelper().findCurio(player, Curios.SPELLBOOK_SLOT, 0).map(SlotResult::stack).orElse(null);
+                                          ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\api\util\Utils.java:147: 警告: [removal] ICuriosHelper 中的 setEquippedCurio(LivingEntity,String,int,ItemStack) 已过时, 且标记为待删除
+        CuriosApi.getCuriosHelper().setEquippedCurio(player, Curios.SPELLBOOK_SLOT, 0, itemStack);
+                                   ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\compat\Curios.java:14: 警告: [removal] top.theillusivec4.curios.api 中的 SlotTypeMessage 已过时, 且标记为待删除
+        final SlotTypeMessage.Builder message = new SlotTypeMessage.Builder(identifier);
+              ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\compat\Curios.java:14: 警告: [removal] SlotTypeMessage 中的 Builder 已过时, 且标记为待删除
+        final SlotTypeMessage.Builder message = new SlotTypeMessage.Builder(identifier);
+                             ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\compat\Curios.java:14: 警告: [removal] top.theillusivec4.curios.api 中的 SlotTypeMessage 已过时, 且标记为待删除
+        final SlotTypeMessage.Builder message = new SlotTypeMessage.Builder(identifier);
+                                                    ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\compat\Curios.java:14: 警告: [removal] SlotTypeMessage 中的 Builder 已过时, 且标记为待删除
+        final SlotTypeMessage.Builder message = new SlotTypeMessage.Builder(identifier);
+                                                                   ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\compat\Curios.java:14: 警告: [removal] Builder 中的 Builder(String) 已过时, 且标记为待删除
+        final SlotTypeMessage.Builder message = new SlotTypeMessage.Builder(identifier);
+                                                ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\compat\Curios.java:16: 警告: [removal] Builder 中的 size(int) 已过时, 且标记为待删除
+        message.size(slots);
+               ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\compat\Curios.java:19: 警告: [removal] Builder 中的 hide() 已过时, 且标记为待删除
+            message.hide();
+                   ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\compat\Curios.java:23: 警告: [removal] Builder 中的 icon(ResourceLocation) 已过时, 且标记为待删除
+            message.icon(icon);
+                   ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\compat\Curios.java:26: 警告: [removal] top.theillusivec4.curios.api 中的 SlotTypeMessage 已过时, 且标记为待删除
+        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> message.build());
+                                       ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\compat\Curios.java:26: 警告: [removal] Builder 中的 build() 已过时, 且标记为待删除
+        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> message.build());
+                                                                                   ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\item\armor\ExtendedArmorItem.java:91: 警告: [removal] IForgeItem 中的 onArmorTick(ItemStack,Level,Player) 已过时, 且标记为待删除
+    public void onArmorTick(ItemStack stack, Level world, Player player) {
+                ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\IronsSpellbooks.java:63: 警告: [removal] FMLJavaModLoadingContext 中的 get() 已过时, 且标记为待删除
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+                                                        ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\IronsSpellbooks.java:90: 警告: [removal] ModLoadingContext 中的 get() 已过时, 且标记为待删除
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfigs.SPEC, String.format("%s-client.toml", IronsSpellbooks.MODID));
+                         ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\IronsSpellbooks.java:91: 警告: [removal] ModLoadingContext 中的 get() 已过时, 且标记为待删除
+        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ServerConfigs.SPEC, String.format("%s-server.toml", IronsSpellbooks.MODID));
+                         ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\IronsSpellbooks.java:99: 警告: [removal] FMLJavaModLoadingContext 中的 get() 已过时, 且标记为待删除
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
+                                ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\IronsSpellbooks.java:101: 警告: [removal] FMLJavaModLoadingContext 中的 get() 已过时, 且标记为待删除
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
+                                ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\item\curios\CurioBaseItem.java:20: 警告: [removal] ICuriosHelper 中的 findFirstCurio(LivingEntity,Item) 已过时, 且标记为待删除
+        return entity != null && CuriosApi.getCuriosHelper().findFirstCurio(entity, this).isPresent();
+                                                            ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\player\ServerPlayerEvents.java:223: 警告: [removal] ICuriosHelper 中的 findCurios(LivingEntity,Item) 已过时, 且标记为待删除
+            var ringCount = CuriosApi.getCuriosHelper().findCurios(player, ItemRegistry.EMERALD_STONEPLATE_RING.get()).size();
+                                                       ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\player\ServerPlayerEvents.java:448: 警告: [removal] ProjectileImpactEvent 中的 setCanceled(boolean) 已过时, 且标记为待删除
+                        event.setCanceled(true);
+                             ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\player\ServerPlayerEvents.java:453: 警告: [removal] ProjectileImpactEvent 中的 setCanceled(boolean) 已过时, 且标记为待删除
+                        event.setCanceled(true);
+                             ^
+I:\CustomBuild\Jens_Hons\irons-spells-n-spellbooks-1.20.1\src\main\java\io\redspace\ironsspellbooks\util\UpgradeUtils.java:35: 警告: [removal] ICuriosHelper 中的 getCurioTags(Item) 已过时, 且标记为待删除
+            var tags = CuriosApi.getCuriosHelper().getCurioTags((Item) curioItem);
+                                                  ^
+注: 某些输入文件使用或覆盖了已过时的 API。
+注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+注: 某些输入文件使用了未经检查或不安全的操作。
+注: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。
+28 个警告
+
 > Task :addMixinsToApiJar
-> Task :copyAnimations UP-TO-DATE
-> Task :processResources UP-TO-DATE
-> Task :classes UP-TO-DATE
-> Task :apiJar UP-TO-DATE
+> Task :copyAnimations
+> Task :processResources
+> Task :classes
+> Task :apiJar
 > Task :addMixinsToJar
 > Task :jar
 > Task :configureReobfTaskForReobfJar
@@ -23,7 +123,7 @@ Java: 21.0.2, JVM: 21.0.2+13-58 (Oracle Corporation), Arch: amd64
 > Task :jarJar SKIPPED
 > Task :reobfJarJar SKIPPED
 > Task :addMixinsToSourcesJar
-> Task :sourcesJar UP-TO-DATE
+> Task :sourcesJar
 > Task :assemble
 > Task :compileTestJava NO-SOURCE
 > Task :processTestResources NO-SOURCE
@@ -38,5 +138,5 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/8.8/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 26s
-16 actionable tasks: 9 executed, 7 up-to-date
+BUILD SUCCESSFUL in 1m 39s
+16 actionable tasks: 16 executed

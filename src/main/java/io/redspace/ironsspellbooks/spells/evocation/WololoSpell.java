@@ -79,7 +79,7 @@ public class WololoSpell extends AbstractSpell implements IParameterizedSpell  {
 
     @Override
     public boolean checkPreCastConditions(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        return Utils.preCastTargetHelper(level, entity, playerMagicData, this, 32, .35f, true, livingEntity -> livingEntity instanceof Sheep sheep/* && sheep.getColor() == DyeColor.BLUE*/);
+        return Utils.preCastTargetHelper(level, entity, playerMagicData, this, 64, 1.0f, true, livingEntity -> livingEntity instanceof Sheep sheep/* && sheep.getColor() == DyeColor.BLUE*/);
     }
 
     @Override
