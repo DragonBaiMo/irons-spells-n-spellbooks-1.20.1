@@ -8,11 +8,17 @@ const __dirname = path.dirname(__filename);
 const skillDocsDir = path.resolve(__dirname, '../../skill-docs');
 const outputDir = path.resolve(__dirname, '../public');
 const outputFile = path.join(outputDir, 'skills.json');
+const runtimeDir = path.resolve(__dirname, '../src/generated');
+const runtimeFile = path.join(runtimeDir, 'skills.json');
 
-// Ensure output dir exists
-if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, { recursive: true });
+function ensureDir(targetDir) {
+    if (!fs.existsSync(targetDir)) {
+        fs.mkdirSync(targetDir, { recursive: true });
+    }
 }
+
+ensureDir(outputDir);
+ensureDir(runtimeDir);
 
 const skills = [];
 
@@ -85,9 +91,12 @@ try {
         });
     }
 
-    fs.writeFileSync(outputFile, JSON.stringify(skills, null, 2));
-    console.log(`Generated ${skills.length} skills to ${outputFile}`);
+    const json = JSON.stringify(skills, null, 2);
+    fs.writeFileSync(outputFile, json);
+    fs.writeFileSync(runtimeFile, json);
+    console.log(`已生成 ${skills.length} 个技能数据到 ${outputFile}`);
+    console.log(`已生成 ${skills.length} 个技能数据到 ${runtimeFile}`);
 } catch (e) {
-    console.error("Error generating skills:", e);
+    console.error("生成技能数据时出错:", e);
     process.exit(1);
 }

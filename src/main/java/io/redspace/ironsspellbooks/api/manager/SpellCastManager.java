@@ -27,10 +27,22 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * 管理员施法旁路管理器。
  */
 public final class SpellCastManager {
+    private record PendingCommandCast(String spellId, int level, SpellParameters params, CastOptions options) {
+    }
+
+    public record PendingCommandCastData(String spellId, int level, SpellParameters params, CastOptions options) {
+    }
+
+    private static final Map<UUID, PendingCommandCast> PENDING_COMMAND_CASTS = new ConcurrentHashMap<>();
+
     private SpellCastManager() {
     }
 
@@ -76,14 +88,14 @@ public final class SpellCastManager {
         }
 
         SpellParameters normalized = validation.normalized();
-        SpellParameterConfig baseline = spell.snapshotParameters();
-        SpellParameterConfig resolved = SpellParameterLoader.resolve(spell.getSpellId(), normalized, baseline);
         CastOptions options = CastOptions.fromParameters(normalized, CastSource.COMMAND);
         MagicData magicData = MagicData.getPlayerMagicData(player);
-        SpellParameterConfig previousParameters = spell.applyParameterOverrides(resolved);
+        SpellParameterConfig previousParameters = null;
         boolean castBarInitiated = false;
         boolean castSucceeded = false;
         JsonCastData jsonCastData = new JsonCastData(normalized);
+        SpellParameterConfig baseline = spell.snapshotParameters();
+        SpellParameterConfig resolved = SpellParameterLoader.resolve(spell.getSpellId(), normalized, baseline);
         int resolvedManaCost = calculateManaCost(spell, resolved, level);
 
         try {
@@ -109,12 +121,17 @@ public final class SpellCastManager {
             if (options.showCastBar) {
                 int effectiveCastTime = spell.getEffectiveCastTime(level, player);
                 if (effectiveCastTime > 0 && !magicData.isCasting()) {
+                    registerPendingCast(player.getUUID(), spell.getSpellId(), level, normalized, options);
                     magicData.initiateCast(spell, level, effectiveCastTime, CastSource.COMMAND, "command");
                     castBarInitiated = true;
+                    spell.onServerPreCast(player.level(), level, player, magicData);
                     Messages.sendToPlayer(new ClientboundUpdateCastingState(spell.getSpellId(), level, effectiveCastTime, CastSource.COMMAND, "command"), player);
                     Messages.sendToPlayersTrackingEntity(new ClientboundOnCastStarted(player.getUUID(), spell.getSpellId(), level), player, true);
+                    return true;
                 }
             }
+
+            previousParameters = spell.applyParameterOverrides(resolved);
 
             parameterizedSpell.onCastWithParameters(player.level(), level, player, CastSource.COMMAND, magicData, normalized);
 
@@ -150,7 +167,9 @@ public final class SpellCastManager {
                 magicData.resetCastingState();
                 Messages.sendToPlayersTrackingEntity(new ClientboundOnCastFinished(player.getUUID(), spell.getSpellId(), true), player, true);
             }
-            spell.restoreParameters(previousParameters);
+            if (previousParameters != null) {
+                spell.restoreParameters(previousParameters);
+            }
         }
     }
 
@@ -179,6 +198,18 @@ public final class SpellCastManager {
         } finally {
             spell.restoreParameters(previous);
         }
+    }
+
+    private static void registerPendingCast(UUID playerId, String spellId, int level, SpellParameters params, CastOptions options) {
+        PENDING_COMMAND_CASTS.put(playerId, new PendingCommandCast(spellId, level, params, options));
+    }
+
+    public static PendingCommandCastData consumePendingCast(UUID playerId) {
+        PendingCommandCast pending = PENDING_COMMAND_CASTS.remove(playerId);
+        if (pending == null) {
+            return null;
+        }
+        return new PendingCommandCastData(pending.spellId, pending.level, pending.params, pending.options);
     }
 
     private static int calculateManaCost(AbstractSpell spell, SpellParameterConfig config, int level) {

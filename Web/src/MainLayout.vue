@@ -10,16 +10,17 @@ import {
   SearchOutline, Star, StarOutline, Flash, 
   CopyOutline, CheckmarkCircleOutline, SettingsOutline 
 } from '@vicons/ionicons5';
+import embeddedSkills from './generated/skills.json';
 
-// --- Error Handling ---
+// --- 错误处理 ---
 const renderError = ref<string | null>(null);
 onErrorCaptured((err) => {
-  console.error("Render Error:", err);
+  console.error('渲染错误:', err);
   renderError.value = String(err);
-  return false; // prevent propagation
+  return false; // 阻止继续冒泡
 });
 
-// --- Types ---
+// --- 类型定义 ---
 interface Param {
   key: string;
   type: 'INT' | 'DOUBLE' | 'FLOAT' | 'STRING' | 'LONG' | 'BOOLEAN';
@@ -33,39 +34,39 @@ interface Skill {
   fullId: string;
   displayName: string;
   description: string;
-  icon: string; // unused in old code but good to have
+  icon: string; // 旧代码未用，但保留方便扩展
   params: Param[];
 }
 
-// --- State ---
+// --- 状态 ---
 const skills = ref<Skill[]>([]);
 const loading = ref(true);
 const searchQuery = ref('');
 const filterFav = ref(false);
 const selectedSkill = ref<Skill | null>(null);
-const favorites = ref<string[]>(JSON.parse(localStorage.getItem('favorites') || '[]'));
+const favorites = ref<string[]>(readLocalJson('favorites', []));
 
-// Skill Notes/Aliases (user custom names)
-const skillNotes = ref<Record<string, string>>(JSON.parse(localStorage.getItem('skillNotes') || '{}'));
+// 技能备注 / 自定义别名
+const skillNotes = ref<Record<string, string>>(readLocalJson('skillNotes', {}));
 const editingNote = ref(false);
 const noteInput = ref('');
 
-// Config State
+// 施法配置状态
 const caster = ref('@s');
 const level = ref(1);
 const target = ref('');
 
-// Toggle State
+// 开关状态
 const consumeMana = ref(false);
 const triggerCooldown = ref(false);
 const playEffects = ref(true);
 const bypassConditions = ref(true);
 const showCastBar = ref(false);
 
-// Param Overrides
+// 参数覆盖项
 const overrides = ref<Record<string, any>>({});
 
-// --- Computed ---
+// --- 计算属性 ---
 const filteredSkills = computed(() => {
   const q = searchQuery.value.toLowerCase();
   return skills.value.filter(s => {
@@ -82,21 +83,21 @@ const generatedJson = computed(() => {
   
   const obj: any = {};
   
-  // Global Overrides (only if different from default/standard)
+  // 全局控制项：仅在与默认值不同的情况下写入
   if (consumeMana.value !== false) obj.consumeMana = true;
   if (triggerCooldown.value !== false) obj.triggerCooldown = true;
   if (playEffects.value !== true) obj.playEffects = false;
   if (bypassConditions.value !== true) obj.bypassConditions = false;
   if (showCastBar.value !== false) obj.showCastBar = true;
 
-  // Skill Params
+  // 技能参数
   for (const [key, val] of Object.entries(overrides.value)) {
-    // Only include if it's actually set (though logic below ensures we only add to overrides if user checks "Customize")
-    // We convert types here just in case, though v-model.number helps
+    // 仅在用户开启自定义时写入覆盖值
+    // 额外兜底类型转换，防止输入异常
     obj[key] = val;
   }
   
-  return JSON.stringify(obj, null, 2); // Pretty print for display, but maybe compact for copy?
+  return JSON.stringify(obj, null, 2); // 保留缩进便于阅读
 });
 
 const generatedJsonCompact = computed(() => {
@@ -113,7 +114,7 @@ const generatedCommand = computed(() => {
   if (target.value) {
     cmd += ` ${target.value}`;
   }
-  // Only append JSON if it's not empty object
+  // 仅在 JSON 非空对象时追加
   const json = generatedJsonCompact.value;
   if (json !== '{}') {
     cmd += ` ${json}`;
@@ -121,24 +122,35 @@ const generatedCommand = computed(() => {
   return cmd;
 });
 
-// --- Actions ---
+// --- 行为 ---
 onMounted(async () => {
+  await loadSkills();
+});
+
+async function loadSkills() {
   try {
-    const res = await fetch('skills.json');
-    if (!res.ok) throw new Error('Failed to load skills');
+    if (window.location.protocol === 'file:') {
+      skills.value = embeddedSkills as Skill[];
+      return;
+    }
+    const res = await fetch('skills.json', { cache: 'no-cache' });
+    if (!res.ok) throw new Error('技能数据请求失败');
     skills.value = await res.json();
   } catch (e) {
-    console.error(e);
+    console.error('技能数据加载失败:', e);
+    if (skills.value.length === 0) {
+      skills.value = embeddedSkills as Skill[];
+    }
+    message.error('技能数据加载失败，已使用内置数据');
   } finally {
     loading.value = false;
   }
-});
+}
 
 function selectSkill(skill: Skill) {
-  console.log('Selected skill:', skill.displayName);
+  console.log('已选择技能:', skill.displayName);
   selectedSkill.value = skill;
-  // Reset specific configs if needed? Or keep them? 
-  // Keep Global configs, reset Params
+  // 保留全局控制，清空参数覆盖
   overrides.value = {};
 }
 
@@ -149,7 +161,7 @@ function toggleFavorite(id: string, e?: Event) {
   } else {
     favorites.value.push(id);
   }
-  localStorage.setItem('favorites', JSON.stringify(favorites.value));
+  writeLocalJson('favorites', favorites.value);
 }
 
 function startEditNote() {
@@ -166,7 +178,7 @@ function saveNote() {
     } else {
       delete skillNotes.value[selectedSkill.value.fullId];
     }
-    localStorage.setItem('skillNotes', JSON.stringify(skillNotes.value));
+    writeLocalJson('skillNotes', skillNotes.value);
   }
   editingNote.value = false;
 }
@@ -184,7 +196,7 @@ function toggleParamOverride(param: Param, active: boolean) {
   }
 }
 
-// Use message here (safe because MainLayout will be child of NMessageProvider)
+// 消息提示依赖父级的 NMessageProvider，这里直接复用
 const message = useMessage();
 
 function copyToClipboard(text: string) {
@@ -193,6 +205,26 @@ function copyToClipboard(text: string) {
   }).catch(() => {
     message.error('复制失败');
   });
+}
+
+// --- 本地存储安全封装 ---
+function readLocalJson<T>(key: string, fallback: T): T {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return fallback;
+    return JSON.parse(raw) as T;
+  } catch (e) {
+    console.warn(`读取本地存储失败: ${key}`, e);
+    return fallback;
+  }
+}
+
+function writeLocalJson(key: string, value: unknown) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    console.warn(`写入本地存储失败: ${key}`, e);
+  }
 }
 </script>
 

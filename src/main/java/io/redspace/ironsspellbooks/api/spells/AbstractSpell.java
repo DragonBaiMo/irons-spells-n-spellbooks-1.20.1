@@ -151,7 +151,8 @@ public abstract class AbstractSpell {
     }
 
     public int getCastTime(int spellLevel) {
-        if (this.getCastType() == CastType.INSTANT) {
+        // 对瞬发技能，如果通过参数配置了非零施法时间，则尊重配置值
+        if (this.getCastType() == CastType.INSTANT && this.castTime <= 0) {
             return 0;
         }
         return this.castTime;

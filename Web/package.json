@@ -6,14 +6,15 @@
   "scripts": {
     "generate": "node scripts/generate-skills.js",
     "dev": "vite",
-    "build": "npm run generate && tsc && vite build",
+    "build": "npm run generate && tsc && vite build && node scripts/copy-skill-docs.js",
     "preview": "vite preview"
   },
   "devDependencies": {
     "@vitejs/plugin-legacy": "^7.2.1",
     "terser": "^5.44.1",
     "typescript": "~5.9.3",
-    "vite": "^7.2.4"
+    "vite": "^7.2.4",
+    "vite-plugin-singlefile": "^2.3.0"
   },
   "dependencies": {
     "@vicons/ionicons5": "^0.13.0",

@@ -1,0 +1,7240 @@
+[
+  {
+    "displayName": "AbyssalShroudSpell",
+    "fullId": "irons_spellbooks:abyssal_shroud",
+    "commandId": "abyssal_shroud",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "300",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "6",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "6",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "200.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "durationSecondsPerPower",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "每点威力对应的持续时间 (秒)"
+      }
+    ]
+  },
+  {
+    "displayName": "AcidOrbSpell",
+    "fullId": "irons_spellbooks:acid_orb",
+    "commandId": "acid_orb",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "3",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "15",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "15.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "radiusPerPower",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "3.0",
+        "description": "每点威力对应的爆炸半径"
+      },
+      {
+        "key": "rendAmplifierOffset",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "破甲等级基础偏移值"
+      },
+      {
+        "key": "rendDurationSecondsPerPower",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "20.0",
+        "description": "每点威力附加的破甲持续时间 (秒)"
+      }
+    ]
+  },
+  {
+    "displayName": "AcupunctureSpell",
+    "fullId": "irons_spellbooks:acupuncture",
+    "commandId": "acupuncture",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "25",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "20.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "baseNeedles",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "4",
+        "description": "基础针数"
+      },
+      {
+        "key": "needlesPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级新增针数"
+      },
+      {
+        "key": "damageBase",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "基础伤害"
+      },
+      {
+        "key": "damagePerPower",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "每点威力附加伤害"
+      }
+    ]
+  },
+  {
+    "displayName": "AngelWingsSpell",
+    "fullId": "irons_spellbooks:angel_wing",
+    "commandId": "angel_wing",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "60",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "120.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "durationSecondsPerPower",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "每点威力对应的持续时间 (秒)"
+      }
+    ]
+  },
+  {
+    "displayName": "ArrowVolleySpell",
+    "fullId": "irons_spellbooks:arrow_volley",
+    "commandId": "arrow_volley",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "40",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "8",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "15.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "baseRows",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "4",
+        "description": "基础箭阵行数"
+      },
+      {
+        "key": "rowsPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级额外行数"
+      },
+      {
+        "key": "arrowsPerRowBase",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "5.0",
+        "description": "基础每行箭数"
+      },
+      {
+        "key": "arrowsPerRowPerLevel",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.5",
+        "description": "每级增加的每行箭数"
+      },
+      {
+        "key": "damageMultiplier",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.25",
+        "description": "伤害系数"
+      }
+    ]
+  },
+  {
+    "displayName": "AscensionSpell",
+    "fullId": "irons_spellbooks:ascension",
+    "commandId": "ascension",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "50",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "15.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "strikeRadius",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "5.0",
+        "description": "闪电落点影响半径"
+      }
+    ]
+  },
+  {
+    "displayName": "BallLightningSpell",
+    "fullId": "irons_spellbooks:ball_lightning",
+    "commandId": "ball_lightning",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "4",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "6",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "damagePerPower",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "每点威力对应的伤害系数"
+      }
+    ]
+  },
+  {
+    "displayName": "BlackHoleSpell",
+    "fullId": "irons_spellbooks:black_hole",
+    "commandId": "black_hole",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "300",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "100",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "100",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "120.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "baseRadius",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "4.0",
+        "description": "基础半径"
+      },
+      {
+        "key": "radiusPerLevel",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "2.0",
+        "description": "每级额外半径"
+      },
+      {
+        "key": "radiusPerPower",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.125",
+        "description": "每点威力额外半径"
+      },
+      {
+        "key": "damageMultiplier",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "2.0",
+        "description": "伤害系数"
+      }
+    ]
+  },
+  {
+    "displayName": "BlazeStormSpell",
+    "fullId": "irons_spellbooks:blaze_storm",
+    "commandId": "blaze_storm",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。实际施法时间=基础施法时间 + castTimePerLevel * 技能等级。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "55",
+        "description": "基础施法时间 (tick)"
+      },
+      {
+        "key": "castTimePerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级额外施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "20.0",
+        "description": "默认冷却时间 (秒)"
+      }
+    ]
+  },
+  {
+    "displayName": "BlessingOfLifeSpell",
+    "fullId": "irons_spellbooks:blessing_of_life",
+    "commandId": "blessing_of_life",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "6",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "10.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "healPerPower",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "每点威力对应的治疗量"
+      }
+    ]
+  },
+  {
+    "displayName": "BlightSpell",
+    "fullId": "irons_spellbooks:blight",
+    "commandId": "blight",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "50",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "35.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "amplifierOffset",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "-1",
+        "description": "效果等级偏移"
+      },
+      {
+        "key": "durationSecondsPerPower",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "30.0",
+        "description": "每点威力对应的持续时间 (秒)"
+      }
+    ]
+  },
+  {
+    "displayName": "BloodNeedlesSpell",
+    "fullId": "irons_spellbooks:blood_needles",
+    "commandId": "blood_needles",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "25",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "8",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "10.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "projectileCount",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "针数"
+      },
+      {
+        "key": "damageMultiplier",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.25",
+        "description": "伤害系数"
+      },
+      {
+        "key": "lifestealPercent",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.25",
+        "description": "吸血比例 (0-1)"
+      }
+    ]
+  },
+  {
+    "displayName": "BloodSlashSpell",
+    "fullId": "irons_spellbooks:blood_slash",
+    "commandId": "blood_slash",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "25",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "10.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "lifestealPercent",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.15",
+        "description": "吸血比例 (0-1)"
+      }
+    ]
+  },
+  {
+    "displayName": "BloodStepSpell",
+    "fullId": "irons_spellbooks:blood_step",
+    "commandId": "blood_step",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "12",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "4",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "5.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "invisDurationTicks",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "100",
+        "description": "隐身持续时间 (tick)"
+      }
+    ]
+  },
+  {
+    "displayName": "BurningDashSpell",
+    "fullId": "irons_spellbooks:burning_dash",
+    "commandId": "burning_dash",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "10.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "damageBase",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "基础伤害"
+      },
+      {
+        "key": "damagePerPower",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "每点威力附加伤害"
+      }
+    ]
+  },
+  {
+    "displayName": "ChainCreeperSpell",
+    "fullId": "irons_spellbooks:chain_creeper",
+    "commandId": "chain_creeper",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "40",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "15.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "baseCount",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "3",
+        "description": "基础爆炸头数量"
+      },
+      {
+        "key": "countPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级额外数量"
+      }
+    ]
+  },
+  {
+    "displayName": "ChainLightningSpell",
+    "fullId": "irons_spellbooks:chain_lightning",
+    "commandId": "chain_lightning",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "25",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "7",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "6",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "20.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "baseConnections",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "3",
+        "description": "基础跳跃次数"
+      },
+      {
+        "key": "connectionsPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级额外跳跃次数"
+      },
+      {
+        "key": "rangeBase",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "基础跳跃距离"
+      },
+      {
+        "key": "rangePerPower",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.5",
+        "description": "每点威力附加跳跃距离"
+      }
+    ]
+  },
+  {
+    "displayName": "ChargeSpell",
+    "fullId": "irons_spellbooks:charge",
+    "commandId": "charge",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "50",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "25",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "8",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "40.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "durationSecondsPerPower",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "每点威力对应的持续时间 (秒)"
+      },
+      {
+        "key": "amplifierOffset",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "-1",
+        "description": "效果等级偏移"
+      }
+    ]
+  },
+  {
+    "displayName": "CleanseSpell",
+    "fullId": "irons_spellbooks:cleanse",
+    "commandId": "cleanse",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。净化半径可配置（默认 2 格），施法瞄准提示与实际生效范围一致。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "100",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "60",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "60.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "radius",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "2.0",
+        "description": "净化半径 (格)"
+      }
+    ]
+  },
+  {
+    "displayName": "CloudOfRegenerationSpell",
+    "fullId": "irons_spellbooks:cloud_of_regeneration",
+    "commandId": "cloud_of_regeneration",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "3",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "200",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "35.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "healPerPower",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.5",
+        "description": "每点威力对应的治疗量"
+      },
+      {
+        "key": "radius",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "5.0",
+        "description": "治疗半径"
+      }
+    ]
+  },
+  {
+    "displayName": "ConeOfColdSpell",
+    "fullId": "irons_spellbooks:cone_of_cold",
+    "commandId": "cone_of_cold",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "100",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "12.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "damageBase",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "基础伤害"
+      },
+      {
+        "key": "damagePerPower",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.75",
+        "description": "每点威力附加伤害"
+      },
+      {
+        "key": "freezeDurationTicks",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "80",
+        "description": "冰冻时长 (tick)"
+      }
+    ]
+  },
+  {
+    "displayName": "CounterspellSpell",
+    "fullId": "irons_spellbooks:counterspell",
+    "commandId": "counterspell",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "50",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "10.0",
+        "description": "默认冷却时间 (秒)"
+      }
+    ]
+  },
+  {
+    "displayName": "DevourSpell",
+    "fullId": "irons_spellbooks:devour",
+    "commandId": "devour",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "25",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "4",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "6",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "20.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "hpBonusMultiplier",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.5",
+        "description": "击杀生命加成系数"
+      },
+      {
+        "key": "lifestealPercent",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.15",
+        "description": "吸血比例"
+      },
+      {
+        "key": "targetRange",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "9.0",
+        "description": "锁定目标距离"
+      }
+    ]
+  },
+  {
+    "displayName": "DivineSmiteSpell",
+    "fullId": "irons_spellbooks:divine_smite",
+    "commandId": "divine_smite",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "15",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "8",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "3",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "16",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "15.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "smiteRadius",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "2.2",
+        "description": "冲击半径"
+      },
+      {
+        "key": "smiteRange",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.7",
+        "description": "落点前推距离"
+      },
+      {
+        "key": "particleYOffset",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "2.0",
+        "description": "落点向下探测高度"
+      }
+    ]
+  },
+  {
+    "displayName": "DragonBreathSpell",
+    "fullId": "irons_spellbooks:dragon_breath",
+    "commandId": "dragon_breath",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "100",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "12.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "damageBase",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.0",
+        "description": "基础伤害加值"
+      },
+      {
+        "key": "damageScale",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.75",
+        "description": "伤害系数"
+      },
+      {
+        "key": "aiStopRange",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "10.0",
+        "description": "AI 停止施法距离"
+      }
+    ]
+  },
+  {
+    "displayName": "EarthquakeSpell",
+    "fullId": "irons_spellbooks:earthquake",
+    "commandId": "earthquake",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "50",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "8",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "40",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "16.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "durationTicks",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "240",
+        "description": "持续时间 (tick)"
+      },
+      {
+        "key": "radiusBase",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "4.0",
+        "description": "基础半径"
+      },
+      {
+        "key": "radiusScale",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "4.0",
+        "description": "半径系数"
+      },
+      {
+        "key": "damageScale",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.25",
+        "description": "伤害系数"
+      },
+      {
+        "key": "slownessOffset",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "减速等级扣减"
+      },
+      {
+        "key": "slownessScale",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.0",
+        "description": "减速等级系数"
+      }
+    ]
+  },
+  {
+    "displayName": "EchoingStrikesSpell",
+    "fullId": "irons_spellbooks:echoing_strikes",
+    "commandId": "echoing_strikes",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "50",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "60.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "baseAmplifier",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "4",
+        "description": "基础增益等级"
+      },
+      {
+        "key": "amplifierPerLevel",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.0",
+        "description": "每级增益系数"
+      },
+      {
+        "key": "radius",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "3.0",
+        "description": "作用半径"
+      }
+    ]
+  },
+  {
+    "displayName": "EldritchBlastSpell",
+    "fullId": "irons_spellbooks:eldritch_blast",
+    "commandId": "eldritch_blast",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "90",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "15",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "15",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "15.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "recastBase",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "重铸基础次数"
+      },
+      {
+        "key": "recastPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级追加重铸次数"
+      },
+      {
+        "key": "recastIntervalTicks",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "80",
+        "description": "重铸间隔 (tick)"
+      },
+      {
+        "key": "range",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "30.0",
+        "description": "施法距离"
+      }
+    ]
+  },
+  {
+    "displayName": "ElectrocuteSpell",
+    "fullId": "irons_spellbooks:electrocute",
+    "commandId": "electrocute",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "3",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "100",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "12.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "damageBase",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.0",
+        "description": "基础伤害加值"
+      },
+      {
+        "key": "damageScale",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.75",
+        "description": "伤害系数"
+      },
+      {
+        "key": "aiStopRange",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "10.0",
+        "description": "AI 停止施法距离"
+      }
+    ]
+  },
+  {
+    "displayName": "EvasionSpell",
+    "fullId": "irons_spellbooks:evasion",
+    "commandId": "evasion",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "40",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "180.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "durationSeconds",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "60",
+        "description": "持续时间 (秒)"
+      },
+      {
+        "key": "baseHits",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.0",
+        "description": "基础可闪避次数"
+      },
+      {
+        "key": "hitsPerPower",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.0",
+        "description": "每点威力增加的闪避次数"
+      }
+    ]
+  },
+  {
+    "displayName": "FangStrikeSpell",
+    "fullId": "irons_spellbooks:fang_strike",
+    "commandId": "fang_strike",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "3",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "6",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "15",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "5.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "baseCount",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "7",
+        "description": "基础獠牙数量"
+      },
+      {
+        "key": "countPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级追加数量"
+      },
+      {
+        "key": "spacing",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.0",
+        "description": "獠牙间距"
+      },
+      {
+        "key": "delayDivisor",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "3",
+        "description": "生成延迟除数"
+      },
+      {
+        "key": "groundSearchMaxSteps",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "8",
+        "description": "地面搜索最大步数"
+      }
+    ]
+  },
+  {
+    "displayName": "FangWardSpell",
+    "fullId": "irons_spellbooks:fang_ward",
+    "commandId": "fang_ward",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "45",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "8",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "15",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "15.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "ringsBase",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "基础环数"
+      },
+      {
+        "key": "ringSpacing",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.5",
+        "description": "环间距"
+      },
+      {
+        "key": "fangsFirstRing",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "第一圈獠牙数量"
+      },
+      {
+        "key": "groundSearchMaxSteps",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "地面搜索最大步数"
+      }
+    ]
+  },
+  {
+    "displayName": "FireballSpell",
+    "fullId": "irons_spellbooks:fireball",
+    "commandId": "fireball",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "60",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "15",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "40",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "25.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "damageBase",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "5.0",
+        "description": "基础伤害加值"
+      },
+      {
+        "key": "damageScale",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "5.0",
+        "description": "伤害系数"
+      },
+      {
+        "key": "radiusBase",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "基础半径"
+      },
+      {
+        "key": "radiusPerPower",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.0",
+        "description": "每点威力增加半径"
+      }
+    ]
+  },
+  {
+    "displayName": "FireboltSpell",
+    "fullId": "irons_spellbooks:firebolt",
+    "commandId": "firebolt",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "12",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "damageScale",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.5",
+        "description": "伤害系数"
+      },
+      {
+        "key": "fireTimeSeconds",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "3.0",
+        "description": "点燃时长 (秒)"
+      }
+    ]
+  },
+  {
+    "displayName": "FireBreathSpell",
+    "fullId": "irons_spellbooks:fire_breath",
+    "commandId": "fire_breath",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "100",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "12.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "damageBase",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.0",
+        "description": "基础伤害加值"
+      },
+      {
+        "key": "damageScale",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.75",
+        "description": "伤害系数"
+      },
+      {
+        "key": "aiStopRange",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "10.0",
+        "description": "AI 停止施法距离"
+      }
+    ]
+  },
+  {
+    "displayName": "FirecrackerSpell",
+    "fullId": "irons_spellbooks:firecracker",
+    "commandId": "firecracker",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "4",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.5",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "rangeBase",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "15",
+        "description": "基础射程"
+      },
+      {
+        "key": "rangePerPower",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "2.0",
+        "description": "每点威力增加射程"
+      },
+      {
+        "key": "damageScale",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.0",
+        "description": "伤害系数"
+      }
+    ]
+  },
+  {
+    "displayName": "FireflySwarmSpell",
+    "fullId": "irons_spellbooks:firefly_swarm",
+    "commandId": "firefly_swarm",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "40",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "6",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "20.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "radius",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "2.0",
+        "description": "作用半径"
+      },
+      {
+        "key": "damageScale",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.33333334",
+        "description": "伤害系数"
+      },
+      {
+        "key": "targetSearchRange",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "32.0",
+        "description": "目标搜索距离"
+      }
+    ]
+  },
+  {
+    "displayName": "FlamingBarrageSpell",
+    "fullId": "irons_spellbooks:flaming_barrage",
+    "commandId": "flaming_barrage",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "80",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "3",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "15.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "recastCount",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "重铸次数"
+      },
+      {
+        "key": "recastIntervalTicks",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "80",
+        "description": "重铸间隔 (tick)"
+      },
+      {
+        "key": "inaccuracyMin",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.2",
+        "description": "最小散射"
+      },
+      {
+        "key": "inaccuracyMax",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.4",
+        "description": "最大散射"
+      }
+    ]
+  },
+  {
+    "displayName": "FlamingStrikeSpell",
+    "fullId": "irons_spellbooks:flaming_strike",
+    "commandId": "flaming_strike",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "15",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "15.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "arcRadius",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "3.25",
+        "description": "挥击半径"
+      },
+      {
+        "key": "arcDistance",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.9",
+        "description": "前探距离"
+      },
+      {
+        "key": "fireTimeSeconds",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "3.0",
+        "description": "点燃时长 (秒)"
+      },
+      {
+        "key": "weaponDamageScale",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.0",
+        "description": "武器伤害系数"
+      },
+      {
+        "key": "bonusDamageScale",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.0",
+        "description": "技能威力系数"
+      }
+    ]
+  },
+  {
+    "displayName": "FortifySpell",
+    "fullId": "irons_spellbooks:fortify",
+    "commandId": "fortify",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "40",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "6",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "40",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "35.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "durationSeconds",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "120",
+        "description": "持续时间 (秒)"
+      },
+      {
+        "key": "absorptionScale",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.0",
+        "description": "吸收等级系数"
+      },
+      {
+        "key": "targetingColor",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "16239960",
+        "description": "范围指示颜色"
+      }
+    ]
+  },
+  {
+    "displayName": "FrostbiteSpell",
+    "fullId": "irons_spellbooks:frostbite",
+    "commandId": "frostbite",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "100",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "50",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "75",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "15",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "40",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "percentDamageScale",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.01",
+        "description": "冻结伤害百分比系数"
+      },
+      {
+        "key": "icicleShardCount",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "8",
+        "description": "碎冰弹数量"
+      },
+      {
+        "key": "shardDamageSplit",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.0",
+        "description": "碎冰伤害分摊比例"
+      },
+      {
+        "key": "castRange",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "48.0",
+        "description": "施法距离"
+      }
+    ]
+  },
+  {
+    "displayName": "FrostStepSpell",
+    "fullId": "irons_spellbooks:frost_step",
+    "commandId": "frost_step",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "15",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "3",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "14",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "3",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "10.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "distanceScale",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.65",
+        "description": "距离系数"
+      },
+      {
+        "key": "shadowDamageScale",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.33333334",
+        "description": "残影碎裂伤害系数"
+      },
+      {
+        "key": "shadowDurationTicks",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "60",
+        "description": "残影存活时间 (tick)"
+      }
+    ]
+  },
+  {
+    "displayName": "FrostwaveSpell",
+    "fullId": "irons_spellbooks:frostwave",
+    "commandId": "frostwave",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "50",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "3",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "45.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "radiusBase",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "6.0",
+        "description": "基础半径"
+      },
+      {
+        "key": "radiusPerLevel",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.75",
+        "description": "每级增加半径"
+      },
+      {
+        "key": "durationPerPower",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "20.0",
+        "description": "每点威力增加持续 (tick)"
+      }
+    ]
+  },
+  {
+    "displayName": "GluttonySpell",
+    "fullId": "irons_spellbooks:gluttony",
+    "commandId": "gluttony",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "35",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "90.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "durationPerPower",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "20.0",
+        "description": "每点威力增加持续 (tick)"
+      }
+    ]
+  },
+  {
+    "displayName": "GreaterHealSpell",
+    "fullId": "irons_spellbooks:greater_heal",
+    "commandId": "greater_heal",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "100",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "120",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "45.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "healRatio",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.0",
+        "description": "治疗比例 (最大生命百分比)"
+      }
+    ]
+  },
+  {
+    "displayName": "GuidingBoltSpell",
+    "fullId": "irons_spellbooks:guiding_bolt",
+    "commandId": "guiding_bolt",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "6",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "8.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "damageScale",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.5",
+        "description": "伤害系数"
+      },
+      {
+        "key": "markDurationSeconds",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "25",
+        "description": "标记持续时间 (秒)"
+      },
+      {
+        "key": "projectileSpeed",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.0",
+        "description": "投射物速度系数"
+      }
+    ]
+  },
+  {
+    "displayName": "GustSpell",
+    "fullId": "irons_spellbooks:gust",
+    "commandId": "gust",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "15",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "12.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "range",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "8.0",
+        "description": "施法范围"
+      },
+      {
+        "key": "strengthScale",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.2",
+        "description": "击退强度系数"
+      },
+      {
+        "key": "kickbackScale",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.25",
+        "description": "自我后坐力系数"
+      },
+      {
+        "key": "damageScale",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.0",
+        "description": "落地伤害系数"
+      }
+    ]
+  },
+  {
+    "displayName": "HasteSpell",
+    "fullId": "irons_spellbooks:haste",
+    "commandId": "haste",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "50",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "80.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "hasteRadius",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "3.0",
+        "description": "生效半径"
+      },
+      {
+        "key": "maxTargets",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "最大友方数量"
+      },
+      {
+        "key": "durationPerPower",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "20.0",
+        "description": "持续时间系数 (tick/威力)"
+      }
+    ]
+  },
+  {
+    "displayName": "HealingCircleSpell",
+    "fullId": "irons_spellbooks:healing_circle",
+    "commandId": "healing_circle",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "40",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "25.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "radius",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "5.0",
+        "description": "治疗半径"
+      },
+      {
+        "key": "duration",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "200",
+        "description": "持续时间 (tick)"
+      },
+      {
+        "key": "healMultiplier",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.25",
+        "description": "治疗系数 (威力倍率)"
+      }
+    ]
+  },
+  {
+    "displayName": "HealSpell",
+    "fullId": "irons_spellbooks:heal",
+    "commandId": "heal",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "15",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "30.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "healMultiplier",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.0",
+        "description": "治疗倍率"
+      }
+    ]
+  },
+  {
+    "displayName": "HeartstopSpell",
+    "fullId": "irons_spellbooks:heartstop",
+    "commandId": "heartstop",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "50",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "300",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "120.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "effectAmplifier",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "效果等级"
+      }
+    ]
+  },
+  {
+    "displayName": "HeatSurgeSpell",
+    "fullId": "irons_spellbooks:heat_surge",
+    "commandId": "heat_surge",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "50",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "8",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "45.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "radiusBase",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "6.0",
+        "description": "爆发半径基础值"
+      },
+      {
+        "key": "radiusPerLevel",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.5",
+        "description": "爆发半径每级增量"
+      },
+      {
+        "key": "rendBase",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "撕裂等级基础值"
+      },
+      {
+        "key": "rendPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "撕裂等级每级增量"
+      },
+      {
+        "key": "durationPerPower",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "20.0",
+        "description": "持续时间系数 (tick/威力)"
+      }
+    ]
+  },
+  {
+    "displayName": "IceBlockSpell",
+    "fullId": "irons_spellbooks:ice_block",
+    "commandId": "ice_block",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "40",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "14",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "15.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "airTimeNoTarget",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "25",
+        "description": "未锁定目标时悬空时长 (tick)"
+      },
+      {
+        "key": "airTimeTarget",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "35",
+        "description": "锁定目标时悬空时长 (tick)"
+      },
+      {
+        "key": "damageMultiplier",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.0",
+        "description": "伤害威力倍率"
+      }
+    ]
+  },
+  {
+    "displayName": "IcicleSpell",
+    "fullId": "irons_spellbooks:icicle",
+    "commandId": "icicle",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "12",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "damageMultiplier",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.5",
+        "description": "伤害威力倍率"
+      }
+    ]
+  },
+  {
+    "displayName": "InvisibilitySpell",
+    "fullId": "irons_spellbooks:invisibility",
+    "commandId": "invisibility",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "35",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "8",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "40",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "45.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "durationPerPower",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "20.0",
+        "description": "持续时间系数 (tick/威力)"
+      }
+    ]
+  },
+  {
+    "displayName": "LightningBoltSpell",
+    "fullId": "irons_spellbooks:lightning_bolt",
+    "commandId": "lightning_bolt",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "75",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "15",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "25.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "radius",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "4.0",
+        "description": "溅射半径"
+      }
+    ]
+  },
+  {
+    "displayName": "LightningLanceSpell",
+    "fullId": "irons_spellbooks:lightning_lance",
+    "commandId": "lightning_lance",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "50",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "14",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "40",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "8.0",
+        "description": "默认冷却时间 (秒)"
+      }
+    ]
+  },
+  {
+    "displayName": "LobCreeperSpell",
+    "fullId": "irons_spellbooks:lob_creeper",
+    "commandId": "lob_creeper",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "12",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "2.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "speedBase",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.6",
+        "description": "初速基础值"
+      },
+      {
+        "key": "speedPerLevel",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.1",
+        "description": "初速每级增量"
+      },
+      {
+        "key": "damageMultiplier",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.5",
+        "description": "伤害威力倍率"
+      }
+    ]
+  },
+  {
+    "displayName": "MagicArrowSpell",
+    "fullId": "irons_spellbooks:magic_arrow",
+    "commandId": "magic_arrow",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "40",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "8.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "damageMultiplier",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.0",
+        "description": "伤害威力倍率"
+      }
+    ]
+  },
+  {
+    "displayName": "MagicMissileSpell",
+    "fullId": "irons_spellbooks:magic_missile",
+    "commandId": "magic_missile",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "12",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "damageMultiplier",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.5",
+        "description": "伤害威力倍率"
+      }
+    ]
+  },
+  {
+    "displayName": "MagmaBombSpell",
+    "fullId": "irons_spellbooks:magma_bomb",
+    "commandId": "magma_bomb",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "8",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "3",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "12.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "radiusBase",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "3.0",
+        "description": "爆炸半径基础值"
+      },
+      {
+        "key": "radiusPowerScale",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.0",
+        "description": "爆炸半径威力系数"
+      },
+      {
+        "key": "directDamageMultiplier",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.0",
+        "description": "直击伤害威力倍率"
+      },
+      {
+        "key": "aoeDamageBase",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "1.0",
+        "description": "范围伤害基础值"
+      },
+      {
+        "key": "aoeDamageRatio",
+        "aliases": [],
+        "type": "FLOAT",
+        "defaultValue": "0.1",
+        "description": "范围伤害威力系数"
+      }
+    ]
+  },
+  {
+    "displayName": "OakskinSpell",
+    "fullId": "irons_spellbooks:oakskin",
+    "commandId": "oakskin",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "15",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "3",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "35.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "durationPerPower",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "每点威力对应的持续时间 (tick)"
+      }
+    ]
+  },
+  {
+    "displayName": "PlanarSightSpell",
+    "fullId": "irons_spellbooks:planar_sight",
+    "commandId": "planar_sight",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "150",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "50",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "40",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "200.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "durationPerPower",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "每点威力对应的持续时间 (tick)"
+      }
+    ]
+  },
+  {
+    "displayName": "PoisonArrowSpell",
+    "fullId": "irons_spellbooks:poison_arrow",
+    "commandId": "poison_arrow",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "40",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "15.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "projectileSpeed",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "2.5",
+        "description": "弹速"
+      },
+      {
+        "key": "aoeDurationTicks",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "200",
+        "description": "毒云持续时间 (tick)"
+      },
+      {
+        "key": "damageMultiplier",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "直伤倍率 (基于技能威力)"
+      },
+      {
+        "key": "aoeDamageMultiplier",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.185",
+        "description": "毒云伤害倍率 (基于技能威力)"
+      }
+    ]
+  },
+  {
+    "displayName": "PoisonBreathSpell",
+    "fullId": "irons_spellbooks:poison_breath",
+    "commandId": "poison_breath",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "100",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "12.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "damageMultiplier",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.75",
+        "description": "伤害倍率 (基于技能威力)"
+      },
+      {
+        "key": "maxRange",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "10.0",
+        "description": "最大施法距离"
+      }
+    ]
+  },
+  {
+    "displayName": "PoisonSplashSpell",
+    "fullId": "irons_spellbooks:poison_splash",
+    "commandId": "poison_splash",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "40",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "8",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "15",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "20.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "targetRange",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "32.0",
+        "description": "目标选择最大距离"
+      },
+      {
+        "key": "damageMultiplier",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "伤害倍率 (基于技能威力)"
+      },
+      {
+        "key": "durationBase",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "100",
+        "description": "基础持续时间 (tick)"
+      },
+      {
+        "key": "durationPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "40",
+        "description": "每级持续时间增量 (tick)"
+      },
+      {
+        "key": "cloudRadius",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "2.0",
+        "description": "毒云半径"
+      }
+    ]
+  },
+  {
+    "displayName": "PortalSpell",
+    "fullId": "irons_spellbooks:portal",
+    "commandId": "portal",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "200",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "300",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "120",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "180.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "portalDurationTicks",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "每点威力对应的传送门持续时间 (tick)"
+      },
+      {
+        "key": "recastWindowTicks",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "2400",
+        "description": "二段施法允许的窗口时长 (tick)"
+      },
+      {
+        "key": "maxRange",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "48.0",
+        "description": "最大放置距离"
+      }
+    ]
+  },
+  {
+    "displayName": "RaiseDeadSpell",
+    "fullId": "irons_spellbooks:raise_dead",
+    "commandId": "raise_dead",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "50",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "3",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "150.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "summonDurationTicks",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "12000",
+        "description": "亡灵持续时间 (tick)"
+      },
+      {
+        "key": "baseRadius",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.5",
+        "description": "召唤基础环半径"
+      },
+      {
+        "key": "radiusPerLevel",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.185",
+        "description": "每级半径增量"
+      },
+      {
+        "key": "skeletonChance",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.3",
+        "description": "生成骷髅概率 (0-1)"
+      }
+    ]
+  },
+  {
+    "displayName": "RayOfFrostSpell",
+    "fullId": "irons_spellbooks:ray_of_frost",
+    "commandId": "ray_of_frost",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "25",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "15",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "6",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "15.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "range",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "30.0",
+        "description": "最大射程"
+      },
+      {
+        "key": "damageMultiplier",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.5",
+        "description": "伤害倍率 (基于技能威力)"
+      },
+      {
+        "key": "freezePerPower",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "15",
+        "description": "每点威力附加冻结时长 (tick)"
+      }
+    ]
+  },
+  {
+    "displayName": "RayOfSiphoningSpell",
+    "fullId": "irons_spellbooks:ray_of_siphoning",
+    "commandId": "ray_of_siphoning",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "8",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "4",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "100",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "15.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "range",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "12.0",
+        "description": "最大射程"
+      },
+      {
+        "key": "damageMultiplier",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.25",
+        "description": "每点威力伤害倍率"
+      }
+    ]
+  },
+  {
+    "displayName": "RecallSpell",
+    "fullId": "irons_spellbooks:recall",
+    "commandId": "recall",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "100",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "100",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "300.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "teleportYOffset",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.0",
+        "description": "传送高度偏移"
+      },
+      {
+        "key": "allowOverworldFallback",
+        "aliases": [],
+        "type": "BOOLEAN",
+        "defaultValue": "true",
+        "description": "无重生点时是否回主世界出生点"
+      },
+      {
+        "key": "requireRespawnPoint",
+        "aliases": [],
+        "type": "BOOLEAN",
+        "defaultValue": "false",
+        "description": "无重生点时是否直接失败"
+      }
+    ]
+  },
+  {
+    "displayName": "RootSpell",
+    "fullId": "irons_spellbooks:root",
+    "commandId": "root",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "45",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "3",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "40",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "35.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "maxTargetRange",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "32.0",
+        "description": "最大选取距离"
+      },
+      {
+        "key": "durationPerPower",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "每点威力对应的束缚时长 (tick)"
+      }
+    ]
+  },
+  {
+    "displayName": "SacrificeSpell",
+    "fullId": "irons_spellbooks:sacrifice",
+    "commandId": "sacrifice",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "25",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "targetRange",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "25.0",
+        "description": "可选取召唤物的最大距离"
+      },
+      {
+        "key": "healthDamageRatio",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.5",
+        "description": "消耗目标生命的伤害系数"
+      },
+      {
+        "key": "explosionRadiusBase",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "3.0",
+        "description": "基础爆炸半径"
+      },
+      {
+        "key": "explosionRadiusHealthScale",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.5",
+        "description": "爆炸半径随生命的比例"
+      }
+    ]
+  },
+  {
+    "displayName": "ScorchSpell",
+    "fullId": "irons_spellbooks:scorch",
+    "commandId": "scorch",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "50",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "8",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "12.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "targetRange",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "32.0",
+        "description": "目标选取最大距离"
+      },
+      {
+        "key": "radius",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "2.5",
+        "description": "爆炸/火场半径"
+      },
+      {
+        "key": "damageMultiplier",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "伤害倍率 (基于技能威力)"
+      },
+      {
+        "key": "fireFieldDurationTicks",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "200",
+        "description": "火场持续时间 (tick)"
+      },
+      {
+        "key": "fireFieldDamageMultiplier",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.1",
+        "description": "火场伤害倍率"
+      }
+    ]
+  },
+  {
+    "displayName": "SculkTentaclesSpell",
+    "fullId": "irons_spellbooks:sculk_tentacles",
+    "commandId": "sculk_tentacles",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "150",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "50",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "8",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "3",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "30.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "targetRange",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "48.0",
+        "description": "目标选取距离"
+      },
+      {
+        "key": "damageMultiplier",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "伤害倍率 (基于技能威力)"
+      },
+      {
+        "key": "baseRings",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "基础环数"
+      },
+      {
+        "key": "ringsPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级增加的环数"
+      },
+      {
+        "key": "tentaclesBase",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "第一环触手数量"
+      },
+      {
+        "key": "tentaclesPerRingIncrement",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "每环额外触手数"
+      },
+      {
+        "key": "ringSpacing",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.3",
+        "description": "环间距"
+      }
+    ]
+  },
+  {
+    "displayName": "ShieldSpell",
+    "fullId": "irons_spellbooks:shield",
+    "commandId": "shield",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "35",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "8.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "placementRange",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "5.0",
+        "description": "放置距离"
+      },
+      {
+        "key": "shieldBase",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "10.0",
+        "description": "护盾基础生命"
+      },
+      {
+        "key": "shieldPowerMultiplier",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "护盾生命倍率 (基于技能威力)"
+      }
+    ]
+  },
+  {
+    "displayName": "ShockwaveSpell",
+    "fullId": "irons_spellbooks:shockwave",
+    "commandId": "shockwave",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "70",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "8",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "16",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "30.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "baseRadius",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "8.0",
+        "description": "基础半径"
+      },
+      {
+        "key": "radiusPerLevel",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "每级半径增量"
+      },
+      {
+        "key": "baseDamage",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "4.0",
+        "description": "基础伤害"
+      },
+      {
+        "key": "damagePerPower",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.75",
+        "description": "每点威力的伤害加成"
+      },
+      {
+        "key": "maxTargets",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "-1",
+        "description": "最多命中目标数 (-1 表示无限制)"
+      }
+    ]
+  },
+  {
+    "displayName": "SlowSpell",
+    "fullId": "irons_spellbooks:slow",
+    "commandId": "slow",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "50",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "4",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "80.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "targetRange",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "32.0",
+        "description": "目标选取距离"
+      },
+      {
+        "key": "radius",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "3.0",
+        "description": "减速范围半径"
+      },
+      {
+        "key": "maxTargets",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "最多命中目标数"
+      },
+      {
+        "key": "durationPerPower",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "每点威力对应的持续时间 (tick)"
+      },
+      {
+        "key": "baseAmplifier",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "基础减速等级"
+      },
+      {
+        "key": "amplifierPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级增加的减速等级"
+      }
+    ]
+  },
+  {
+    "displayName": "SonicBoomSpell",
+    "fullId": "irons_spellbooks:sonic_boom",
+    "commandId": "sonic_boom",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "110",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "50",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "8",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "25.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "baseRange",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "15.0",
+        "description": "基础射程"
+      },
+      {
+        "key": "rangePerLevel",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "5.0",
+        "description": "每级射程增量"
+      },
+      {
+        "key": "beamWidth",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.4",
+        "description": "伤害判定宽度"
+      }
+    ]
+  },
+  {
+    "displayName": "SpectralHammerSpell",
+    "fullId": "irons_spellbooks:spectral_hammer",
+    "commandId": "spectral_hammer",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "15",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "2.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "distance",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "16",
+        "description": "最远挖掘距离"
+      },
+      {
+        "key": "radiusMultiplier",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.5",
+        "description": "半径倍率 (基于技能威力)"
+      },
+      {
+        "key": "depthMultiplier",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "深度倍率 (基于技能威力)"
+      }
+    ]
+  },
+  {
+    "displayName": "SpiderAspectSpell",
+    "fullId": "irons_spellbooks:spider_aspect",
+    "commandId": "spider_aspect",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "35",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "90.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "durationPerPower",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "每点威力对应的持续时间 (tick)"
+      }
+    ]
+  },
+  {
+    "displayName": "StarfallSpell",
+    "fullId": "irons_spellbooks:starfall",
+    "commandId": "starfall",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "8",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "160",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "16.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "radius",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "6.0",
+        "description": "落星覆盖半径"
+      },
+      {
+        "key": "damageMultiplier",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.5",
+        "description": "伤害倍率 (基于技能威力)"
+      },
+      {
+        "key": "explosionRadius",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "2.0",
+        "description": "流星爆炸半径"
+      }
+    ]
+  },
+  {
+    "displayName": "StompSpell",
+    "fullId": "irons_spellbooks:stomp",
+    "commandId": "stomp",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "50",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "8",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "16.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "baseRange",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "4.0",
+        "description": "基础范围"
+      },
+      {
+        "key": "rangePerLevel",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "每级范围增量"
+      },
+      {
+        "key": "damageMultiplier",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "伤害倍率 (基于技能威力)"
+      }
+    ]
+  },
+  {
+    "displayName": "SummonEnderChestSpell",
+    "fullId": "irons_spellbooks:summon_ender_chest",
+    "commandId": "summon_ender_chest",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "25",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "5.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "allowNonPlayerCaster",
+        "aliases": [],
+        "type": "BOOLEAN",
+        "defaultValue": "false",
+        "description": "是否允许非玩家施放"
+      }
+    ]
+  },
+  {
+    "displayName": "SummonHorseSpell",
+    "fullId": "irons_spellbooks:summon_horse",
+    "commandId": "summon_horse",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "50",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "20.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "summonDurationTicks",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "12000",
+        "description": "召唤物持续时间 (tick)"
+      },
+      {
+        "key": "speedMin",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.2",
+        "description": "最小移动速度"
+      },
+      {
+        "key": "speedMax",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.45",
+        "description": "最大移动速度"
+      },
+      {
+        "key": "jumpMin",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.6",
+        "description": "最小跳跃力"
+      },
+      {
+        "key": "jumpMax",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "最大跳跃力"
+      },
+      {
+        "key": "healthMin",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "10.0",
+        "description": "最小生命值"
+      },
+      {
+        "key": "healthMax",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "40.0",
+        "description": "最大生命值"
+      }
+    ]
+  },
+  {
+    "displayName": "SummonPolarBearSpell",
+    "fullId": "irons_spellbooks:summon_polar_bear",
+    "commandId": "summon_polar_bear",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "50",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "4",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "180.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "summonDurationTicks",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "12000",
+        "description": "召唤物持续时间 (tick)"
+      },
+      {
+        "key": "bearBaseHealth",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "20.0",
+        "description": "基础生命值"
+      },
+      {
+        "key": "bearHealthPerLevel",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "4.0",
+        "description": "每级生命增量"
+      },
+      {
+        "key": "bearDamageMultiplier",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "伤害倍率 (基于技能威力)"
+      }
+    ]
+  },
+  {
+    "displayName": "SummonVexSpell",
+    "fullId": "irons_spellbooks:summon_vex",
+    "commandId": "summon_vex",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "50",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "150.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "summonDurationTicks",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "12000",
+        "description": "召唤物持续时间 (tick)"
+      }
+    ]
+  },
+  {
+    "displayName": "SunbeamSpell",
+    "fullId": "irons_spellbooks:sunbeam",
+    "commandId": "sunbeam",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "40",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "24",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "3",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "20.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "targetRange",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "48.0",
+        "description": "目标选取距离"
+      },
+      {
+        "key": "damageMultiplier",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.5",
+        "description": "伤害倍率 (基于技能威力)"
+      }
+    ]
+  },
+  {
+    "displayName": "TelekinesisSpell",
+    "fullId": "irons_spellbooks:telekinesis",
+    "commandId": "telekinesis",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "25",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "8",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "4",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "140",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "35.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "rangeBase",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "12.0",
+        "description": "基础抓取距离"
+      },
+      {
+        "key": "rangePerLevel",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "2.0",
+        "description": "每级抓取距离增量"
+      },
+      {
+        "key": "forceScale",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.6",
+        "description": "牵引强度倍率"
+      }
+    ]
+  },
+  {
+    "displayName": "TeleportSpell",
+    "fullId": "irons_spellbooks:teleport",
+    "commandId": "teleport",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "3.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "rangeScale",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "距离倍率"
+      },
+      {
+        "key": "maxRange",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "-1.0",
+        "description": "最大传送距离 (-1 表示不限制)"
+      }
+    ]
+  },
+  {
+    "displayName": "ThunderStepSpell",
+    "fullId": "irons_spellbooks:thunder_step",
+    "commandId": "thunder_step",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "75",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "15",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "8.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "rangeScale",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "距离倍率"
+      },
+      {
+        "key": "maxRange",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "-1.0",
+        "description": "最大传送距离 (-1 表示不限制)"
+      },
+      {
+        "key": "beamWidth",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "判定宽度"
+      }
+    ]
+  },
+  {
+    "displayName": "ThunderstormSpell",
+    "fullId": "irons_spellbooks:thunderstorm",
+    "commandId": "thunderstorm",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "70",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "8",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "40",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "120.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "durationBaseSeconds",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "基础持续时间 (秒)"
+      },
+      {
+        "key": "durationPerLevelSeconds",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "每级持续时间增量 (秒)"
+      },
+      {
+        "key": "baseAmplifier",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "8",
+        "description": "基础威力等级"
+      }
+    ]
+  },
+  {
+    "displayName": "WallOfFireSpell",
+    "fullId": "irons_spellbooks:wall_of_fire",
+    "commandId": "wall_of_fire",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "4",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "30.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "maxWallLength",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "25.0",
+        "description": "火墙最大总长度"
+      },
+      {
+        "key": "recastCount",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "3",
+        "description": "可放置锚点次数"
+      },
+      {
+        "key": "recastCooldownTicks",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "40",
+        "description": "锚点窗口时长 (tick)"
+      }
+    ]
+  },
+  {
+    "displayName": "WispSpell",
+    "fullId": "irons_spellbooks:wisp",
+    "commandId": "wisp",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "15",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "3.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "wispLifetimeTicks",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "200",
+        "description": "幽火存在的最长时间 (tick)"
+      }
+    ]
+  },
+  {
+    "displayName": "WitherSkullSpell",
+    "fullId": "irons_spellbooks:wither_skull",
+    "commandId": "wither_skull",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "20",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "2",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "12",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "0",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "baseSpeed",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "8.0",
+        "description": "基础速度系数 (最终速度除以100)"
+      },
+      {
+        "key": "speedPerLevel",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "1.0",
+        "description": "每级速度增量系数"
+      },
+      {
+        "key": "damageMultiplier",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "0.5",
+        "description": "伤害倍率 (基于技能威力)"
+      }
+    ]
+  },
+  {
+    "displayName": "WololoSpell",
+    "fullId": "irons_spellbooks:wololo",
+    "commandId": "wololo",
+    "description": "参数可在管理员通道中通过 SpellParameters 进行覆盖。",
+    "params": [
+      {
+        "key": "baseManaCost",
+        "aliases": [
+          "manaCost"
+        ],
+        "type": "INT",
+        "defaultValue": "10",
+        "description": "基础魔力消耗"
+      },
+      {
+        "key": "manaCostPerLevel",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "5",
+        "description": "每级魔力消耗增量"
+      },
+      {
+        "key": "baseSpellPower",
+        "aliases": [
+          "power"
+        ],
+        "type": "INT",
+        "defaultValue": "4",
+        "description": "基础技能威力"
+      },
+      {
+        "key": "spellPowerPerLevel",
+        "aliases": [
+          "levelScaling"
+        ],
+        "type": "INT",
+        "defaultValue": "1",
+        "description": "每级技能威力增量"
+      },
+      {
+        "key": "castTime",
+        "aliases": [],
+        "type": "INT",
+        "defaultValue": "30",
+        "description": "施法时间 (tick)"
+      },
+      {
+        "key": "cooldown",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "10.0",
+        "description": "默认冷却时间 (秒)"
+      },
+      {
+        "key": "targetRange",
+        "aliases": [],
+        "type": "DOUBLE",
+        "defaultValue": "64.0",
+        "description": "目标选取距离"
+      },
+      {
+        "key": "randomColor",
+        "aliases": [],
+        "type": "BOOLEAN",
+        "defaultValue": "true",
+        "description": "是否随机染色"
+      },
+      {
+        "key": "fixedColor",
+        "aliases": [],
+        "type": "STRING",
+        "defaultValue": "random",
+        "description": "固定染色颜色（MC 颜色名，填 random 表示随机）"
+      }
+    ]
+  }
+]
